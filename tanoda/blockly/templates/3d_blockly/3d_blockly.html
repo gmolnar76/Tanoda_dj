@@ -1,0 +1,1183 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Robot Kaland - Ciklusok Gyakorlása</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/3d_blockly.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- OrbitControls hozzáadása -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script> 
+    <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+    <!-- Az XML kezeléshez szükséges script hozzáadása -->
+    <script src="https://unpkg.com/blockly/msg/js/hu.js"></script>
+    <script src="https://unpkg.com/blockly/xml_compressed.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Robot Kaland - Ciklusok a 3D térben</h1>
+        
+        <div class="level-selector">
+            <label for="levelSelect">Pálya kiválasztása:</label>
+            <select id="levelSelect" onchange="loadSelectedLevel()">
+                <option value="0">0. szint - Bemutató</option> {/* Új szint */}
+                <option value="1">1. szint - Könnyű Kezdés (For)</option> {/* Módosított név */}
+                <option value="2">2. szint - Falig (While)</option> {/* Módosított név */}
+                <option value="3">3. szint - Labirintus (Kombinált)</option> {/* Módosított név */}
+            </select>
+        </div>
+        
+        <div class="game-area">
+            <div id="blocklyDiv"></div>
+            <div id="threeJsRenderer"></div>
+        </div>
+        
+        <div class="controls">
+            <button id="runButton" onclick="runCode()">Kód futtatása</button>
+            <button id="showSolutionButton" onclick="showSolution()" style="display: none;">Megoldás mutatása</button> {/* Új gomb */}
+            <button id="resetButton" onclick="resetGame()">Újrakezdés</button>
+            <button id="hintButton" onclick="showHint()">Segítség</button>
+        </div>
+        
+        <div class="status">
+            <h3>Állapot:</h3>
+            <pre id="output">Válassz egy pályát és kezdd el a programozást!</pre>
+        </div>
+    </div>
+    
+    <xml id="toolbox" style="display: none">
+        <category name="Robot mozgások" colour="#5C81A6">
+            <block type="robot_move_forward"></block>
+            <block type="robot_turn_left"></block>
+            <block type="robot_turn_right"></block>
+            <block type="robot_collect_item"></block>
+        </category>
+        <category name="Érzékelők" colour="#5CA65C">
+            <block type="robot_detect_wall"></block>
+            <block type="robot_detect_item"></block>
+            <block type="robot_position"></block>
+        </category>
+        <category name="Ciklusok" colour="#5CA699">
+            <block type="controls_repeat_ext">
+                <value name="TIMES">
+                    <block type="math_number">
+                        <field name="NUM">10</field>
+                    </block>
+                </value>
+            </block>
+            <block type="controls_whileUntil"></block>
+            <block type="controls_for">
+                <value name="FROM">
+                    <block type="math_number">
+                        <field name="NUM">1</field>
+                    </block>
+                </value>
+                <value name="TO">
+                    <block type="math_number">
+                        <field name="NUM">10</field>
+                    </block>
+                </value>
+                <value name="BY">
+                    <block type="math_number">
+                        <field name="NUM">1</field>
+                    </block>
+                </value>
+            </block>
+        </category>
+        <category name="Logika" colour="#A55B5B">
+            <block type="controls_if"></block>
+            <block type="logic_compare"></block>
+            <block type="logic_operation"></block>
+            <block type="logic_negate"></block>
+        </category>
+        <category name="Matematika" colour="#A6745C">
+            <block type="math_number"></block>
+            <block type="math_arithmetic"></block>
+        </category>
+        <category name="Változók" custom="VARIABLE" colour="#A65CA4"></category>
+    </xml>
+
+    <script>
+        // Blockly munkaterület változó deklarálása - később lesz inicializálva a teljes opciókkal
+        var workspace;
+
+        // XML definíciók a blokkokhoz (megoldás mutatása funkcióhoz)
+        const blockXml = {
+            moveForward: '<block type="robot_move_forward"></block>',
+            turnLeft: '<block type="robot_turn_left"></block>',
+            turnRight: '<block type="robot_turn_right"></block>',
+            collectItem: '<block type="robot_collect_item"></block>'
+        };
+
+        // --- FIX for controls_repeat_ext ---
+        // Ensure the message includes the argument placeholder %1
+        // Use the correct Hungarian translation or fallback to English if unsure.
+        // Example using a potentially correct Hungarian translation:
+        Blockly.Msg["CONTROLS_REPEAT_TITLE"] = "ismételd %1 alkalommal"; 
+        // Or fallback to English:
+        // Blockly.Msg["CONTROLS_REPEAT_TITLE"] = "repeat %1 times"; 
+
+        // Force update the block definition if needed (might not be necessary if Blockly.Msg is set before injection)
+        if (Blockly.Blocks['controls_repeat_ext']) {
+            Blockly.Blocks['controls_repeat_ext'].init = function() {
+                this.jsonInit({
+                    "message0": Blockly.Msg["CONTROLS_REPEAT_TITLE"], // Use the potentially fixed message
+                    "args0": [
+                        {
+                            "type": "input_value",
+                            "name": "TIMES",
+                            "check": "Number"
+                        }
+                    ],
+                    "message1": Blockly.Msg["CONTROLS_REPEAT_INPUT_DO"],
+                    "args1": [
+                        {
+                            "type": "input_statement",
+                            "name": "DO"
+                        }
+                    ],
+                    "previousStatement": null,
+                    "nextStatement": null,
+                    "style": "loop_blocks", // Use style instead of colour if using modern themes
+                    // "colour": "%{BKY_LOOPS_HUE}", // Use colour for classic theme
+                    "tooltip": Blockly.Msg["CONTROLS_REPEAT_TOOLTIP"],
+                    "helpUrl": Blockly.Msg["CONTROLS_REPEAT_HELPURL"]
+                });
+            };
+        }
+        // --- END FIX ---
+
+        // Játék változók
+        let scene, camera, renderer, robot, grid;
+        let items = [];
+        let walls = [];
+        let gameRunning = false;
+        let currentLevel = 1;
+        let itemsCollected = 0;
+        let totalItems = 0;
+        let robotDirection = 0; // 0: észak, 1: kelet, 2: dél, 3: nyugat
+        let solutionSteps = []; // A bemutató szint megoldásának lépései
+        let showingSolution = false; // Jelzi, ha a megoldás bemutatása fut
+        let controls; // Kamera vezérlő
+        
+        // Blockly munkaterület változó deklarálása - később lesz inicializálva a teljes opciókkal
+        var workspace;
+
+        // Játék inicializálása
+        function initGame() {
+            // Three.js inicializálása
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xc0e0ff);
+            
+            // Kamera beállítása
+            camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            camera.position.set(5, 8, 12); // Közelebbi és magasabb nézőpont
+            camera.lookAt(scene.position);
+            
+            // Renderer beállítása
+            const container = document.getElementById('threeJsRenderer');
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.innerHTML = '';
+            container.appendChild(renderer.domElement);
+            
+            // Fények beállítása
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 7.5);
+            scene.add(directionalLight);
+            
+            // OrbitControls inicializálása
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true; // Sima mozgás
+            controls.dampingFactor = 0.1;
+            controls.screenSpacePanning = false; // Csak a célpont körül forgat
+            controls.minDistance = 3; // Minimális zoom távolság
+            controls.maxDistance = 30; // Maximális zoom távolság
+            controls.target.set(4.5, 0, 4.5); // A pálya közepe legyen a célpont
+            controls.update();
+            
+            // Pálya létrehozása
+            createGrid();
+            
+            // Pálya betöltése
+            loadLevel(currentLevel);
+            
+            // Animáció indítása
+            animate();
+            
+            // Ablakátméretezés kezelése
+            window.addEventListener('resize', onWindowResize);
+        }
+        
+        // Ablak átméretezés kezelése
+        function onWindowResize() {
+            const container = document.getElementById('threeJsRenderer');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+        
+        // Animáció
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Kamera vezérlő frissítése
+            if (controls) controls.update(); 
+            
+            // Feldolgozzuk az animációkat
+            for (let i = animations.length - 1; i >= 0; i--) {
+                const anim = animations[i];
+                if (!anim.update()) {
+                    animations.splice(i, 1);
+                }
+            }
+            
+            // Érmék animációja
+            items.forEach(item => {
+                if (item.userData.animation && typeof item.userData.animation.update === 'function') {
+                    item.userData.animation.update(item);
+                }
+            });
+            
+            if (renderer) renderer.render(scene, camera);
+        }
+        
+        // Rács létrehozása (vizuális fejlesztés)
+        function createGrid() {
+            if (grid) {
+                scene.remove(grid);
+            }
+            grid = new THREE.Group();
+            
+            // Padló textúrával
+            const textureLoader = new THREE.TextureLoader();
+            const floorTexture = textureLoader.load('{% static "images/grass_texture.jpg" %}'); // Tegyük fel, hogy van egy fű textúra
+            floorTexture.wrapS = THREE.RepeatWrapping;
+            floorTexture.wrapT = THREE.RepeatWrapping;
+            floorTexture.repeat.set(5, 5);
+
+            const floorGeometry = new THREE.PlaneGeometry(10, 10);
+            const floorMaterial = new THREE.MeshStandardMaterial({
+                map: floorTexture, // Textúra használata
+                side: THREE.DoubleSide
+            });
+            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+            floor.rotation.x = Math.PI / 2;
+            floor.position.set(4.5, -0.5, 4.5);
+            grid.add(floor);
+            
+            // Rácsvonalak (opcionális, lehet kevésbé hangsúlyos)
+            const gridHelper = new THREE.GridHelper(10, 10, 0xcccccc, 0xdddddd);
+            gridHelper.position.set(4.5, -0.49, 4.5);
+            grid.add(gridHelper);
+            
+            scene.add(grid);
+        }
+        
+        // Robot létrehozása
+        function createRobot(x, z) {
+            // Régi robot eltávolítása, ha van
+            if (robot) {
+                scene.remove(robot);
+            }
+            
+            robot = new THREE.Group();
+            
+            // Robot test
+            const bodyGeometry = new THREE.BoxGeometry(0.7, 0.7, 0.7);
+            const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0x3498db });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            robot.add(body);
+            
+            // Robot fej
+            const headGeometry = new THREE.BoxGeometry(0.4, 0.3, 0.4);
+            const headMaterial = new THREE.MeshStandardMaterial({ color: 0x2c3e50 });
+            const head = new THREE.Mesh(headGeometry, headMaterial);
+            head.position.y = 0.5;
+            robot.add(head);
+            
+            // Robot szemek
+            const eyeGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+            const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0xecf0f1 });
+            
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(0.15, 0.5, 0.15);
+            leftEye.scale.set(0.5, 0.5, 0.5);
+            robot.add(leftEye);
+            
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(-0.15, 0.5, 0.15);
+            rightEye.scale.set(0.5, 0.5, 0.5);
+            robot.add(rightEye);
+            
+            // Robot pozicionálása
+            robot.position.set(x, 0, z);
+            updateRobotRotation();
+            
+            scene.add(robot);
+        }
+        
+        // Robot forgatása
+        function updateRobotRotation() {
+            if (!robot) return;
+            
+            robot.rotation.y = Math.PI / 2 * robotDirection;
+        }
+        
+        // Gyűjtendő elem létrehozása (vizuális fejlesztés)
+        function createItem(x, z) {
+            const geometry = new THREE.IcosahedronGeometry(0.3, 0); // Kicsit érdekesebb forma
+            const material = new THREE.MeshStandardMaterial({ 
+                color: 0xffd700, // Arany szín
+                metalness: 0.7, 
+                roughness: 0.3, 
+                emissive: 0xccaa00, // Enyhe ragyogás
+                emissiveIntensity: 0.4
+            });
+            const item = new THREE.Mesh(geometry, material);
+            item.position.set(x, 0.1, z); // Kicsit a föld felett
+            
+            item.userData = {
+                originalY: 0.1,
+                collectible: true,
+                x: Math.floor(x),
+                z: Math.floor(z),
+                animation: {
+                    time: Math.random() * Math.PI * 2,
+                    update: function(mesh) {
+                        mesh.position.y = mesh.userData.originalY + Math.sin(mesh.userData.animation.time) * 0.15;
+                        mesh.userData.animation.time += 0.05;
+                        mesh.rotation.y += 0.02;
+                        mesh.rotation.x += 0.01;
+                    }
+                }
+            };
+            
+            items.push(item);
+            scene.add(item);
+            totalItems++;
+        }
+        
+        // Fal létrehozása (vizuális fejlesztés)
+        function createWall(x, z) {
+            const textureLoader = new THREE.TextureLoader();
+            const wallTexture = textureLoader.load('{% static "images/brick_wall.jpg" %}'); // Tegyük fel, hogy van egy tégla textúra
+            wallTexture.wrapS = THREE.RepeatWrapping;
+            wallTexture.wrapT = THREE.RepeatWrapping;
+            wallTexture.repeat.set(1, 1);
+
+            const geometry = new THREE.BoxGeometry(1, 1.5, 1);
+            const material = new THREE.MeshStandardMaterial({ 
+                map: wallTexture, // Textúra használata
+                roughness: 0.8
+            });
+            const wall = new THREE.Mesh(geometry, material);
+            wall.position.set(x, 0.25, z);
+            
+            wall.userData = {
+                x: Math.floor(x),
+                z: Math.floor(z)
+            };
+            
+            walls.push(wall);
+            scene.add(wall);
+        }
+        
+        // Pálya betöltése
+        function loadLevel(level) {
+            clearLevel();
+            itemsCollected = 0;
+            totalItems = 0;
+            robotDirection = 0;
+            solutionSteps = []; // Megoldás lépéseinek törlése
+            showingSolution = false;
+            document.getElementById('showSolutionButton').style.display = 'none'; // Gomb elrejtése alapból
+
+            switch(level) {
+                case 0: // Bemutató szint
+                    createRobot(0, 0);
+                    createItem(2, 0);
+                    createWall(3, 0);
+                    
+                    // Megoldás lépései ehhez a szinthez (blokk XML-lel)
+                    solutionSteps = [
+                        { action: moveForward, blockXml: blockXml.moveForward },
+                        { action: moveForward, blockXml: blockXml.moveForward },
+                        { action: collectItem, blockXml: blockXml.collectItem }
+                    ];
+                    
+                    document.getElementById('showSolutionButton').style.display = 'inline-block'; // Gomb mutatása
+                    document.getElementById('output').textContent = "0. SZINT: Bemutató\nFigyeld meg, hogyan gyűjti össze a robot az érmét! Kattints a 'Megoldás mutatása' gombra, majd próbáld meg te is!";
+                    break;
+                    
+                case 1: // Könnyített Kezdő (For)
+                    createRobot(0, 0);
+                    createItem(1, 0);
+                    createItem(3, 0);
+                    createWall(4, 0);
+                    
+                    document.getElementById('output').textContent = "1. SZINT: Könnyű Kezdés\nGyűjtsd össze a két érmét! Használd a 'Robot előre' és 'Érme begyűjtése' blokkokat. Egy FOR ciklus segíthet!";
+                    break;
+
+                case 2: // Falig (While)
+                    createRobot(0, 0);
+                    robotDirection = 1; // Kelet felé néz
+                    createItem(1, 0);
+                    createItem(3, 0);
+                    createItem(5, 0);
+                    createWall(6, 0);
+                    
+                    document.getElementById('output').textContent = "2. SZINT: Falig\nMenj előre és gyűjtsd össze az érméket, amíg falba nem ütközöl! Használj WHILE ciklust és a 'Fal van előttem?' blokkot.";
+                    break;
+                    
+                case 3: // Labirintus (Kombinált)
+                    // Marad a korábbi komplex pálya, de lehetne egyszerűsíteni, ha szükséges
+                    createRobot(0, 0);
+                    // ... (a korábbi falak és érmék létrehozása) ...
+                    // Falak labirintusszerűen
+                    for(let i = -1; i < 10; i++) {
+                        createWall(i, -1);
+                        createWall(-1, i);
+                        createWall(10, i);
+                        createWall(i, 10);
+                    }
+                    createWall(2, 2); createWall(2, 3); createWall(2, 4);
+                    createWall(4, 2); createWall(5, 2); createWall(6, 2);
+                    createWall(4, 4); createWall(5, 4); createWall(6, 4);
+                    createWall(6, 5); createWall(6, 6);
+                    createWall(2, 6); createWall(2, 7); createWall(2, 8);
+                    createWall(4, 6); createWall(4, 7); createWall(4, 8);
+                    createWall(6, 8); createWall(7, 8); createWall(8, 8);
+                    createWall(8, 6); createWall(8, 4); createWall(8, 2);
+                    
+                    // Érmék
+                    createItem(1, 1); createItem(3, 1); createItem(5, 1); createItem(7, 1); createItem(9, 1);
+                    createItem(1, 3); createItem(3, 3); createItem(7, 3); createItem(9, 3);
+                    createItem(1, 5); createItem(3, 5); createItem(5, 5); createItem(7, 5); createItem(9, 5);
+                    createItem(1, 7); createItem(5, 7); createItem(9, 7);
+                    createItem(1, 9); createItem(3, 9); createItem(5, 9); createItem(7, 9); createItem(9, 9);
+
+                    document.getElementById('output').textContent = "3. SZINT: Labirintus\nNavigálj a labirintusban és gyűjtsd össze az összes érmét! Kombinálj FOR és WHILE ciklusokat a hatékony megoldáshoz!";
+                    break;
+            }
+            
+            updateRobotRotation();
+            workspace.clear(); // Munkaterület törlése szintváltáskor
+        }
+        
+        // Pálya törlése
+        function clearLevel() {
+            // Robot eltávolítása
+            if (robot) {
+                scene.remove(robot);
+                robot = null;
+            }
+            
+            // Érmék eltávolítása
+            for(let i = 0; i < items.length; i++) {
+                scene.remove(items[i]);
+            }
+            items = [];
+            
+            // Falak eltávolítása
+            for(let i = 0; i < walls.length; i++) {
+                scene.remove(walls[i]);
+            }
+            walls = [];
+        }
+        
+        // Választott pálya betöltése
+        function loadSelectedLevel() {
+            const selectElement = document.getElementById('levelSelect');
+            currentLevel = parseInt(selectElement.value);
+            loadLevel(currentLevel);
+            
+            // Munkaterület törlése
+            workspace.clear();
+        }
+        
+        // Játék alaphelyzetbe állítása
+        function resetGame() {
+            gameRunning = false;
+            loadLevel(currentLevel);
+        }
+        
+        // Játék megnyerése
+        function winGame() {
+            document.getElementById('output').textContent = `Gratulálunk! Összegyűjtöttél minden érmét (${itemsCollected}/${totalItems})!`;
+            gameRunning = false;
+        }
+        
+        // Segítség mutatása (részletesebb)
+        function showHint() {
+            let hint = "";
+            switch(currentLevel) {
+                case 0:
+                    hint = "TIPP (0. szint):\n1. Menj előre egyet.\n2. Menj előre még egyet.\n3. Gyűjtsd be az érmét.";
+                    break;
+                case 1:
+                    hint = "TIPP (1. szint):\n1. Menj előre.\n2. Gyűjtsd be az érmét.\n3. Menj előre.\n4. Menj előre.\n5. Gyűjtsd be az érmét.\nPróbáld meg ezt egy FOR ciklussal, ami kétszer fut le! Mit kell a ciklusba tenni?";
+                    break;
+                case 2:
+                    hint = "TIPP (2. szint):\n1. Használj egy WHILE ciklust.\n2. A ciklus feltétele legyen: 'amíg NEM (Fal van előttem?)'.\n3. A cikluson belül: Menj előre.\n4. A cikluson belül: Használj egy IF blokkot, hogy ellenőrizd: 'Érme van itt?'.\n5. Ha igen, akkor: Gyűjtsd be az érmét.";
+                    break;
+                case 3:
+                    hint = "TIPP (3. szint): Ez egy nehezebb pálya!\nPróbálj meg egy stratégiát kitalálni. Például: mindig a jobb oldali fal mellett haladni.\nHasználj ciklusokat (WHILE vagy FOR) az ismétlődő mozgásokhoz, és IF elágazásokat a döntésekhez (pl. fordulás falnál).";
+                    break;
+            }
+            logMessage(hint);
+        }
+        
+        // Robot típusú blokkok definiálása
+        
+        // Előre mozgás
+        Blockly.Blocks['robot_move_forward'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Robot előre")
+                    .appendField(new Blockly.FieldImage("{% static 'images/arrow_forward.png' %}", 15, 15, "*"));
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(230);
+                this.setTooltip("A robot egy mezőt előre megy");
+                this.setHelpUrl("");
+            }
+        };
+        
+        // Balra fordulás
+        Blockly.Blocks['robot_turn_left'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Robot balra fordulás")
+                    .appendField(new Blockly.FieldImage("{% static 'images/turn_left.png' %}", 15, 15, "*"));
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(230);
+                this.setTooltip("A robot balra fordul");
+                this.setHelpUrl("");
+            }
+        };
+        
+        // Jobbra fordulás
+        Blockly.Blocks['robot_turn_right'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Robot jobbra fordulás")
+                    .appendField(new Blockly.FieldImage("{% static 'images/turn_right.png' %}", 15, 15, "*"));
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(230);
+                this.setTooltip("A robot jobbra fordul");
+                this.setHelpUrl("");
+            }
+        };
+        
+        // Érme begyűjtése
+        Blockly.Blocks['robot_collect_item'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Érme begyűjtése")
+                    .appendField(new Blockly.FieldImage("{% static 'images/collect.png' %}", 15, 15, "*"));
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(230);
+                this.setTooltip("Az érme begyűjtése, ha a robot mezőjén van");
+                this.setHelpUrl("");
+            }
+        };
+        
+        // Fal érzékelése
+        Blockly.Blocks['robot_detect_wall'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Fal van előttem?")
+                    .appendField(new Blockly.FieldImage("{% static 'images/wall.png' %}", 15, 15, "*"));
+                this.setOutput(true, "Boolean");
+                this.setColour(120);
+                this.setTooltip("Ellenőrzi, hogy fal van-e a robot előtt");
+                this.setHelpUrl("");
+            }
+        };
+        
+        // Érme érzékelése
+        Blockly.Blocks['robot_detect_item'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Érme van itt?")
+                    .appendField(new Blockly.FieldImage("{% static 'images/coin.png' %}", 15, 15, "*"));
+                this.setOutput(true, "Boolean");
+                this.setColour(120);
+                this.setTooltip("Ellenőrzi, hogy van-e érme a robot mezőjén");
+                this.setHelpUrl("");
+            }
+        };
+        
+        // Robot pozíció
+        Blockly.Blocks['robot_position'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Robot pozíció")
+                    .appendField(new Blockly.FieldDropdown([
+                        ["X koordináta", "X"],
+                        ["Z koordináta", "Z"]
+                    ]), "COORD");
+                this.setOutput(true, "Number");
+                this.setColour(120);
+                this.setTooltip("A robot X vagy Z koordinátáját adja vissza");
+                this.setHelpUrl("");
+            }
+        };
+        
+        // JavaScript generátorok a robot blokkokhoz
+        
+        Blockly.JavaScript['robot_move_forward'] = function(block) {
+            return 'moveForward();\n';
+        };
+        
+        Blockly.JavaScript['robot_turn_left'] = function(block) {
+            return 'turnLeft();\n';
+        };
+        
+        Blockly.JavaScript['robot_turn_right'] = function(block) {
+            return 'turnRight();\n';
+        };
+        
+        Blockly.JavaScript['robot_collect_item'] = function(block) {
+            return 'collectItem();\n';
+        };
+        
+        Blockly.JavaScript['robot_detect_wall'] = function(block) {
+            return ['detectWall()', Blockly.JavaScript.ORDER_FUNCTION_CALL];
+        };
+        
+        Blockly.JavaScript['robot_detect_item'] = function(block) {
+            return ['detectItem()', Blockly.JavaScript.ORDER_FUNCTION_CALL];
+        };
+        
+        Blockly.JavaScript['robot_position'] = function(block) {
+            const coordinate = block.getFieldValue('COORD');
+            return ['getRobotPosition("' + coordinate + '")', Blockly.JavaScript.ORDER_FUNCTION_CALL];
+        };
+        
+        // Robot funkciók a játéklogikához - promise-okat használunk a megfelelő időzítéshez
+        
+        async function moveForward() {
+            if (!gameRunning || !robot) return Promise.resolve();
+            
+            // Robot jelenlegi pozíciója
+            const x = Math.round(robot.position.x);
+            const z = Math.round(robot.position.z);
+            
+            // Új pozíció kiszámítása az irány alapján
+            let newX = x;
+            let newZ = z;
+            
+            switch(robotDirection) {
+                case 0: // Észak
+                    newZ = z - 1;
+                    break;
+                case 1: // Kelet
+                    newX = x + 1;
+                    break;
+                case 2: // Dél
+                    newZ = z + 1;
+                    break;
+                case 3: // Nyugat
+                    newX = x - 1;
+                    break;
+            }
+            
+            // Ellenőrizzük, hogy van-e fal az új pozíción
+            const wallAtNewPos = walls.some(wall => 
+                Math.abs(wall.userData.x - newX) < 0.5 && 
+                Math.abs(wall.userData.z - newZ) < 0.5
+            );
+            
+            // Ha nincs fal, mozoghat a robot
+            if (!wallAtNewPos) {
+                logMessage(`Robot előre lép: [${x},${z}] -> [${newX},${newZ}]`);
+                
+                // Animáció helyett közvetlen mozgatás + Promise
+                return new Promise(resolve => {
+                    const startTime = Date.now();
+                    const duration = 500; // 500ms
+                    const startX = robot.position.x;
+                    const startZ = robot.position.z;
+                    
+                    function step() {
+                        const now = Date.now();
+                        const progress = Math.min(1, (now - startTime) / duration);
+                        
+                        robot.position.x = startX + (newX - startX) * progress;
+                        robot.position.z = startZ + (newZ - startZ) * progress;
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(step);
+                        } else {
+                            resolve();
+                        }
+                    }
+                    
+                    step();
+                });
+            } else {
+                logMessage("A robot falba ütközött!");
+                return Promise.resolve(); // Azonnal visszatérünk, ha falba ütközünk
+            }
+        }
+        
+        function turnLeft() {
+            if (!gameRunning || !robot) return Promise.resolve();
+            
+            return new Promise(resolve => {
+                const startDirection = robotDirection;
+                robotDirection = (robotDirection + 3) % 4; // -1 mod 4
+                
+                const startTime = Date.now();
+                const duration = 300; // 300ms
+                const startRotation = robot.rotation.y;
+                const targetRotation = Math.PI / 2 * robotDirection;
+                
+                function step() {
+                    const now = Date.now();
+                    const progress = Math.min(1, (now - startTime) / duration);
+                    
+                    // Interpoláljuk a forgatást
+                    robot.rotation.y = startRotation + (targetRotation - startRotation) * progress;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        logMessage(`Robot balra fordult`);
+                        resolve();
+                    }
+                }
+                
+                step();
+            });
+        }
+        
+        function turnRight() {
+            if (!gameRunning || !robot) return Promise.resolve();
+            
+            return new Promise(resolve => {
+                const startDirection = robotDirection;
+                robotDirection = (robotDirection + 1) % 4;
+                
+                const startTime = Date.now();
+                const duration = 300; // 300ms
+                const startRotation = robot.rotation.y;
+                const targetRotation = Math.PI / 2 * robotDirection;
+                
+                function step() {
+                    const now = Date.now();
+                    const progress = Math.min(1, (now - startTime) / duration);
+                    
+                    // Interpoláljuk a forgatást
+                    robot.rotation.y = startRotation + (targetRotation - startRotation) * progress;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        logMessage(`Robot jobbra fordult`);
+                        resolve();
+                    }
+                }
+                
+                step();
+            });
+        }
+        
+        function collectItem() {
+            if (!gameRunning || !robot) return Promise.resolve();
+            
+            const x = Math.round(robot.position.x);
+            const z = Math.round(robot.position.z);
+            
+            // Keressük meg az érmét a robot pozíciójában
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                if (Math.abs(item.userData.x - x) < 0.5 && Math.abs(item.userData.z - z) < 0.5) {
+                    // Érme begyűjtése animációval
+                    return new Promise(resolve => {
+                        const startTime = Date.now();
+                        const duration = 500; // 500ms
+                        const startY = item.position.y;
+                        
+                        function step() {
+                            const now = Date.now();
+                            const progress = Math.min(1, (now - startTime) / duration);
+                            
+                            // Felemelkedik az érme
+                            item.position.y = startY + progress * 1.5;
+                            // És kicsinyítjük
+                            item.scale.set(1 - progress, 1 - progress, 1 - progress);
+                            
+                            if (progress < 1) {
+                                requestAnimationFrame(step);
+                            } else {
+                                scene.remove(item);
+                                items.splice(i, 1);
+                                itemsCollected++;
+                                
+                                logMessage(`Érme begyűjtve! (${itemsCollected}/${totalItems})`);
+                                
+                                // Ha minden érmét összegyűjtöttünk, győzelem
+                                if (itemsCollected === totalItems) {
+                                    setTimeout(() => winGame(), 500);
+                                }
+                                
+                                resolve();
+                            }
+                        }
+                        
+                        step();
+                    });
+                }
+            }
+            
+            logMessage("Itt nincs érme!");
+            return Promise.resolve();
+        }
+        
+        function detectWall() {
+            if (!gameRunning || !robot) return false;
+            
+            const x = Math.round(robot.position.x);
+            const z = Math.round(robot.position.z);
+            
+            // Ellenőrizzük, hogy van-e fal a robot előtt
+            let checkX = x;
+            let checkZ = z;
+            
+            switch(robotDirection) {
+                case 0: // Észak
+                    checkZ = z - 1;
+                    break;
+                case 1: // Kelet
+                    checkX = x + 1;
+                    break;
+                case 2: // Dél
+                    checkZ = z + 1;
+                    break;
+                case 3: // Nyugat
+                    checkX = x - 1;
+                    break;
+            }
+            
+            return walls.some(wall => 
+                Math.abs(wall.userData.x - checkX) < 0.5 && 
+                Math.abs(wall.userData.z - checkZ) < 0.5
+            );
+        }
+        
+        function detectItem() {
+            if (!gameRunning || !robot) return false;
+            
+            const x = Math.round(robot.position.x);
+            const z = Math.round(robot.position.z);
+            
+            return items.some(item => 
+                Math.abs(item.userData.x - x) < 0.5 && 
+                Math.abs(item.userData.z - z) < 0.5
+            );
+        }
+        
+        function getRobotPosition(coord) {
+            if (!gameRunning || !robot) return 0;
+            
+            if (coord === "X") {
+                return Math.round(robot.position.x);
+            } else {
+                return Math.round(robot.position.z);
+            }
+        }
+        
+        // Animációk és időzítések
+        let animations = [];
+        
+        // Kód futtatása
+        async function runCode() {
+            if (gameRunning || showingSolution) return; // Ne fusson, ha már megy vagy a megoldást mutatja
+            
+            resetGame(); // Alaphelyzetbe állítjuk a pályát futtatás előtt
+            await new Promise(resolve => setTimeout(resolve, 100)); // Kis várakozás, hogy a reset lefusson vizuálisan
+
+            gameRunning = true;
+            
+            try {
+                // JavaScript kód generálása a blokkokból
+                const code = Blockly.JavaScript.workspaceToCode(workspace);
+                logMessage('Program futtatása...');
+                logMessage('Generált kód: \n' + code); // Opcionális: Megmutatja a generált kódot
+                
+                // Async wrapper a kód köré, hogy az await működjön benne
+                await eval('(async function() { \n' + 
+                           'try { \n' + 
+                                code + '\n' + 
+                           '} catch(e) { \n' +
+                           '  logMessage("Hiba: " + e.message); \n' + 
+                           '} \n' +
+                           '})()');
+            } catch (e) {
+                logMessage('Futtatási hiba: ' + e.message);
+            } finally {
+                gameRunning = false;
+                checkWinCondition();
+            }
+        }
+
+        // Új funkció: Megoldás mutatása (blokkokkal)
+        async function showSolution() {
+            if (gameRunning || showingSolution || currentLevel !== 0 || solutionSteps.length === 0) return;
+
+            resetGame(); 
+            workspace.clear(); // Munkaterület törlése a bemutató előtt
+            await new Promise(resolve => setTimeout(resolve, 150)); // Kis várakozás
+
+            showingSolution = true;
+            gameRunning = true; 
+            logMessage('Megoldás bemutatása...');
+            
+            let blockY = 10; // Kezdő pozíció a blokkoknak a munkaterületen
+
+            try {
+                for (const step of solutionSteps) {
+                    // 1. Blokk létrehozása és elhelyezése
+                    const blockDom = Blockly.Xml.textToDom(step.blockXml);
+                    const newBlock = Blockly.Xml.domToBlock(blockDom, workspace);
+                    newBlock.moveBy(10, blockY); // Pozicionálás
+                    newBlock.initSvg();
+                    newBlock.render();
+                    blockY += 60; // Következő blokk lejjebb
+
+                    // 2. Blokk kiemelése
+                    workspace.highlightBlock(newBlock.id);
+
+                    // 3. Akció végrehajtása és várakozás
+                    await step.action(); 
+
+                    // 4. Kiemelés megszüntetése (kis késleltetéssel, hogy látható legyen)
+                    await new Promise(resolve => setTimeout(resolve, 100)); 
+                    workspace.highlightBlock(null);
+                    
+                    // Opcionális: Rövid szünet a lépések között
+                    await new Promise(resolve => setTimeout(resolve, 200)); 
+                }
+                logMessage('Bemutató vége. Most próbáld meg te!');
+            } catch (e) {
+                logMessage('Hiba a bemutató közben: ' + e.message);
+                workspace.highlightBlock(null); // Hiba esetén is szüntessük meg a kiemelést
+            } finally {
+                showingSolution = false;
+                gameRunning = false; 
+                // A blokkok a munkaterületen maradnak referenciaként
+                // resetGame(); // Nem resetelünk automatikusan, hogy a user lássa a blokkokat
+                logMessage('Bemutató vége. A megoldás blokkjai a munkaterületen láthatók. Kattints az Újrakezdésre a próbálkozáshoz!');
+            }
+        }
+        
+        // Győzelmi feltétel ellenőrzése (külön funkcióban)
+        function checkWinCondition() {
+             if (!showingSolution && itemsCollected === totalItems && totalItems > 0) {
+                 winGame();
+             } else if (!showingSolution) {
+                 logMessage(`Program vége. Összegyűjtött érmék: ${itemsCollected}/${totalItems}`);
+             }
+        }
+        
+        // Napló üzenet
+        function logMessage(message) {
+            const output = document.getElementById('output');
+            output.textContent += '\n' + message;
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        // Oldal betöltésekor
+        document.addEventListener('DOMContentLoaded', function() {
+            // A magyar nyelvű fordítások betöltése - ez fontos, hogy megelőzze a workspace inicializálását
+            try {
+                // Először biztosítsuk, hogy minden nyelvi konstans helyesen van beállítva
+                if (Blockly.Msg) {
+                    // Helyesen definiáljuk a kontrol üzeneteket a %1 placeholderrel
+                    Blockly.Msg["CONTROLS_REPEAT_TITLE"] = "ismételd %1 alkalommal";
+                    Blockly.Msg["CONTROLS_REPEAT_INPUT_DO"] = "csináld";
+                    Blockly.Msg["CONTROLS_WHILEUNTIL_OPERATOR_WHILE"] = "amíg";
+                    Blockly.Msg["CONTROLS_WHILEUNTIL_OPERATOR_UNTIL"] = "addig amíg nem";
+                    Blockly.Msg["CONTROLS_WHILEUNTIL_INPUT_DO"] = "csináld";
+                    Blockly.Msg["LOGIC_OPERATION_AND"] = "és";
+                    Blockly.Msg["LOGIC_OPERATION_OR"] = "vagy";
+                    Blockly.Msg["LOGIC_NEGATE_TITLE"] = "nem %1";
+                    Blockly.Msg["MATH_ARITHMETIC_ADDITION"] = "+";
+                    Blockly.Msg["CONTROLS_FOR_TITLE"] = "számláló %1 értéke %2 -től %3 -ig %4 lépésközzel";
+                    Blockly.Msg["CONTROLS_FOR_INPUT_DO"] = "csináld";
+                }
+                console.log("Magyar fordítások betöltve");
+            } catch (e) {
+                console.error("Hiba a fordítások betöltésekor:", e);
+            }
+            
+            // A blokkdefiníciók manuális felülbírálása a helyes működéshez
+            try {
+                // Repeat blokk javítása
+                Blockly.Blocks['controls_repeat_ext'] = {
+                    init: function() {
+                        this.jsonInit({
+                            "message0": Blockly.Msg["CONTROLS_REPEAT_TITLE"],
+                            "args0": [
+                                {
+                                    "type": "input_value",
+                                    "name": "TIMES",
+                                    "check": "Number"
+                                }
+                            ],
+                            "message1": "%{BKY_CONTROLS_REPEAT_INPUT_DO}",
+                            "args1": [
+                                {
+                                    "type": "input_statement",
+                                    "name": "DO"
+                                }
+                            ],
+                            "previousStatement": null,
+                            "nextStatement": null,
+                            "colour": 120,
+                            "helpUrl": "%{BKY_CONTROLS_REPEAT_HELPURL}"
+                        });
+                    }
+                };
+                
+                // While blokk javítása
+                Blockly.Blocks['controls_whileUntil'] = {
+                    init: function() {
+                        this.jsonInit({
+                            "message0": "%1 %2",
+                            "args0": [
+                                {
+                                    "type": "field_dropdown",
+                                    "name": "MODE",
+                                    "options": [
+                                        ["%{BKY_CONTROLS_WHILEUNTIL_OPERATOR_WHILE}", "WHILE"],
+                                        ["%{BKY_CONTROLS_WHILEUNTIL_OPERATOR_UNTIL}", "UNTIL"]
+                                    ]
+                                },
+                                {
+                                    "type": "input_value",
+                                    "name": "BOOL",
+                                    "check": "Boolean"
+                                }
+                            ],
+                            "message1": "%{BKY_CONTROLS_WHILEUNTIL_INPUT_DO}",
+                            "args1": [
+                                {
+                                    "type": "input_statement",
+                                    "name": "DO"
+                                }
+                            ],
+                            "previousStatement": null,
+                            "nextStatement": null,
+                            "colour": 120,
+                            "helpUrl": "%{BKY_CONTROLS_WHILEUNTIL_HELPURL}"
+                        });
+                    }
+                };
+                
+                // For ciklus blokk javítása
+                Blockly.Blocks['controls_for'] = {
+                    init: function() {
+                        this.jsonInit({
+                            "message0": "%{BKY_CONTROLS_FOR_TITLE}",
+                            "args0": [
+                                {
+                                    "type": "field_variable",
+                                    "name": "VAR",
+                                    "variable": null
+                                },
+                                {
+                                    "type": "input_value",
+                                    "name": "FROM",
+                                    "check": "Number",
+                                    "align": "RIGHT"
+                                },
+                                {
+                                    "type": "input_value",
+                                    "name": "TO",
+                                    "check": "Number",
+                                    "align": "RIGHT"
+                                },
+                                {
+                                    "type": "input_value",
+                                    "name": "BY",
+                                    "check": "Number",
+                                    "align": "RIGHT"
+                                }
+                            ],
+                            "message1": "%{BKY_CONTROLS_FOR_INPUT_DO}",
+                            "args1": [
+                                {
+                                    "type": "input_statement",
+                                    "name": "DO"
+                                }
+                            ],
+                            "previousStatement": null,
+                            "nextStatement": null,
+                            "colour": 120,
+                            "helpUrl": "%{BKY_CONTROLS_FOR_HELPURL}"
+                        });
+                    }
+                };
+                
+                console.log("Blokkdefiníciók sikeresen felülírva");
+            } catch(e) {
+                console.error("Hiba a blokkdefiníciók felülírásakor:", e);
+            }
+            
+            // Blockly inicializálása - minden függvény és blokk definiálása előtt
+            try {
+                workspace = Blockly.inject('blocklyDiv', {
+                    toolbox: document.getElementById('toolbox'),
+                    scrollbars: true,
+                    sounds: true,
+                    trashcan: true,
+                    zoom: {
+                        controls: true,
+                        wheel: true,
+                        startScale: 1.0,
+                        maxScale: 3,
+                        minScale: 0.3,
+                        scaleSpeed: 1.2
+                    },
+                    grid: {
+                        spacing: 20,
+                        length: 3,
+                        colour: '#ccc',
+                        snap: true
+                    }
+                });
+                console.log("Blockly munkaterület sikeresen inicializálva");
+            } catch (e) {
+                console.error("Hiba a Blockly inicializálásakor:", e);
+            }
+            
+            // Three.js inicializálása
+            try {
+                initGame();
+                console.log("Three.js játék inicializálása sikeres");
+            } catch (e) {
+                console.error("Hiba a Three.js inicializálásakor:", e);
+            }
+        });
+    </script>
+</body>
+</html>

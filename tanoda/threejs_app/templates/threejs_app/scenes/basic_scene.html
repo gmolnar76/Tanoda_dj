@@ -1,0 +1,463 @@
+{% extends "threejs_app/base/base_threejs.html" %}
+{% load static %}
+
+{% block threejs_title %}Three.js Alap Jelenet | Tanoda{% endblock %}
+{% block threejs_page_title %}Three.js Alap Jelenet{% endblock %}
+
+{% block threejs_extra_css %}
+<style>
+    .controls-section {
+        background-color: #2b2b2b;
+        border-radius: 8px;
+        border: 1px solid #444;
+        padding: 15px;
+        margin-top: 20px;
+    }
+    
+    .control-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .control-group {
+        flex: 1;
+        min-width: 150px;
+    }
+    
+    .control-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #bb86fc;
+    }
+    
+    .object-library {
+        margin-top: 20px;
+    }
+    
+    .object-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+    
+    .object-item {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        border-radius: 4px;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.2s, background-color 0.2s;
+    }
+    
+    .object-item:hover {
+        background-color: #333;
+        transform: translateY(-2px);
+    }
+    
+    .object-item.active {
+        border: 2px solid #bb86fc;
+        background-color: #3a2f4d;
+    }
+    
+    .object-item img {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 5px;
+    }
+    
+    .object-item span {
+        display: block;
+        font-size: 14px;
+        color: #e0e0e0;
+    }
+    
+    .instructions {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 20px;
+    }
+    
+    .instructions h3 {
+        color: #bb86fc;
+        margin-top: 0;
+        font-size: 18px;
+    }
+    
+    .instructions ul {
+        padding-left: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block threejs_controls %}
+<button id="resetSceneButton" class="btn btn-secondary">Alaphelyzet</button>
+<button id="toggleGridButton" class="btn btn-primary">Rács ki/be</button>
+<button id="toggleAxesButton" class="btn btn-primary">Tengelyek ki/be</button>
+<button id="toggleLightHelperButton" class="btn btn-primary">Fény segéd</button>
+{% endblock %}
+
+{% block threejs_content %}
+<div class="instructions">
+    <h3>Alap Three.js Jelenet</h3>
+    <p>Ez az interaktív jelenet segít megérteni a 3D tér alapjait. Válassz különböző objektumokat, mozgasd a kamerát, és játssz a beállításokkal.</p>
+    <ul>
+        <li><strong>Forgatás:</strong> Bal egér gomb + húzás</li>
+        <li><strong>Mozgatás:</strong> Jobb egér gomb + húzás (vagy középső gomb + húzás)</li>
+        <li><strong>Nagyítás:</strong> Egér görgő</li>
+    </ul>
+</div>
+
+<div class="controls-section">
+    <h4>Objektum vezérlés</h4>
+    <div class="control-row">
+        <div class="control-group">
+            <label for="objectColor">Objektum színe:</label>
+            <input type="color" id="objectColor" value="#bb86fc">
+        </div>
+        <div class="control-group">
+            <label for="objectOpacity">Átlátszóság:</label>
+            <input type="range" id="objectOpacity" min="0" max="1" step="0.1" value="1">
+            <span id="opacityValue">1.0</span>
+        </div>
+        <div class="control-group">
+            <label for="objectWireframe">Drótváz mód:</label>
+            <input type="checkbox" id="objectWireframe">
+        </div>
+    </div>
+    
+    <div class="control-row">
+        <div class="control-group">
+            <label for="objectScale">Méret:</label>
+            <input type="range" id="objectScale" min="0.1" max="3" step="0.1" value="1">
+            <span id="scaleValue">1.0</span>
+        </div>
+        <div class="control-group">
+            <label for="objectRotationSpeed">Forgási sebesség:</label>
+            <input type="range" id="objectRotationSpeed" min="0" max="0.1" step="0.001" value="0.005">
+            <span id="rotationValue">0.005</span>
+        </div>
+    </div>
+    
+    <div class="control-row">
+        <div class="control-group">
+            <button id="toggleRotationButton" class="btn btn-primary">Forgás ki/be</button>
+        </div>
+        <div class="control-group">
+            <button id="toggleShadowButton" class="btn btn-primary">Árnyék ki/be</button>
+        </div>
+        <div class="control-group">
+            <button id="addObjectButton" class="btn btn-success">+ Új objektum</button>
+            <button id="clearObjectsButton" class="btn btn-danger">Törlés</button>
+        </div>
+    </div>
+</div>
+
+<div class="object-library">
+    <h4>Objektumok</h4>
+    <div class="object-grid">
+        <div class="object-item active" data-shape="cube">
+            <img src="{% static 'images/threejs/cube.svg' %}" alt="Kocka" onerror="this.src='https://via.placeholder.com/60?text=Kocka'">
+            <span>Kocka</span>
+        </div>
+        <div class="object-item" data-shape="sphere">
+            <img src="{% static 'images/threejs/sphere.svg' %}" alt="Gömb" onerror="this.src='https://via.placeholder.com/60?text=Gömb'">
+            <span>Gömb</span>
+        </div>
+        <div class="object-item" data-shape="cone">
+            <img src="{% static 'images/threejs/cone.svg' %}" alt="Kúp" onerror="this.src='https://via.placeholder.com/60?text=Kúp'">
+            <span>Kúp</span>
+        </div>
+        <div class="object-item" data-shape="cylinder">
+            <img src="{% static 'images/threejs/cylinder.svg' %}" alt="Henger" onerror="this.src='https://via.placeholder.com/60?text=Henger'">
+            <span>Henger</span>
+        </div>
+        <div class="object-item" data-shape="torus">
+            <img src="{% static 'images/threejs/torus.svg' %}" alt="Tórusz" onerror="this.src='https://via.placeholder.com/60?text=Tórusz'">
+            <span>Tórusz</span>
+        </div>
+        <div class="object-item" data-shape="dodecahedron">
+            <img src="{% static 'images/threejs/dodecahedron.svg' %}" alt="Dodekaéder" onerror="this.src='https://via.placeholder.com/60?text=Dodekaéder'">
+            <span>Dodekaéder</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block threejs_extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ThreeJS inicializálása kis késleltetéssel
+    setTimeout(function() {
+        if (typeof ThreeJSInitializer === 'undefined') {
+            console.error('ThreeJSInitializer nem található!');
+            return;
+        }
+        
+        // Inicializáljuk a Three.js-t
+        ThreeJSInitializer.init('threeJsRenderer', {
+            cameraPosition: { x: 0, y: 1, z: 5 },
+            enableControls: true,
+            lights: [
+                { type: 'ambient', color: 0x404040 },
+                { type: 'directional', color: 0xffffff, intensity: 1, position: { x: 1, y: 1, z: 1 } },
+                { type: 'point', color: 0x8844ff, intensity: 1, position: { x: -2, y: 3, z: -1 } }
+            ],
+            defaultObjects: []
+        });
+        
+        const scene = ThreeJSInitializer.getScene();
+        
+        // Grid és tengelyek hozzáadása
+        const grid = new THREE.GridHelper(10, 10);
+        grid.visible = false;
+        ThreeJSInitializer.addObject('grid', grid);
+        
+        const axes = new THREE.AxesHelper(5);
+        axes.visible = false;
+        ThreeJSInitializer.addObject('axes', axes);
+        
+        // Fények és fény segédek
+        const pointLight = ThreeJSInitializer.getObject('pointLight');
+        if (pointLight) {
+            const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.3);
+            pointLightHelper.visible = false;
+            ThreeJSInitializer.addObject('lightHelper', pointLightHelper);
+        }
+        
+        // Változók
+        let currentShape = 'cube';
+        let isRotating = true;
+        let rotationSpeed = 0.005;
+        let activeObject = null;
+        
+        // Objektum létrehozása
+        function createObject(shape) {
+            let geometry;
+            
+            switch(shape) {
+                case 'cube':
+                    geometry = new THREE.BoxGeometry(1, 1, 1);
+                    break;
+                case 'sphere':
+                    geometry = new THREE.SphereGeometry(0.6, 32, 32);
+                    break;
+                case 'cone':
+                    geometry = new THREE.ConeGeometry(0.6, 1.2, 32);
+                    break;
+                case 'cylinder':
+                    geometry = new THREE.CylinderGeometry(0.6, 0.6, 1.2, 32);
+                    break;
+                case 'torus':
+                    geometry = new THREE.TorusGeometry(0.5, 0.2, 16, 50);
+                    break;
+                case 'dodecahedron':
+                    geometry = new THREE.DodecahedronGeometry(0.7);
+                    break;
+                default:
+                    geometry = new THREE.BoxGeometry(1, 1, 1);
+            }
+            
+            // Szín és átlátszóság
+            const color = document.getElementById('objectColor').value;
+            const opacity = parseFloat(document.getElementById('objectOpacity').value);
+            const wireframe = document.getElementById('objectWireframe').checked;
+            const scale = parseFloat(document.getElementById('objectScale').value);
+            
+            // Anyag
+            const material = new THREE.MeshPhongMaterial({
+                color: parseInt(color.replace('#', '0x')),
+                transparent: opacity < 1,
+                opacity: opacity,
+                wireframe: wireframe,
+                side: THREE.DoubleSide
+            });
+            
+            // Objektum létrehozása
+            const mesh = new THREE.Mesh(geometry, material);
+            
+            // Véletlen pozíció -3 és 3 között
+            mesh.position.set(
+                Math.random() * 6 - 3,
+                Math.random() * 3 - 1.5,
+                Math.random() * 6 - 3
+            );
+            
+            // Méret beállítása
+            mesh.scale.set(scale, scale, scale);
+            
+            // Véletlen forgatás
+            mesh.rotation.set(
+                Math.random() * Math.PI * 2,
+                Math.random() * Math.PI * 2,
+                Math.random() * Math.PI * 2
+            );
+            
+            // Objektum felvétele a jelenethez
+            scene.add(mesh);
+            
+            // Objektum hozzáadása a kezelendő objektumokhoz
+            const objCount = Object.keys(ThreeJSInitializer.getObjects()).filter(key => 
+                key.startsWith('userObject')
+            ).length;
+            
+            ThreeJSInitializer.addObject(`userObject_${objCount}`, mesh);
+            
+            // Aktív objektum frissítése
+            activeObject = mesh;
+            
+            return mesh;
+        }
+        
+        // Értékek frissítése
+        function updateValueDisplay() {
+            document.getElementById('opacityValue').textContent = document.getElementById('objectOpacity').value;
+            document.getElementById('scaleValue').textContent = document.getElementById('objectScale').value;
+            document.getElementById('rotationValue').textContent = document.getElementById('objectRotationSpeed').value;
+        }
+        
+        // Események kezelése - Objektum választás
+        document.querySelectorAll('.object-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.object-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                currentShape = this.getAttribute('data-shape');
+            });
+        });
+        
+        // Események kezelése - Vezérlők
+        document.getElementById('addObjectButton').addEventListener('click', function() {
+            createObject(currentShape);
+        });
+        
+        document.getElementById('clearObjectsButton').addEventListener('click', function() {
+            // Töröljük a felhasználó által létrehozott objektumokat
+            const objects = ThreeJSInitializer.getObjects();
+            Object.keys(objects).forEach(key => {
+                if (key.startsWith('userObject')) {
+                    const obj = objects[key];
+                    scene.remove(obj);
+                    if (obj.geometry) obj.geometry.dispose();
+                    if (obj.material) {
+                        if (Array.isArray(obj.material)) {
+                            obj.material.forEach(m => m.dispose());
+                        } else {
+                            obj.material.dispose();
+                        }
+                    }
+                    delete objects[key];
+                }
+            });
+            
+            activeObject = null;
+        });
+        
+        document.getElementById('toggleRotationButton').addEventListener('click', function() {
+            isRotating = !isRotating;
+            this.innerText = isRotating ? 'Forgás ki' : 'Forgás be';
+        });
+        
+        document.getElementById('toggleGridButton').addEventListener('click', function() {
+            const grid = ThreeJSInitializer.getObject('grid');
+            if (grid) {
+                grid.visible = !grid.visible;
+            }
+        });
+        
+        document.getElementById('toggleAxesButton').addEventListener('click', function() {
+            const axes = ThreeJSInitializer.getObject('axes');
+            if (axes) {
+                axes.visible = !axes.visible;
+            }
+        });
+        
+        document.getElementById('toggleLightHelperButton').addEventListener('click', function() {
+            const lightHelper = ThreeJSInitializer.getObject('lightHelper');
+            if (lightHelper) {
+                lightHelper.visible = !lightHelper.visible;
+            }
+        });
+        
+        document.getElementById('toggleShadowButton').addEventListener('click', function() {
+            // Árnyékok ki/be kapcsolása
+            ThreeJSInitializer.toggleShadows();
+        });
+        
+        // Értékek változtatása
+        document.getElementById('objectColor').addEventListener('change', function() {
+            if (!activeObject) return;
+            
+            const color = this.value;
+            const hexColor = parseInt(color.replace('#', '0x'));
+            activeObject.material.color.setHex(hexColor);
+        });
+        
+        document.getElementById('objectOpacity').addEventListener('input', function() {
+            if (!activeObject) return;
+            
+            const opacity = parseFloat(this.value);
+            activeObject.material.opacity = opacity;
+            activeObject.material.transparent = opacity < 1;
+            
+            updateValueDisplay();
+        });
+        
+        document.getElementById('objectWireframe').addEventListener('change', function() {
+            if (!activeObject) return;
+            
+            activeObject.material.wireframe = this.checked;
+        });
+        
+        document.getElementById('objectScale').addEventListener('input', function() {
+            if (!activeObject) return;
+            
+            const scale = parseFloat(this.value);
+            activeObject.scale.set(scale, scale, scale);
+            
+            updateValueDisplay();
+        });
+        
+        document.getElementById('objectRotationSpeed').addEventListener('input', function() {
+            rotationSpeed = parseFloat(this.value);
+            updateValueDisplay();
+        });
+        
+        // Reset gomb eseménykezelő
+        document.getElementById('resetSceneButton').addEventListener('click', function() {
+            ThreeJSInitializer.resetScene();
+        });
+        
+        // Létrehozunk egy kezdő objektumot
+        createObject(currentShape);
+        
+        // Frissítjük a kijelzett értékeket
+        updateValueDisplay();
+        
+        // Animációs ciklus
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Objektumok forgatása
+            if (isRotating) {
+                const objects = ThreeJSInitializer.getObjects();
+                Object.keys(objects).forEach(key => {
+                    if (key.startsWith('userObject')) {
+                        const obj = objects[key];
+                        obj.rotation.y += rotationSpeed;
+                        obj.rotation.z += rotationSpeed * 0.5;
+                    }
+                });
+            }
+        }
+        
+        animate();
+    }, 500); // Kis késleltetés a betöltődéshez
+});
+</script>
+{% endblock %}

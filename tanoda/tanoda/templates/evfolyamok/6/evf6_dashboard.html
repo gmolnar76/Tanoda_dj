@@ -1,0 +1,174 @@
+{% extends "evfolyamok.html" %}
+{% load static %}
+
+{% block title %}{% block page_title %}Dashboard{% endblock %} - Tanoda{% endblock %}
+
+{% block extra_css %}
+<!-- Dashboard CSS Framework -->
+<link rel="stylesheet" href="{% static 'css/dashboard/dashboard-base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard/sidebar.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard/widgets.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard/responsive.css' %}">
+{% block dashboard_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block main_content %}
+<!-- SVG Gradient Definitions -->
+<svg class="svg-defs" aria-hidden="true">
+    <defs>
+        <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color: #4ecca3" />
+            <stop offset="100%" style="stop-color: #00d4ff" />
+        </linearGradient>
+    </defs>
+</svg>
+
+<!-- Gamification Notifications Container -->
+<div id="gamification-notifications"></div>
+
+<!-- Dashboard Container -->
+<div class="dashboard-container">
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="dashboard-sidebar" id="dashboard-sidebar">
+        {% include "evfolyamok/6/partials/sidebar.html" %}
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="dashboard-main">
+        <!-- Header Bar -->
+        {% include "evfolyamok/6/partials/header.html" %}
+
+        <!-- Dashboard Content - Widget Grid -->
+        <div class="dashboard-content">
+            {% block dashboard_content %}
+            <!-- Default content if not overridden -->
+            <div class="widget-grid">
+                <p class="text-muted">Nincs tartalom.</p>
+            </div>
+            {% endblock %}
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Dashboard Core JavaScript -->
+<script>
+    // Sidebar Toggle Functions
+    function toggleSidebar() {
+        const sidebar = document.getElementById('dashboard-sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+    }
+
+    function closeSidebar() {
+        const sidebar = document.getElementById('dashboard-sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+    }
+
+    // Sidebar Collapse (Desktop)
+    function collapseSidebar() {
+        const sidebar = document.getElementById('dashboard-sidebar');
+        sidebar.classList.toggle('collapsed');
+
+        // Save preference
+        const isCollapsed = sidebar.classList.contains('collapsed');
+        localStorage.setItem('sidebar-collapsed', isCollapsed);
+    }
+
+    // Initialize sidebar state
+    document.addEventListener('DOMContentLoaded', function() {
+        // Restore sidebar collapse state
+        const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+        if (isCollapsed && window.innerWidth > 1024) {
+            document.getElementById('dashboard-sidebar').classList.add('collapsed');
+        }
+
+        // Update current date in header
+        const dateElement = document.getElementById('current-date');
+        if (dateElement) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            dateElement.textContent = new Date().toLocaleDateString('hu-HU', options);
+        }
+
+        // Close sidebar on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSidebar();
+            }
+        });
+
+        // Close sidebar on resize to desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 1024) {
+                closeSidebar();
+            }
+        });
+    });
+
+    // Widget Expand/Collapse Functions
+    function expandWidget(button) {
+        const widget = button.closest('.widget');
+        const overlay = document.querySelector('.widget-overlay');
+
+        if (widget.classList.contains('expanded')) {
+            widget.classList.remove('expanded');
+            if (overlay) overlay.classList.remove('show');
+        } else {
+            widget.classList.add('expanded');
+            if (!overlay) {
+                const newOverlay = document.createElement('div');
+                newOverlay.className = 'widget-overlay show';
+                newOverlay.onclick = function() {
+                    widget.classList.remove('expanded');
+                    this.classList.remove('show');
+                };
+                document.body.appendChild(newOverlay);
+            } else {
+                overlay.classList.add('show');
+            }
+        }
+    }
+
+    // Theme Toggle (if not already defined)
+    if (typeof toggleTheme === 'undefined') {
+        const THEME_KEY = 'dashboard-theme';
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+            document.body.classList.toggle('light-theme', savedTheme === 'light');
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            document.body.classList.toggle('light-theme', newTheme === 'light');
+            localStorage.setItem(THEME_KEY, newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const toggleBtn = document.querySelector('.theme-toggle');
+            if (toggleBtn) {
+                toggleBtn.innerHTML = theme === 'light'
+                    ? '<i class="fas fa-moon"></i>'
+                    : '<i class="fas fa-sun"></i>';
+                toggleBtn.title = theme === 'light'
+                    ? 'Sötét téma'
+                    : 'Világos téma';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initTheme);
+    }
+</script>
+{% block dashboard_extra_js %}{% endblock %}
+{% endblock %}

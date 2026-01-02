@@ -1,0 +1,175 @@
+/* ==========================================================================
+   Multiplication Module - Dashboard Overrides
+   ========================================================================== */
+
+/* Ensure input fields use new styling */
+#valasz {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 3px solid rgba(78, 204, 163, 0.4) !important;
+    border-radius: 20px !important;
+    color: var(--text-primary) !important;
+    text-align: center !important;
+    transition: width 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+    min-width: 80px !important;
+    width: 100px; /* Default width */
+}
+
+/* Remove number input spinners */
+#valasz::-webkit-outer-spin-button,
+#valasz::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+#valasz[type=number] {
+    -moz-appearance: textfield !important;
+}
+
+#valasz:focus {
+    border-color: var(--neon-green) !important;
+    box-shadow: 0 0 30px rgba(78, 204, 163, 0.4) !important;
+}
+
+/* Override old card styles */
+.dashboard-container .card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Szorzat numbers with neon effect */
+.szorzat-szam, .task-number {
+    background: linear-gradient(45deg, var(--neon-cyan), var(--neon-green)) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* Override Bootstrap progress */
+.progress {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 4px !important;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan)) !important;
+}
+
+/* Override badge styles */
+.badge.bg-success {
+    background: rgba(78, 204, 163, 0.2) !important;
+    color: var(--neon-green) !important;
+}
+
+/* Override alert styles */
+.alert {
+    border-radius: var(--border-radius-md) !important;
+}
+
+.alert-success {
+    background: rgba(78, 204, 163, 0.15) !important;
+    border: 1px solid rgba(78, 204, 163, 0.3) !important;
+    color: var(--neon-green) !important;
+}
+
+.alert-danger {
+    background: rgba(255, 107, 157, 0.15) !important;
+    border: 1px solid rgba(255, 107, 157, 0.3) !important;
+    color: var(--neon-pink) !important;
+}
+
+.alert-warning {
+    background: rgba(255, 140, 66, 0.15) !important;
+    border: 1px solid rgba(255, 140, 66, 0.3) !important;
+    color: var(--neon-orange) !important;
+}
+
+/* Transparent buttons styling */
+.transparent-btn, .btn-circle {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: var(--text-primary) !important;
+}
+
+.transparent-btn:hover, .btn-circle:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Feature buttons */
+.feature-btn {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: var(--text-primary) !important;
+    padding: 12px 20px !important;
+    border-radius: var(--border-radius-md) !important;
+}
+
+.feature-btn:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* List group override */
+.list-group-item {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Glassy Circular Action Buttons */
+.task-actions {
+    gap: 20px !important;
+}
+
+.btn-glass-circle {
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: var(--text-secondary) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+    padding: 0 !important;
+}
+
+.btn-glass-circle i {
+    font-size: 1.4rem !important;
+    font-weight: 900 !important; /* Ensure solid icons show correctly */
+}
+
+.btn-glass-circle:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--neon-cyan) !important;
+    color: var(--neon-cyan) !important;
+    transform: translateY(-3px) scale(1.05) !important;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.2) !important;
+}
+
+.btn-glass-circle:active:not(:disabled) {
+    transform: translateY(0) scale(0.95) !important;
+}
+
+.btn-glass-circle.btn-success-glow {
+    border-color: var(--neon-green) !important;
+    color: var(--neon-green) !important;
+    box-shadow: 0 0 20px rgba(78, 204, 163, 0.2) !important;
+}
+
+.btn-glass-circle:disabled {
+    opacity: 0.3 !important;
+    cursor: not-allowed !important;
+}
+
+/* Inset input style */
+.inset-input {
+    background: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Hide old theme toggle (we have one in header) */
+.theme-toggle:not(.dashboard-header .theme-toggle) {
+    display: none !important;
+}

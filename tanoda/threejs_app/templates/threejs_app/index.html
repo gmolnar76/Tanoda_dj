@@ -1,0 +1,177 @@
+{% extends "threejs_app/base/base_threejs.html" %}
+{% load static %}
+
+{% block threejs_title %}Three.js 3D Vizualizációk | Tanoda{% endblock %}
+{% block threejs_page_title %}Three.js 3D Vizualizációk{% endblock %}
+
+{% block threejs_extra_css %}
+<style>
+    .feature-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+    }
+    
+    .feature-card {
+        background-color: #2b2b2b;
+        border-radius: 8px;
+        border: 1px solid #444;
+        padding: 20px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .feature-card h3 {
+        color: #bb86fc;
+        font-size: 18px;
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+    
+    .feature-card p {
+        color: #e0e0e0;
+        margin-bottom: 20px;
+    }
+    
+    .feature-card .btn {
+        width: 100%;
+    }
+    
+    .intro-section {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 25px;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .intro-section h2 {
+        color: #cf6679;
+        margin-top: 0;
+    }
+</style>
+{% endblock %}
+
+{% block threejs_content %}
+<div class="intro-section">
+    <h2>Three.js - A 3D Webes Grafika</h2>
+    <p>A Three.js egy JavaScript könyvtár, amely segítségével WebGL alapú 3D grafikát hozhatunk létre böngészőben. Segítségével könnyedén jeleníthetsz meg különböző 3D objektumokat, interaktív jeleneteket és animációkat.</p>
+    <p>Ez az alkalmazás különböző Three.js demókat tartalmaz, amelyek segítségével megértheted a 3D geometria és a térbeli gondolkodás alapjait.</p>
+</div>
+
+<div class="feature-cards">
+    <!-- 3D Tanoda Szöveg animációkkal -->
+    <div class="feature-card">
+        <h3>3D Tanoda Szöveg Animáció</h3>
+        <p>Fedezd fel ezt az interaktív 3D "tanoda" szöveget, amelyhez különféle animációkat és effekteket állíthatsz be. Kísérletezz a különböző beállításokkal!</p>
+        <a href="{% url 'threejs_app:text_3d_animation' %}" class="btn btn-primary">Kipróbálás</a>
+    </div>
+
+    <!-- Alap Jelenet -->
+    <div class="feature-card">
+        <h3>Alap 3D Jelenet</h3>
+        <p>Ismerkedj meg a Three.js alapjaival. Tanulmányozd az alapvető 3D objektumokat és kísérletezz velük egy interaktív környezetben.</p>
+        <a href="{% url 'threejs_app:basic_scene' %}" class="btn btn-primary">Felfedezés</a>
+    </div>
+    
+    <!-- Geometriai Alakzatok -->
+    <div class="feature-card">
+        <h3>3D Geometriai Alakzatok</h3>
+        <p>Fedezd fel a különböző 3D geometriai alakzatokat és a hozzájuk kapcsolódó matematikai képleteket egy interaktív bemutatón keresztül.</p>
+        <a href="{% url 'threejs_app:geometry_showcase' %}" class="btn btn-primary">Megtekintés</a>
+    </div>
+    
+    <!-- Blockly Integráció -->
+    <div class="feature-card">
+        <h3>Blockly Programozás</h3>
+        <p>Programozz 3D objektumokat vizuális Blockly blokkok segítségével. Készíts saját jeleneteket és animációkat programozással.</p>
+        <a href="{% url 'threejs_app:blockly_integration' %}" class="btn btn-primary">Programozás</a>
+    </div>
+    
+    <!-- Új Kísérleti Jelenet -->
+    <div class="feature-card">
+        <h3>Színes 3D Objektumok</h3>
+        <p>Fedezd fel ezt az új kísérleti jelenetet, amely különböző színes 3D objektumokat tartalmaz árnyékokkal és interaktív vezérlőkkel.</p>
+        <a href="{% url 'threejs_app:experiment_scene' %}" class="btn btn-primary">Kipróbálás</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block threejs_extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Demo animation
+    setTimeout(function() {
+        if (typeof ThreeJSInitializer === 'undefined') {
+            console.error('ThreeJSInitializer nem található!');
+            return;
+        }
+        
+        // Inicializáljuk a Three.js-t
+        ThreeJSInitializer.init('threeJsRenderer', {
+            cameraPosition: { x: 0, y: 1, z: 5 },
+            lights: [
+                { type: 'ambient', color: 0x404040 },
+                { type: 'directional', color: 0xffffff, intensity: 1, position: { x: 1, y: 1, z: 1 } },
+                { type: 'point', color: 0x8844ff, intensity: 1, position: { x: -2, y: 3, z: -1 } }
+            ],
+            defaultObjects: []
+        });
+        
+        // Demo objektumok létrehozása
+        const scene = ThreeJSInitializer.getScene();
+        
+        // Kocka
+        const cubeGeometry = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+        const cubeMaterial = new THREE.MeshPhongMaterial({
+            color: 0x6200ee,
+            shininess: 100
+        });
+        const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        cube.position.set(-2, 0, 0);
+        scene.add(cube);
+        
+        // Gömb
+        const sphereGeometry = new THREE.SphereGeometry(0.8, 32, 32);
+        const sphereMaterial = new THREE.MeshPhongMaterial({
+            color: 0x03dac6,
+            shininess: 100
+        });
+        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        sphere.position.set(0, 0, 0);
+        scene.add(sphere);
+        
+        // Kúp
+        const coneGeometry = new THREE.ConeGeometry(0.8, 1.6, 32);
+        const coneMaterial = new THREE.MeshPhongMaterial({
+            color: 0xcf6679,
+            shininess: 100
+        });
+        const cone = new THREE.Mesh(coneGeometry, coneMaterial);
+        cone.position.set(2, 0, 0);
+        scene.add(cone);
+        
+        // Animáció
+        function animateDemoScene() {
+            cube.rotation.y += 0.01;
+            cube.rotation.x += 0.005;
+            
+            sphere.rotation.y += 0.02;
+            
+            cone.rotation.y -= 0.015;
+            cone.rotation.z += 0.005;
+            
+            requestAnimationFrame(animateDemoScene);
+        }
+        
+        animateDemoScene();
+    }, 500);
+});
+</script>
+{% endblock %}

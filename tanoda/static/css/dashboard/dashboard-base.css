@@ -1,0 +1,571 @@
+/* ==========================================================================
+   Dashboard Base Styles - Modern Dark UI with Glass Morphism
+   Based on GUI_.jpg design reference
+   ========================================================================== */
+
+/* CSS Variables for theming */
+:root {
+    /* Background gradients */
+    --bg-primary: #0d0d0d;
+    --bg-secondary: #1a1a2e;
+    --bg-gradient: linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 100%);
+
+    /* Glass card colors */
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: rgba(0, 0, 0, 0.3);
+
+    /* Neon accent colors */
+    --neon-cyan: #00d4ff;
+    --neon-green: #4ecca3;
+    --neon-orange: #ff8c42;
+    --neon-pink: #ff6b9d;
+    --neon-purple: #a855f7;
+
+    /* Text colors */
+    --text-primary: rgba(255, 255, 255, 0.95);
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --text-muted: rgba(255, 255, 255, 0.5);
+
+    /* Spacing */
+    --sidebar-width: 280px;
+    --header-height: 70px;
+    --widget-gap: 24px;
+    --border-radius-lg: 24px;
+    --border-radius-md: 16px;
+    --border-radius-sm: 12px;
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Main Content Area */
+.dashboard-main {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: margin-left var(--transition-normal);
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    flex: 1;
+    padding: var(--widget-gap);
+    overflow-y: auto;
+}
+
+/* ==========================================================================
+   Glass Card Effect
+   ========================================================================== */
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    box-shadow:
+        0 8px 32px var(--glass-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Glass Input */
+.glass-input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(78, 204, 163, 0.3);
+    border-radius: var(--border-radius-md);
+    color: var(--text-primary);
+    outline: none;
+    transition: all var(--transition-normal);
+}
+
+.glass-input:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 20px rgba(78, 204, 163, 0.3);
+}
+
+.glass-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Glass Select */
+.glass-select {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-sm);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    cursor: pointer;
+    outline: none;
+}
+
+.glass-select option {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   Neon Text Effects
+   ========================================================================== */
+
+.neon-cyan {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+.neon-green {
+    color: var(--neon-green);
+    text-shadow: 0 0 20px rgba(78, 204, 163, 0.5);
+}
+
+.neon-orange {
+    color: var(--neon-orange);
+    text-shadow: 0 0 20px rgba(255, 140, 66, 0.5);
+}
+
+.neon-pink {
+    color: var(--neon-pink);
+    text-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
+}
+
+.neon-purple {
+    color: var(--neon-purple);
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+}
+
+/* ==========================================================================
+   Widget Grid System
+   ========================================================================== */
+
+.widget-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--widget-gap);
+}
+
+.widget-row {
+    display: flex;
+    gap: var(--widget-gap);
+    flex-wrap: wrap;
+}
+
+.widget {
+    padding: var(--widget-gap);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+/* Widget Sizes */
+.widget-large {
+    flex: 2;
+    min-width: 400px;
+}
+
+.widget-medium {
+    flex: 1;
+    min-width: 300px;
+}
+
+.widget-small {
+    flex: 1;
+    min-width: 250px;
+}
+
+.widget-full {
+    flex: 1 1 100%;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.btn-action {
+    padding: 12px 24px;
+    border-radius: var(--border-radius-sm);
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-action:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+    color: #000;
+}
+
+.btn-primary:hover:not(:disabled) {
+    box-shadow: 0 0 30px rgba(78, 204, 163, 0.5);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border: 1px solid var(--glass-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-accent {
+    background: rgba(255, 140, 66, 0.2);
+    color: var(--neon-orange);
+    border: 1px solid rgba(255, 140, 66, 0.3);
+}
+
+.btn-accent:hover:not(:disabled) {
+    background: rgba(255, 140, 66, 0.3);
+    box-shadow: 0 0 20px rgba(255, 140, 66, 0.3);
+}
+
+.btn-danger {
+    background: rgba(255, 107, 157, 0.2);
+    color: var(--neon-pink);
+    border: 1px solid rgba(255, 107, 157, 0.3);
+}
+
+.btn-danger:hover:not(:disabled) {
+    background: rgba(255, 107, 157, 0.3);
+}
+
+/* Icon Buttons */
+.btn-icon {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.btn-icon-sm {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+}
+
+/* ==========================================================================
+   Badges & Tags
+   ========================================================================== */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-success {
+    background: rgba(78, 204, 163, 0.2);
+    color: var(--neon-green);
+}
+
+.badge-warning {
+    background: rgba(255, 140, 66, 0.2);
+    color: var(--neon-orange);
+}
+
+.badge-danger {
+    background: rgba(255, 107, 157, 0.2);
+    color: var(--neon-pink);
+}
+
+.badge-info {
+    background: rgba(0, 212, 255, 0.2);
+    color: var(--neon-cyan);
+}
+
+/* ==========================================================================
+   Progress Indicators
+   ========================================================================== */
+
+.progress-bar-container {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
+    border-radius: 4px;
+    transition: width var(--transition-slow);
+}
+
+/* Circular Progress */
+.progress-ring {
+    transform: rotate(-90deg);
+}
+
+.progress-ring-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 8;
+}
+
+.progress-ring-fill {
+    fill: none;
+    stroke: url(#progress-gradient);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 314;
+    stroke-dashoffset: 314;
+    transition: stroke-dashoffset var(--transition-slow);
+}
+
+/* SVG Gradient Definition (include in HTML) */
+.svg-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+/* ==========================================================================
+   Alerts & Messages
+   ========================================================================== */
+
+.alert {
+    padding: 16px 20px;
+    border-radius: var(--border-radius-md);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.alert-success {
+    background: rgba(78, 204, 163, 0.15);
+    border: 1px solid rgba(78, 204, 163, 0.3);
+    color: var(--neon-green);
+}
+
+.alert-danger {
+    background: rgba(255, 107, 157, 0.15);
+    border: 1px solid rgba(255, 107, 157, 0.3);
+    color: var(--neon-pink);
+}
+
+.alert-warning {
+    background: rgba(255, 140, 66, 0.15);
+    border: 1px solid rgba(255, 140, 66, 0.3);
+    color: var(--neon-orange);
+}
+
+.alert-info {
+    background: rgba(0, 212, 255, 0.15);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    color: var(--neon-cyan);
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+.text-primary {
+    color: var(--text-primary);
+}
+
+.text-secondary {
+    color: var(--text-secondary);
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin: 0;
+}
+
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.gap-1 { gap: 4px; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.gap-5 { gap: 20px; }
+.gap-6 { gap: 24px; }
+
+.p-1 { padding: 4px; }
+.p-2 { padding: 8px; }
+.p-3 { padding: 12px; }
+.p-4 { padding: 16px; }
+.p-5 { padding: 20px; }
+.p-6 { padding: 24px; }
+
+.mt-1 { margin-top: 4px; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+.mt-5 { margin-top: 20px; }
+.mt-6 { margin-top: 24px; }
+
+.mb-1 { margin-bottom: 4px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 12px; }
+.mb-4 { margin-bottom: 16px; }
+.mb-5 { margin-bottom: 20px; }
+.mb-6 { margin-bottom: 24px; }
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: auto; }
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px var(--neon-green); }
+    50% { box-shadow: 0 0 20px var(--neon-green), 0 0 30px var(--neon-cyan); }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-pulse { animation: pulse 2s infinite; }
+.animate-glow { animation: glow 2s infinite; }
+.animate-slide-in { animation: slideIn 0.3s ease-out; }
+.animate-fade-in { animation: fadeIn 0.3s ease-out; }
+
+/* ==========================================================================
+   Scrollbar Styling
+   ========================================================================== */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Firefox scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================================================================
+   Light Theme Support (Optional)
+   ========================================================================== */
+
+body.light-theme {
+    --bg-primary: #f5f7fa;
+    --bg-secondary: #e8ecf1;
+    --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --glass-shadow: rgba(0, 0, 0, 0.1);
+    --text-primary: rgba(0, 0, 0, 0.9);
+    --text-secondary: rgba(0, 0, 0, 0.7);
+    --text-muted: rgba(0, 0, 0, 0.5);
+}
+
+body.light-theme .dashboard-container {
+    background: var(--bg-gradient);
+}
+
+body.light-theme .glass-card {
+    background: var(--glass-bg);
+    box-shadow: 0 8px 32px var(--glass-shadow);
+}

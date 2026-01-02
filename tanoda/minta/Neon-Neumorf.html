@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Neumorf Minta</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --shadow-dark: #070a0f;
+            --shadow-light: #131b27;
+            --primary-neon: #00f0ff;
+            --secondary-neon: #ff00ff;
+            --text-color: #e6e6e6;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .menu-item {
+            width: 200px;
+            padding: 16px;
+            background: linear-gradient(145deg, #0c1016, #0e1219);
+            border-radius: 15px;
+            box-shadow: 8px 8px 16px var(--shadow-dark), 
+                       -8px -8px 16px var(--shadow-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(0, 240, 255, 0) 0%, 
+                rgba(0, 240, 255, 0.1) 50%, 
+                rgba(0, 240, 255, 0) 100%);
+            z-index: 1;
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+        
+        .menu-item:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #0c1016, #0e1219);
+            box-shadow: 3px 3px 6px var(--shadow-dark),
+                       -3px -3px 6px var(--shadow-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .icon::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            box-shadow: 0 0 10px var(--primary-neon),
+                        inset 0 0 5px var(--primary-neon);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .menu-item:hover .icon::after {
+            opacity: 1;
+        }
+        
+        .icon-symbol {
+            font-size: 24px;
+            color: var(--primary-neon);
+            text-shadow: 0 0 5px var(--primary-neon);
+        }
+        
+        .text {
+            color: var(--text-color);
+            margin-top: 8px;
+            font-size: 14px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .menu-item:nth-child(2) .icon-symbol,
+        .menu-item:nth-child(2) .icon::after {
+            color: var(--secondary-neon);
+            box-shadow: 0 0 10px var(--secondary-neon),
+                        inset 0 0 5px var(--secondary-neon);
+        }
+        
+        .menu-item:nth-child(2) .icon-symbol {
+            text-shadow: 0 0 5px var(--secondary-neon);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="menu-item">
+            <div class="icon">
+                <div class="icon-symbol">∑</div>
+            </div>
+            <div class="text">Sorozatok</div>
+        </div>
+        
+        <div class="menu-item">
+            <div class="icon">
+                <div class="icon-symbol">∫</div>
+            </div>
+            <div class="text">Integrálszámítás</div>
+        </div>
+    </div>
+</body>
+</html>

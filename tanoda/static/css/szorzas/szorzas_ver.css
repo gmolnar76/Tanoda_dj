@@ -1,0 +1,154 @@
+/* szorzas_ver.css */
+
+/* Visszajelzés üzenetek alapstílusai */
+.feedback-message {
+    position: absolute;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    animation: fadeInOut 3s ease;
+    z-index: 1000;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.error-message {
+    background-color: rgba(233, 69, 96, 0.2);
+    color: #e94560;
+    border: 1px solid #e94560;
+}
+
+.success-message {
+    background-color: rgba(78, 204, 163, 0.2);
+    color: #4ecca3;
+    border: 1px solid #4ecca3;
+}
+
+/* Helyes/Helytelen állapotok a végeredmény mezőknél */
+.final-result input.correct {
+    background-color: rgba(78, 204, 163, 0.1);
+    border-color: #4ecca3;
+    animation: pulseCorrect 0.5s ease;
+}
+
+.final-result input.incorrect {
+    background-color: rgba(233, 69, 96, 0.1);
+    border-color: #e94560;
+    animation: shakeIncorrect 0.5s ease;
+}
+
+/* Részeredmények kiemelése ellenőrzéskor */
+.partial-result.highlighted {
+    background-color: rgba(255, 215, 0, 0.1);
+    border: 1px solid #ffd700;
+}
+
+/* Ellenőrzés során használt animációk */
+@keyframes pulseCorrect {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shakeIncorrect {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; top: -20px; }
+    10% { opacity: 1; top: 20px; }
+    90% { opacity: 1; top: 20px; }
+    100% { opacity: 0; top: -20px; }
+}
+
+/* Végeredmény mező státusz jelzések */
+.final-result-status {
+    position: absolute;
+    right: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+}
+
+.final-result-status.correct {
+    color: #4ecca3;
+}
+
+.final-result-status.incorrect {
+    color: #e94560;
+}
+
+/* Tooltipek az ellenőrzéshez */
+.verification-tooltip {
+    position: absolute;
+    background-color: #1a1a2e;
+    border: 1px solid #4ecca3;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #e0e0e0;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.final-result:hover .verification-tooltip {
+    opacity: 1;
+}
+
+/* Részeredmények összegzés panel */
+.partial-sums-panel {
+    background-color: rgba(22, 33, 62, 0.9);
+    border: 1px solid #4ecca3;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 4px;
+}
+
+.sum-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(78, 204, 163, 0.2);
+}
+
+.sum-row:last-child {
+    border-bottom: none;
+    font-weight: bold;
+}
+
+/* Validációs ikonok */
+.validation-icon {
+    margin-left: 10px;
+    font-size: 1.2em;
+}
+
+.validation-icon.correct::before {
+    content: '✓';
+    color: #4ecca3;
+}
+
+.validation-icon.incorrect::before {
+    content: '×';
+    color: #e94560;
+}
+
+/* Reszponzív beállítások */
+@media (max-width: 768px) {
+    .verification-tooltip {
+        display: none; /* Mobilon elrejtjük a tooltipeket */
+    }
+    
+    .final-result-status {
+        right: -20px;
+        font-size: 1em;
+    }
+    
+    .feedback-message {
+        width: 90%;
+        font-size: 0.9em;
+    }
+}

@@ -1,0 +1,64 @@
+{% extends "evfolyamok/6/evf6.html" %}
+{% load static %}
+
+{% block title %}{% block threejs_title %}Three.js alapok{% endblock %}{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'threejs_app/css/threejs_base.css' %}">
+{% block threejs_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block evf6_content %}
+<div class="threejs-container mt-4">
+    <h1>{% block threejs_page_title %}Three.js alapok{% endblock %}</h1>
+    
+    <!-- ThreeJS vezérlők -->
+    <div class="threejs-controls mb-3">
+        {% block threejs_controls %}
+        <button id="resetSceneButton" class="btn btn-secondary">Alaphelyzet</button>
+        {% endblock %}
+    </div>
+    
+    <!-- ThreeJS renderer konténer -->
+    <div class="threejs-renderer-container">
+        <div id="threeJsRenderer" 
+             class="threejs-renderer"
+             data-width="550"
+             data-height="480"
+             data-background-color="#121212">
+        </div>
+        {% if debug %}
+        <div id="stats-container"></div>
+        {% endif %}
+    </div>
+    
+    <!-- ThreeJS tartalmi blokk -->
+    {% block threejs_content %}
+    <div class="mt-4">
+        <p>Three.js alapok betöltve. Válassz egy jelenetet a menüből.</p>
+    </div>
+    {% endblock %}
+    
+    <!-- Debug infó panel -->
+    {% if debug %}
+    <div id="threejs-debug" class="debug-info mt-4">
+        <h3>Three.js Debug Panel</h3>
+        <div id="threejs-status">
+            <p>Inicializálás...</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<!-- Three.js könyvtár betöltése -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- ThreeJS inicializáló betöltése -->
+<script src="{% static 'threejs_app/js/core/threejs_init.js' %}"></script>
+
+{% block threejs_extra_js %}
+{% endblock %}
+{% endblock %}

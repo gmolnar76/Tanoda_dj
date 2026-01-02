@@ -1,0 +1,116 @@
+{% load static %}
+
+<nav id="sidebarMenu" class="collapse d-md-block sidebar">
+    <div class="position-sticky">
+        <!-- 4. évfolyam - gyerekbarátabb menü ikonokkal -->
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link menu-item">
+                    <i class="fas fa-calculator me-2"></i> Számok világa
+                </a>
+                    
+                <ul class="nav flex-column ml-3">
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'szamolas_100' %}active{% endif %}" href="#">
+                            <i class="fas fa-sort-numeric-up me-2"></i> Számolás 100-ig
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'osszeadas_kivonas' %}active{% endif %}" href="#">
+                            <i class="fas fa-plus-minus me-2"></i> Összeadás és kivonás
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'szorzotabla' %}active{% endif %}" href="#">
+                            <i class="fas fa-times me-2"></i> Szorzótábla
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link menu-item">
+                    <i class="fas fa-shapes me-2"></i> Formák és méretek
+                </a>
+                
+                <ul class="nav flex-column ml-3">
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'sikidomok' %}active{% endif %}" href="#">
+                            <i class="fas fa-square me-2"></i> Síkidomok
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'mertek' %}active{% endif %}" href="#">
+                            <i class="fas fa-ruler me-2"></i> Mértékegységek
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link menu-item">
+                    <i class="fas fa-gamepad me-2"></i> Játékos tanulás
+                </a>
+                
+                <ul class="nav flex-column ml-3">
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'matek_jatek' %}active{% endif %}" href="#">
+                            <i class="fas fa-dice me-2"></i> Matek játékok
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'blockly_kezdo' %}active{% endif %}" href="#">
+                            <i class="fas fa-puzzle-piece me-2"></i> Blockly kezdőknek
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        
+        <!-- Jutalmak és teljesítmények szekció -->
+        <div class="rewards-section mt-5">
+            <h5 class="mb-3"><i class="fas fa-trophy me-2"></i> Jutalmaid</h5>
+            <div class="badges-container d-flex flex-wrap">
+                <div class="badge-item m-1" title="Szorzótábla mester">
+                    <img src="{% static 'images/badges/multiply.png' %}" alt="Szorzótábla" 
+                         width="30" height="30" class="rounded-circle">
+                </div>
+                <div class="badge-item m-1 disabled" title="Még nem szerezted meg">
+                    <img src="{% static 'images/badges/shapes.png' %}" alt="Síkidomok" 
+                         width="30" height="30" class="rounded-circle opacity-50">
+                </div>
+                <div class="badge-item m-1" title="Számkirály">
+                    <img src="{% static 'images/badges/numbers.png' %}" alt="Számok" 
+                         width="30" height="30" class="rounded-circle">
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    /* 4. évfolyam specifikus menü stílusok */
+    .menu-item {
+        font-weight: bold;
+        font-size: 1.1em;
+        color: var(--evfolyam-primary-color);
+    }
+    
+    .submenu-item {
+        padding-left: 1.5rem;
+        font-size: 0.95em;
+    }
+    
+    .badge-item {
+        border: 2px solid var(--evfolyam-accent-color);
+        border-radius: 50%;
+        padding: 2px;
+        transition: transform 0.3s ease;
+    }
+    
+    .badge-item:hover {
+        transform: scale(1.2);
+    }
+    
+    .disabled {
+        border-color: #555;
+    }
+</style>

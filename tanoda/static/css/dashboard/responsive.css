@@ -1,0 +1,576 @@
+/* ==========================================================================
+   Responsive Styles - Mobile & Tablet Breakpoints
+   ========================================================================== */
+
+/* ==========================================================================
+   Extra Large Screens (1400px+)
+   ========================================================================== */
+
+@media (min-width: 1400px) {
+    .widget-grid {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .widget-large {
+        min-width: 500px;
+    }
+}
+
+/* ==========================================================================
+   Large Screens (1024px - 1399px)
+   ========================================================================== */
+
+@media (max-width: 1399px) {
+    :root {
+        --sidebar-width: 260px;
+    }
+
+    .widget-large {
+        min-width: 350px;
+    }
+
+    .widget-medium {
+        min-width: 280px;
+    }
+}
+
+/* ==========================================================================
+   Tablet Landscape (1024px)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    :root {
+        --sidebar-width: 240px;
+        --widget-gap: 20px;
+    }
+
+    /* Sidebar - Collapsible on tablet */
+    .dashboard-sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+
+    .dashboard-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .dashboard-main {
+        margin-left: 0;
+    }
+
+    /* Show sidebar toggle */
+    .sidebar-toggle {
+        display: flex;
+    }
+
+    /* Show overlay when sidebar is open */
+    .sidebar-overlay {
+        display: none;
+    }
+
+    .dashboard-sidebar.open + .sidebar-overlay {
+        display: block;
+    }
+
+    /* Widget adjustments */
+    .widget-large,
+    .widget-medium {
+        flex: 1 1 calc(50% - var(--widget-gap) / 2);
+        min-width: 280px;
+    }
+
+    .widget-row {
+        flex-wrap: wrap;
+    }
+
+    /* Task display */
+    .task-number {
+        font-size: 4rem;
+    }
+
+    .task-input {
+        width: 120px;
+        height: 80px;
+        font-size: 2.5rem;
+    }
+}
+
+/* ==========================================================================
+   Tablet Portrait (768px)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    :root {
+        --header-height: 60px;
+        --widget-gap: 16px;
+        --border-radius-lg: 20px;
+        --border-radius-md: 14px;
+    }
+
+    /* Header adjustments */
+    .dashboard-header {
+        padding: 0 16px;
+    }
+
+    .header-left .page-title {
+        font-size: 18px;
+    }
+
+    .header-widget {
+        display: none;
+    }
+
+    .header-widget.mobile-visible {
+        display: flex;
+    }
+
+    /* Sidebar full screen on mobile */
+    .dashboard-sidebar {
+        width: 100%;
+        max-width: 320px;
+    }
+
+    /* Widgets stack vertically */
+    .widget-row {
+        flex-direction: column;
+    }
+
+    .widget-large,
+    .widget-medium,
+    .widget-small {
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+
+    .widget {
+        padding: var(--widget-gap);
+    }
+
+    /* Task widget adjustments */
+    .task-display {
+        flex-direction: row;
+        gap: 12px;
+        padding: 24px 0;
+    }
+
+    .task-number {
+        font-size: 3rem;
+    }
+
+    .task-operator {
+        font-size: 2.5rem;
+    }
+
+    .task-input {
+        width: 100px;
+        height: 70px;
+        font-size: 2rem;
+        border-radius: 16px;
+    }
+
+    .task-actions {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .task-actions .btn-action {
+        min-width: 100px;
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+
+    /* Stats widget */
+    .stat-dial {
+        width: 120px;
+        height: 120px;
+    }
+
+    .dial-value {
+        font-size: 2rem;
+    }
+
+    .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .stat-item {
+        padding: 12px;
+    }
+
+    .stat-value {
+        font-size: 1.25rem;
+    }
+
+    /* Pythagorasz table */
+    .pythagoras-widget .pitagorasz-tabla {
+        max-height: 250px;
+    }
+
+    .grid-cell {
+        min-width: 28px;
+        min-height: 28px;
+        font-size: 11px;
+    }
+
+    /* Leaderboard */
+    .leaderboard-item {
+        padding: 10px 12px;
+    }
+
+    .leaderboard-rank {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+
+    /* Notifications */
+    #gamification-notifications {
+        right: 16px;
+        left: 16px;
+        max-width: 100%;
+    }
+
+    .gamification-notification {
+        min-width: auto;
+    }
+}
+
+/* ==========================================================================
+   Mobile Large (576px)
+   ========================================================================== */
+
+@media (max-width: 576px) {
+    :root {
+        --widget-gap: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-md: 12px;
+    }
+
+    /* Header */
+    .dashboard-header {
+        padding: 0 12px;
+    }
+
+    .header-left .page-title {
+        font-size: 16px;
+    }
+
+    .sidebar-toggle {
+        width: 40px;
+        height: 40px;
+    }
+
+    .theme-toggle {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Task widget - compact layout */
+    .task-display {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .task-number {
+        font-size: 2.5rem;
+    }
+
+    .task-operator {
+        font-size: 2rem;
+    }
+
+    .task-input {
+        width: 90px;
+        height: 60px;
+        font-size: 1.75rem;
+        border-width: 2px;
+    }
+
+    .task-actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .task-actions .btn-action {
+        flex: 1;
+        min-width: 80px;
+        max-width: 120px;
+    }
+
+    /* Stat dial smaller */
+    .stat-dial {
+        width: 100px;
+        height: 100px;
+    }
+
+    .progress-ring-bg,
+    .progress-ring-fill {
+        stroke-width: 8;
+    }
+
+    .dial-value {
+        font-size: 1.5rem;
+    }
+
+    /* Buttons */
+    .btn-action {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+
+    .btn-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Pythagorasz compact */
+    .grid-cell {
+        min-width: 24px;
+        min-height: 24px;
+        font-size: 10px;
+    }
+
+    /* Widget headers */
+    .widget-header h3 {
+        font-size: 14px;
+    }
+
+    .widget-header h3 i {
+        font-size: 16px;
+    }
+
+    /* Keyboard shortcuts - hide on mobile */
+    .shortcuts-widget {
+        display: none;
+    }
+
+    /* Bar chart */
+    .bar-chart {
+        height: 140px;
+    }
+
+    .bar {
+        width: 18px;
+    }
+
+    /* User section in sidebar */
+    .sidebar-user {
+        padding: 16px;
+    }
+
+    .user-avatar {
+        width: 38px;
+        height: 38px;
+    }
+
+    .user-name {
+        font-size: 13px;
+    }
+
+    .user-points {
+        font-size: 11px;
+    }
+}
+
+/* ==========================================================================
+   Mobile Small (400px)
+   ========================================================================== */
+
+@media (max-width: 400px) {
+    .task-number {
+        font-size: 2rem;
+    }
+
+    .task-operator {
+        font-size: 1.5rem;
+    }
+
+    .task-input {
+        width: 80px;
+        height: 55px;
+        font-size: 1.5rem;
+    }
+
+    .stat-dial {
+        width: 80px;
+        height: 80px;
+    }
+
+    .dial-value {
+        font-size: 1.25rem;
+    }
+
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .grid-cell {
+        min-width: 22px;
+        min-height: 22px;
+        font-size: 9px;
+    }
+}
+
+/* ==========================================================================
+   Landscape Mode on Mobile
+   ========================================================================== */
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .dashboard-header {
+        height: 50px;
+    }
+
+    .widget {
+        padding: 12px;
+    }
+
+    .task-display {
+        padding: 16px 0;
+    }
+
+    .task-number {
+        font-size: 2.5rem;
+    }
+
+    .task-input {
+        width: 90px;
+        height: 55px;
+        font-size: 1.75rem;
+    }
+
+    .stat-dial-container {
+        padding: 10px 0;
+    }
+
+    .stat-dial {
+        width: 80px;
+        height: 80px;
+    }
+
+    .pythagoras-widget .pitagorasz-tabla {
+        max-height: 150px;
+    }
+}
+
+/* ==========================================================================
+   Touch Device Optimizations
+   ========================================================================== */
+
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .nav-item {
+        padding: 16px 24px;
+    }
+
+    .btn-action {
+        min-height: 48px;
+    }
+
+    .grid-cell {
+        min-width: 36px;
+        min-height: 36px;
+    }
+
+    /* Disable hover effects that might cause issues */
+    .widget:hover {
+        transform: none;
+    }
+
+    .glass-card:hover {
+        transform: none;
+    }
+
+    /* Add active states instead */
+    .btn-action:active {
+        transform: scale(0.95);
+    }
+
+    .nav-item:active {
+        background: rgba(78, 204, 163, 0.15);
+    }
+
+    .grid-cell:active {
+        transform: scale(0.95);
+        background: rgba(255, 255, 255, 0.15);
+    }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+    .dashboard-sidebar,
+    .dashboard-header,
+    .sidebar-toggle,
+    .theme-toggle,
+    .btn-action,
+    #gamification-notifications {
+        display: none !important;
+    }
+
+    .dashboard-main {
+        margin-left: 0;
+    }
+
+    .dashboard-content {
+        padding: 20px;
+    }
+
+    .glass-card {
+        background: #fff;
+        border: 1px solid #ddd;
+        box-shadow: none;
+    }
+
+    .widget {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    body {
+        background: #fff !important;
+        color: #000 !important;
+    }
+}
+
+/* ==========================================================================
+   Reduced Motion Preferences
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ==========================================================================
+   High Contrast Mode
+   ========================================================================== */
+
+@media (prefers-contrast: high) {
+    :root {
+        --glass-border: rgba(255, 255, 255, 0.3);
+        --text-secondary: rgba(255, 255, 255, 0.9);
+        --text-muted: rgba(255, 255, 255, 0.7);
+    }
+
+    .glass-card {
+        border-width: 2px;
+    }
+
+    .task-input {
+        border-width: 3px;
+    }
+
+    .btn-action {
+        border-width: 2px;
+    }
+}

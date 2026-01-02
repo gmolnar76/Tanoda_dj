@@ -1,0 +1,66 @@
+{% load static %}
+
+<nav id="sidebarMenu" class="collapse d-md-block sidebar">
+    <div class="position-sticky">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a >I. Műveletek egész számokkal</a>
+                    
+                <ul class="nav flex-column ml-3">
+
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'pythagoras' %}active{% endif %}"href="{% url 'egesz_szamok:pythagoras' %}">
+                            Pythagoras tábla
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'egesz_szamok:szorzas' %}active{% endif %}" href="{% url 'egesz_szamok:szorzas' %}">
+                            Egész számok szorzása
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'egesz_szamok:szorzasok' %}active{% endif %}" href="{% url 'egesz_szamok:szorzasok' %}">
+                            Szorzások
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'egesz_szamok:szorzas_tobbjegyuvel' %}active{% endif %}" href="{% url 'egesz_szamok:szorzas_tobbjegyuvel' %}">
+                            Többjegyű számok szorzása
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'egesz_szamok:helyiertek-matrix' %}active{% endif %}" href="{% url 'egesz_szamok:szorzas_helyiertek_matrix' %}">
+                            Helyiérték szerint
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.view_name == 'mathsolver:index' %}active{% endif %}" href="{% url 'mathsolver:index' %}">
+                            Matek Megoldó
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'plotly_chart:kordinata' %}active{% endif %}" href="{% url 'plotly_chart:kordinata' %}">
+                            Koordináta rendszerek
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'blockly:main' %}active{% endif %}" href="{% url 'blockly' %}">
+                            Blockly programozás
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'blockly:3d_blockly' %}active{% endif %}" href="{% url '3d_blockly' %}">
+                            3D-Blockly
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link menu-item" href="#">II. További témakörök...</a>
+            </li>
+        </ul>
+    </div>
+</nav>

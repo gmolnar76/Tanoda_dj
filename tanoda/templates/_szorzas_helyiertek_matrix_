@@ -1,0 +1,70 @@
+<style>
+  /* Responsive and theme-matching styles for the Pitagorasz table */
+  .pitagorasz-table {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background-color: #f9f9f9; /* Light background matching the theme */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .pitagorasz-table th, .pitagorasz-table td {
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .pitagorasz-table th {
+    background-color: #4CAF50; /* Theme color */
+    color: white;
+    font-weight: bold;
+  }
+
+  .pitagorasz-table td {
+    transition: background-color 0.3s ease;
+  }
+
+  .pitagorasz-table td:hover {
+    background-color: #d4edda; /* Subtle hover effect */
+  }
+
+  .pitagorasz-table .highlight {
+    background-color: #ffcccc; /* Highlighted cells */
+    font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
+    .pitagorasz-table {
+      font-size: 12px;
+    }
+
+    .pitagorasz-table th, .pitagorasz-table td {
+      padding: 6px;
+    }
+  }
+</style>
+
+<table class="pitagorasz-table">
+  <thead>
+    <tr>
+      <th></th>
+      {% for col in range(1, 21) %}
+        <th>{{ col }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in range(1, 21) %}
+      <tr>
+        <th>{{ row }}</th>
+        {% for col in range(1, 21) %}
+          <td class="{% if row * col in highlighted_values %}highlight{% endif %}">
+            {{ row * col }}
+          </td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

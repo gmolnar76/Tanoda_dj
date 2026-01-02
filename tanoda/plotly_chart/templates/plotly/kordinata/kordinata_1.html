@@ -1,0 +1,16 @@
+{% extends "kordinata.html" %}
+
+{% block tab_content %}
+    <div class="tab-pane fade show active" id="coord" role="tabpanel" aria-labelledby="coord-tab">
+        {% include "2_3d_kordinatak.html" %}
+    </div>
+    <div class="tab-pane fade" id="pitagorasz" role="tabpanel" aria-labelledby="pitagorasz-tab">
+        {% include "pitagorasz_tabla.html" %}
+    </div>
+    <div class="tab-pane fade" id="population" role="tabpanel" aria-labelledby="population-tab">
+        {% include "vilag_nepesseg.html" %}
+    </div>
+    <div class="tab-pane fade" id="civilization" role="tabpanel" aria-labelledby="civilization-tab">
+        {% include "szen_ciklus.html" %}
+    </div>
+{% endblock %}

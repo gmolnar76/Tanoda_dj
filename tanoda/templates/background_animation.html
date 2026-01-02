@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanoda Háttér Animáció</title>
+    {% load static %}
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Ne legyen scrollbar */
+            background-color: #000510; /* Sötétkék háttér */
+            color: white; /* Alapértelmezett szövegszín */
+            font-family: sans-serif;
+        }
+        #threejs-container {
+            position: fixed; /* Rögzített pozíció */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Háttérbe helyezés */
+        }
+        /* Opcionális: Tartalom a háttér előtt */
+        .content {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin-top: 40vh; /* Kb középre */
+            font-size: 3em;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="threejs-container"></div>
+
+    <div class="content">
+        <h1>Tanoda</h1>
+        <!-- Ide jöhetne a tényleges tartalom -->
+    </div>
+
+    <!-- Three.js betöltése (feltételezve, hogy a base template-ben nincs) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Animációs szkript betöltése -->
+    <script src="{% static 'threejs_app/js/scenes/background_shapes.js' %}"></script>
+
+    <script>
+        // Animáció indítása a DOM betöltődése után
+        document.addEventListener('DOMContentLoaded', function() {
+            initBackgroundShapes('threejs-container');
+        });
+    </script>
+</body>
+</html>

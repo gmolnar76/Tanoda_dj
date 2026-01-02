@@ -1,0 +1,95 @@
+{% load static %}
+
+<div class="sidebar p-3">
+    <h2 class="sidebar-heading mb-4">Évfolyamok</h2>
+    
+    <nav class="nav flex-column">
+        <div class="sidebar-module mb-3">
+            <div class="sidebar-module-header">
+                <a class="nav-link" href="{% url 'evfolyam' evfolyam_id=4 %}">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    4. Évfolyam
+                </a>
+            </div>
+        </div>
+        
+        <div class="sidebar-module mb-3">
+            <div class="sidebar-module-header">
+                <a class="nav-link" href="{% url 'evfolyam' evfolyam_id=5 %}">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    5. Évfolyam
+                </a>
+            </div>
+        </div>
+        
+        <div class="sidebar-module mb-3">
+            <div class="sidebar-module-header">
+                <a class="nav-link" href="{% url 'evfolyam' evfolyam_id=6 %}">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    6. Évfolyam
+                </a>
+            </div>
+        </div>
+        
+        <div class="sidebar-module mb-3">
+            <div class="sidebar-module-header">
+                <a class="nav-link" href="{% url 'evfolyam' evfolyam_id=7 %}">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    7. Évfolyam
+                </a>
+            </div>
+        </div>
+        
+        <div class="sidebar-module mb-3">
+            <div class="sidebar-module-header">
+                <a class="nav-link" href="{% url 'evfolyam' evfolyam_id=8 %}">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    8. Évfolyam
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="sidebar-additional mt-5">
+        <h5 class="mb-3">Hasznos linkek</h5>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-info-circle me-2"></i> Súgó</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-cog me-2"></i> Beállítások</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<style>
+    .sidebar {
+        background-color: #1e1e1e;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .sidebar-heading {
+        color: var(--evfolyam-primary-color);
+        font-weight: bold;
+    }
+    
+    .sidebar-module-header {
+        border-left: 3px solid transparent;
+    }
+    
+    .sidebar-module-header .nav-link.active {
+        border-left-color: var(--evfolyam-accent-color);
+    }
+    
+    .nav-link {
+        color: #e0e0e0;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
+    }
+</style>

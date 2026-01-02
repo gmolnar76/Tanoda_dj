@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700">
+  <style>
+    .box { fill:#fff; stroke:#2b6cb0; stroke-width:2; rx:6; }
+    .title { font: bold 14px sans-serif; fill:#0b3a66 }
+    .label { font: 12px sans-serif; fill:#08324a }
+    .arrow { stroke:#2b6cb0; stroke-width:2; fill:none; marker-end:url(#arrowhead);} 
+    .note { font: italic 11px sans-serif; fill:#555 }
+  </style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2b6cb0" />
+    </marker>
+  </defs>
+
+  <rect x="280" y="18" width="440" height="48" class="box" />
+  <text x="500" y="46" text-anchor="middle" class="title">szorzas_gyakorlo.html (child template)</text>
+
+  <rect x="50" y="110" width="210" height="60" class="box" />
+  <text x="155" y="140" text-anchor="middle" class="label">ProblemWidget</text>
+  <text x="155" y="155" text-anchor="middle" class="note">(#szorzo, #szorzando, #valasz)</text>
+
+  <rect x="320" y="110" width="210" height="60" class="box" />
+  <text x="425" y="140" text-anchor="middle" class="label">FeedbackPanel</text>
+  <text x="425" y="155" text-anchor="middle" class="note">(#eredmeny, #kihivas-eredmeny)</text>
+
+  <rect x="590" y="110" width="210" height="60" class="box" />
+  <text x="695" y="140" text-anchor="middle" class="label">StatsWidget</text>
+  <text x="695" y="155" text-anchor="middle" class="note">(#osszes-pont, grafikon)</text>
+
+  <rect x="50" y="220" width="210" height="60" class="box" />
+  <text x="155" y="250" text-anchor="middle" class="label">ChallengeWidget</text>
+  <text x="155" y="265" text-anchor="middle" class="note">(#kihivas-start...)</text>
+
+  <rect x="320" y="220" width="210" height="60" class="box" />
+  <text x="425" y="250" text-anchor="middle" class="label">LeaderboardWidget</text>
+  <text x="425" y="265" text-anchor="middle" class="note">(#leaderboard) - inline fetch risk</text>
+
+  <rect x="590" y="220" width="210" height="60" class="box" />
+  <text x="695" y="250" text-anchor="middle" class="label">PitagoraszTable</text>
+  <text x="695" y="265" text-anchor="middle" class="note">(#pitagorasz-tabla) - lazy-load ideal</text>
+
+  <rect x="50" y="340" width="210" height="44" class="box" />
+  <text x="155" y="370" text-anchor="middle" class="label">DifficultyWidget</text>
+  <text x="155" y="385" text-anchor="middle" class="note">(#nehezseg-kijelzo)</text>
+
+  <rect x="320" y="340" width="210" height="44" class="box" />
+  <text x="425" y="370" text-anchor="middle" class="label">HintWidget</text>
+  <text x="425" y="385" text-anchor="middle" class="note">(#tipp-btn)</text>
+
+  <rect x="590" y="340" width="210" height="44" class="box" />
+  <text x="695" y="370" text-anchor="middle" class="label">ThemeToggle</text>
+  <text x="695" y="385" text-anchor="middle" class="note">(.theme-toggle) - remove inline onclick</text>
+
+  <rect x="50" y="460" width="240" height="56" class="box" />
+  <text x="170" y="490" text-anchor="middle" class="label">real_time_scoring.js</text>
+  <text x="170" y="505" text-anchor="middle" class="note">Handles gamification events (points-earned)</text>
+
+  <rect x="360" y="460" width="240" height="56" class="box" />
+  <text x="480" y="490" text-anchor="middle" class="label">szorzas_gyakorlo.js</text>
+  <text x="480" y="505" text-anchor="middle" class="note">Main initializer / Problem logic (ESM)</text>
+
+  <rect x="670" y="460" width="240" height="56" class="box" />
+  <text x="790" y="490" text-anchor="middle" class="label">leaderboard.js</text>
+  <text x="790" y="505" text-anchor="middle" class="note">External module with error handling (recommended)</text>
+
+  <path d="M500 66 L500 110" class="arrow" />
+  <path d="M500 110 L160 110" class="arrow" />
+  <path d="M500 110 L430 110" class="arrow" />
+  <path d="M500 110 L700 110" class="arrow" />
+
+  <path d="M260 140 L320 140" class="arrow" />
+  <path d="M530 170 L425 170" class="arrow" />
+
+  <path d="M480 516 L425 376" class="arrow" />
+  <path d="M480 516 L155 310" class="arrow" />
+  <path d="M480 516 L695 280" class="arrow" />
+
+  <path d="M520 460 L520 360 L695 360" class="arrow" />
+
+  <path d="M790 516 L425 280" class="arrow" />
+
+  <text x="500" y="660" text-anchor="middle" class="note">Legend: arrows = data/events; boxes = widgets/modules</text>
+</svg>

@@ -1,0 +1,93 @@
+{
+  "id": 6,
+  "title": "6. Évfolyam",
+  "description": "Matematikai alapok és programozási koncepciók a 6. évfolyam számára",
+  "theme": {
+    "primary_color": "#5C81A6",
+    "secondary_color": "#3C6080",
+    "accent_color": "#BB86FC"
+  },
+  "modules": [
+    {
+      "id": "egesz_szamok",
+      "title": "Egész számok, oszthatóság",
+      "icon": "fas fa-calculator",
+      "lessons": [
+        {
+          "id": "muveletek",
+          "title": "Műveletek az egész számok körében",
+          "template": "evfolyamok/6/egesz_szamok/muveletek.html"
+        },
+        {
+          "id": "szorzas",
+          "title": "Szorzás gyakorlása",
+          "template": "egesz_szamok/szorzas/szorzas_gyakorlo.html"
+        },
+        {
+          "id": "pythagoras",
+          "title": "Pythagoras tábla",
+          "template": "egesz_szamok/szorzas/pythagoras.html"
+        },
+        {
+          "id": "helyiertek_matrix",
+          "title": "Helyiérték mátrix",
+          "template": "egesz_szamok/szorzas/szorzas_helyiertek_matrix.html"
+        }
+      ]
+    },
+    {
+      "id": "programozas",
+      "title": "Programozási alapok",
+      "icon": "fas fa-code",
+      "lessons": [
+        {
+          "id": "blockly",
+          "title": "Blockly programozás",
+          "template": "blockly/blockly.html"
+        },
+        {
+          "id": "3d_blockly",
+          "title": "3D Blockly",
+          "template": "blockly/3d_blockly/3d_blockly.html"
+        },
+        {
+          "id": "blockly_threejs",
+          "title": "Blockly-ThreeJS",
+          "template": "blockly/blockly_threejs.html"
+        },
+        {
+          "id": "ciklusok",
+          "title": "Ciklusok gyakorlása",
+          "template": "egesz_szamok/ciklusok/ciklusok.html"
+        }
+      ]
+    },
+    {
+      "id": "geometria",
+      "title": "Geometria és koordináták",
+      "icon": "fas fa-shapes",
+      "lessons": [
+        {
+          "id": "koordinata",
+          "title": "Koordináta rendszerek",
+          "template": "plotly/kordinata/kordinata.html"
+        },
+        {
+          "id": "threejs",
+          "title": "3D Vizualizációk",
+          "template": "threejs_app/index.html"
+        },
+        {
+          "id": "basic_scene",
+          "title": "3D Alap Jelenet",
+          "template": "threejs_app/basic_scene.html"
+        },
+        {
+          "id": "geometry_showcase",
+          "title": "3D Geometriai Alakzatok",
+          "template": "threejs_app/geometry_showcase.html"
+        }
+      ]
+    }
+  ]
+}

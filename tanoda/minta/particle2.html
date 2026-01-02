@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanoda - Dinamikus Matematikai Háttéreffektek</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #e0e6f0;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            background-color: #192231;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -10px;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #4ecca3, #3a86ff);
+            border-radius: 2px;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            color: #b0b9cc;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #4ecca3, #3a86ff);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        /* Háttér effekt switcher */
+        .effect-switcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+        
+        .effect-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .effect-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .effect-btn.active {
+            background: linear-gradient(135deg, #4ecca3, #3a86ff);
+            transform: scale(1.1);
+        }
+        
+        /* 1. Matematikai objektumok (2D, 3D formák) */
+        #math-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            background-color: #192231;
+        }
+        
+        .math-object {
+            position: absolute;
+            transition: transform 0.5s ease;
+        }
+        
+        .math-object:hover {
+            transform: scale(1.2) rotate(10deg) !important;
+        }
+        
+        /* 4. 3D Grid */
+        .grid-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            perspective: 800px;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 1s ease;
+            background-color: #192231;
+        }
+        
+        .grid-container.active {
+            opacity: 1;
+        }
+        
+        .grid {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-style: preserve-3d;
+            transform: translate(-50%, -50%) rotateX(60deg) rotateZ(45deg);
+            width: 150vw;
+            height: 150vh;
+        }
+        
+        .grid-line {
+            position: absolute;
+            background-color: rgba(78, 204, 163, 0.3);
+        }
+        
+        .horizontal-line {
+            width: 100%;
+            height: 1px;
+        }
+        
+        .vertical-line {
+            width: 1px;
+            height: 100%;
+        }
+        
+        /* 5. 3D Platóni testek */
+        .platonics-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 1s ease;
+            background-color: #192231;
+            perspective: 1000px;
+        }
+        
+        .platonics-container.active {
+            opacity: 1;
+        }
+        
+        .platonic-solid {
+            position: absolute;
+            transform-style: preserve-3d;
+            animation: rotate3D 20s infinite linear;
+        }
+        
+        .face {
+            position: absolute;
+            backface-visibility: visible;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background-color: rgba(78, 204, 163, 0.1);
+            transform-origin: center center;
+            transform-style: preserve-3d;
+        }
+        
+        @keyframes rotate3D {
+            from {
+                transform: rotateX(0) rotateY(0) rotateZ(0);
+            }
+            to {
+                transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+            }
+        }
+        
+        /* SVG styles */
+        svg .shape {
+            stroke: rgba(255, 255, 255, 0.5);
+            stroke-width: 1;
+            fill: rgba(78, 204, 163, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        svg .shape:hover {
+            stroke: rgba(255, 255, 255, 0.8);
+            fill: rgba(78, 204, 163, 0.4);
+        }
+        
+        /* Canvas styles */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        
+        canvas.active {
+            opacity: 1;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="content">
+        <h1>Tanoda Projekt</h1>
+        <p>Lépj be a matematika lenyűgöző világába interaktív és vizuális magyarázatokkal. Fedezd fel a számok és formák rejtett titkait!</p>
+        <a href="#" class="btn">Kezdjük el</a>
+    </div>
+    
+    <!-- Háttér effekt váltó gombok -->
+    <div class="effect-switcher">
+        <div class="effect-btn active" data-effect="math-shapes" title="Matematikai Formák">
+            <i class="fas fa-shapes"></i>
+        </div>
+        <div class="effect-btn" data-effect="grid" title="3D Grid">
+            <i class="fas fa-border-all"></i>
+        </div>
+        <div class="effect-btn" data-effect="platonics" title="Platóni Testek">
+            <i class="fas fa-cube"></i>
+        </div>
+    </div>
+    
+    <!-- 1. Matematikai objektumok (2D, 3D formák) -->
+    <div id="math-shapes"></div>
+    
+    <!-- 4. 3D Grid -->
+    <div class="grid-container">
+        <div class="grid" id="grid"></div>
+    </div>
+    
+    <!-- 5. 3D Platóni testek -->
+    <div class="platonics-container" id="platonics-container"></div>
+    
+    <!-- Scripts -->
+    <script>
+        // Globális változók
+        const colors = ['#4ecca3', '#3a86ff', '#ff9f1c', '#ff4d6d', '#8338ec'];
+        let mouseX = 0;
+        let mouseY = 0;
+        
+        // Egér pozíció követése
+        document.addEventListener('mousemove', function(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+        
+        // 1. Matematikai formák létrehozása
+        function setupMathShapes() {
+            const container = document.getElementById('math-shapes');
+            const shapes = [];
+            
+            // Különböző típusú alakzatok
+            const shapeTypes = [
+                createTriangle,
+                createSquare,
+                createPentagon,
+                createHexagon,
+                createCircle,
+                createRhombus,
+                createStar,
+                createPi
+            ];
+            
+            // Formák létrehozása
+            for (let i = 0; i < 30; i++) {
+                const shapeFunc = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+                const shape = shapeFunc();
+                container.appendChild(shape);
+                shapes.push(shape);
+                
+                // Kezdeti pozíció és mozgás
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                const speedX = (Math.random() - 0.5) * 1;
+                const speedY = (Math.random() - 0.5) * 1;
+                const rotation = Math.random() * 360;
+                const rotationSpeed = (Math.random() - 0.5) * 1;
+                
+                shape.style.left = x + 'px';
+                shape.style.top = y + 'px';
+                shape.style.transform = `rotate(${rotation}deg)`;
+                
+                // Adat tárolása a mozgáshoz
+                shape.dataset.x = x;
+                shape.dataset.y = y;
+                shape.dataset.speedX = speedX;
+                shape.dataset.speedY = speedY;
+                shape.dataset.rotation = rotation;
+                shape.dataset.rotationSpeed = rotationSpeed;
+            }
+            
+            // Animáció
+            function animateShapes() {
+                shapes.forEach(shape => {
+                    // Mozgatás
+                    let x = parseFloat(shape.dataset.x);
+                    let y = parseFloat(shape.dataset.y);
+                    let speedX = parseFloat(shape.dataset.speedX);
+                    let speedY = parseFloat(shape.dataset.speedY);
+                    let rotation = parseFloat(shape.dataset.rotation);
+                    let rotationSpeed = parseFloat(shape.dataset.rotationSpeed);
+                    
+                    // Pozíció frissítése
+                    x += speedX;
+                    y += speedY;
+                    rotation += rotationSpeed;
+                    
+                    // Határok ellenőrzése
+                    if (x < -100) x = window.innerWidth + 100;
+                    if (x > window.innerWidth + 100) x = -100;
+                    if (y < -100) y = window.innerHeight + 100;
+                    if (y > window.innerHeight + 100) y = -100;
+                    
+                    // Adatok frissítése
+                    shape.dataset.x = x;
+                    shape.dataset.y = y;
+                    shape.dataset.rotation = rotation;
+                    
+                    // Stílus frissítése
+                    shape.style.left = x + 'px';
+                    shape.style.top = y + 'px';
+                    shape.style.transform = `rotate(${rotation}deg)`;
+                    
+                    // Egér közelségének ellenőrzése
+                    const dx = mouseX - x;
+                    const dy = mouseY - y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 150) {
+                        // Eltávolodás az egértől
+                        const angle = Math.atan2(dy, dx);
+                        shape.dataset.speedX = -Math.cos(angle) * 1;
+                        shape.dataset.speedY = -Math.sin(angle) * 1;
+                    }
+                });
+                
+                requestAnimationFrame(animateShapes);
+            }
+            
+            animateShapes();
+        }
+        
+        // Geometriai formák létrehozó függvények
+        function createTriangle() {
+            const triangle = document.createElement('div');
+            triangle.className = 'math-object';
+            const size = 20 + Math.random() * 50;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            triangle.innerHTML = `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <polygon class="shape" points="50,15 100,100 0,100" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="2" />
+                </svg>
+            `;
+            
+            return triangle;
+        }
+        
+        function createSquare() {
+            const square = document.createElement('div');
+            square.className = 'math-object';
+            const size = 20 + Math.random() * 50;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            square.innerHTML = `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <rect class="shape" x="10" y="10" width="80" height="80" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="2" />
+                </svg>
+            `;
+            
+            return square;
+        }
+        
+        function createPentagon() {
+            const pentagon = document.createElement('div');
+            pentagon.className = 'math-object';
+            const size = 25 + Math.random() * 50;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            pentagon.innerHTML = `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <polygon class="shape" points="50,10 90,40 75,90 25,90 10,40" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="2" />
+                </svg>
+            `;
+            
+            return pentagon;
+        }
+        
+        function createHexagon() {
+            const hexagon = document.createElement('div');
+            hexagon.className = 'math-object';
+            const size = 25 + Math.random() * 50;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            hexagon.innerHTML = `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <polygon class="shape" points="50,10 90,30 90,70 50,90 10,70 10,30" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="2" />
+                </svg>
+            `;
+            
+            return hexagon;
+        }
+        
+        function createCircle() {
+            const circle = document.createElement('div');
+            circle.className = 'math-object';
+            const size = 20 + Math.random() * 50;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            circle.innerHTML = `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <circle class="shape" cx="50" cy="50" r="40" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="2" />
+                </svg>
+            `;
+            
+            return circle;
+        }
+        
+        function createRhombus() {
+            const rhombus = document.createElement('div');
+            rhombus.className = 'math-object';
+            const size = 25 + Math.random() * 50;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            rhombus.innerHTML = `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <polygon class="shape" points="50,10 90,50 50,90 10,50" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="2" />
+                </svg>
+            `;
+            
+            return rhombus;
+        }
+        
+        function createStar() {
+            const star = document.createElement('div');
+            star.className = 'math-object';
+            const size = 30 + Math.random() * 50;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            star.innerHTML = `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <polygon class="shape" points="50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="2" />
+                </svg>
+            `;
+            
+            return star;
+        }
+        
+        function createPi() {
+            const pi = document.createElement('div');
+            pi.className = 'math-object';
+            const size = 30 + Math.random() * 40;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            pi.style.width = size + 'px';
+            pi.style.height = size + 'px';
+            pi.style.color = color;
+            pi.style.fontSize = size + 'px';
+            pi.style.display = 'flex';
+            pi.style.justifyContent = 'center';
+            pi.style.alignItems = 'center';
+            pi.style.opacity = '0.5';
+            pi.style.textShadow = `0 0 10px ${color}`;
+            pi.textContent = 'π';
+            
+            return pi;
+        }
+        
+        // 4. 3D Grid létrehozása
+        function setup3DGrid() {
+            const grid = document.getElementById('grid');
+            const gridSize = 20;
+            const gridGap = 40;
+            
+            // Vízszintes vonalak
+            for (let i = 0; i <= gridSize; i++) {
+                const horizontalLine = document.createElement('div');
+                horizontalLine.className = 'grid-line horizontal-line';
+                horizontalLine.style.top = (i * gridGap) + 'px';
+                grid.appendChild(horizontalLine);
+            }
+            
+            // Függőleges vonalak
+            for (let i = 0; i <= gridSize; i++) {
+                const verticalLine = document.createElement('div');
+                verticalLine.className = 'grid-line vertical-line';
+                verticalLine.style.left = (i * gridGap) + 'px';
+                grid.appendChild(verticalLine);
+            }
+            
+            // Grid animáció
+            let angle = 0;
+            function animateGrid() {
+                angle += 0.1;
+                const baseRotationX = 60 + Math.sin(angle * 0.2) * 10;
+                const baseRotationZ = 45 + Math.cos(angle * 0.3) * 10;
+                
+                grid.style.transform = `translate(-50%, -50%) rotateX(${baseRotationX}deg) rotateZ(${baseRotationZ}deg)`;
+                
+                // Az egér mozgása alapján is enyhén elforgatjuk
+                const mouseXRatio = (mouseX / window.innerWidth - 0.5) * 10;
+                const mouseYRatio = (mouseY / window.innerHeight - 0.5) * 10;
+                
+                grid.style.transform = `translate(-50%, -50%) rotateX(${baseRotationX + mouseYRatio}deg) rotateZ(${baseRotationZ + mouseXRatio}deg)`;
+                
+                requestAnimationFrame(animateGrid);
+            }
+            
+            animateGrid();
+        }
+        
+        // 5. Platóni testek létrehozása
+        function setupPlatonicSolids() {
+            const container = document.getElementById('platonics-container');
+            
+            // Tetraéder (4 háromszögű lap)
+            createTetrahedron(container);
+            
+            // Hexaéder/kocka (6 négyzet lap)
+            createCube(container);
+            
+            // Oktaéder (8 háromszögű lap)
+            createOctahedron(container);
+            
+            // Dodekaéder (12 ötszögű lap)
+            createDodecahedron(container);
+            
+            // Ikozaéder (20 háromszögű lap)
+            createIcosahedron(container);
+        }
+        
+        // Tetraéder létrehozása
+        function createTetrahedron(container) {
+            const tetrahedron = document.createElement('div');
+            tetrahedron.className = 'platonic-solid';
+            tetrahedron.style.top = '30%';
+            tetrahedron.style.left = '20%';
+            container.appendChild(tetrahedron);
+            
+            // Egyszerűsített tetraéder (csak a keret)
+            const size = 100;
+            
+            // SVG tetraéder
+            tetrahedron.innerHTML = `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                    <g transform="translate(50, 50)">
+                        <path class="shape" d="M0,-40 L40,20 L-40,20 Z" fill="rgba(78, 204, 163, 0.2)" stroke="rgba(78, 204, 163, 0.5)" />
+                        <path class="shape" d="M0,-40 L40,20 L0,0 Z" fill="rgba(58, 134, 255, 0.2)" stroke="rgba(58, 134, 255, 0.5)" />
+                        <path class="shape" d="M0,-40 L0,0 L-40,20 Z" fill="rgba(255, 159, 28, 0.2)" stroke="rgba(255, 159, 28, 0.5)" />
+                        <path class="shape" d="M-40,20 L40,20 L0,0 Z" fill="rgba(255, 77, 109, 0.2)" stroke="rgba(255, 77, 109, 0.5)" />
+                    </g>
+                </svg>
+            `;
+            
+            // Animáció
+            let angle = 0;
+            function animateTetrahedron() {
+                angle += 0.5;
+                tetrahedron.style.transform = `rotateX(${angle}deg) rotateY(${angle * 1.5}deg) rotateZ(${angle * 0.5}deg)`;
+                requestAnimationFrame(animateTetrahedron);
+            }
+            
+            animateTetrahedron();
+        }
+        
+        // Kocka létrehozása
+        function createCube(container) {
+            const cube = document.createElement('div');
+            cube.className = 'platonic-solid';
+            cube.style.top = '30%';
+            cube.style.left = '50%';
+            container.appendChild(cube);
+            
+            // Kocka CSS 3D transzformációkkal
+            const size = 80;
+            const halfSize = size / 2;
+            
+            cube.style.width = size + 'px';
+            cube.style.height = size + 'px';
+            cube.style.transformStyle = 'preserve-3d';
+            
+            // Oldalak létrehozása
+            const sides = [
+                { transform: `translateZ(${halfSize}px)`, color: colors[0] },
+                { transform: `translateZ(-${halfSize}px) rotateY(180deg)`, color: colors[1] },
+                { transform: `translateX(${halfSize}px) rotateY(90deg)`, color: colors[2] },
+                { transform: `translateX(-${halfSize}px) rotateY(-90deg)`, color: colors[3] },
+                { transform: `translateY(${halfSize}px) rotateX(90deg)`, color: colors[4] },
+                { transform: `translateY(-${halfSize}px) rotateX(-90deg)`, color: colors[0] }
+            ];
+            
+            sides.forEach(side => {
+                const face = document.createElement('div');
+                face.className = 'face';
+                face.style.position = 'absolute';
+                face.style.width = size + 'px';
+                face.style.height = size + 'px';
+                face.style.backgroundColor = `${side.color}20`; // 20 = 12.5% opacity
+                face.style.border = `1px solid ${side.color}80`; // 80 = 50% opacity
+                face.style.transform = side.transform;
+                cube.appendChild(face);
+            });
+            
+            // Animáció
+            let angle = 0;
+            function animateCube() {
+                angle += 0.5;
+                cube.style.transform = `rotateX(${angle * 0.7}deg) rotateY(${angle}deg)`;
+                requestAnimationFrame(animateCube);
+            }
+            
+            animateCube();
+        }
+        
+        // Oktaéder létrehozása
+        function createOctahedron(container) {
+            const octahedron = document.createElement('div');
+            octahedron.className = 'platonic-solid';
+            octahedron.style.top = '70%';
+            octahedron.style.left = '30%';
+            container.appendChild(octahedron);
+            
+            // SVG oktaéder
+            const size = 90;
+            
+            octahedron.innerHTML = `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                    <g transform="translate(50, 50)">
+                        <path class="shape" d="M0,-40 L40,0 L0,40 Z" fill="rgba(78, 204, 163, 0.2)" stroke="rgba(78, 204, 163, 0.5)" />
+                        <path class="shape" d="M0,-40 L-40,0 L0,40 Z" fill="rgba(58, 134, 255, 0.2)" stroke="rgba(58, 134, 255, 0.5)" />
+                        <path class="shape" d="M0,-40 L-40,0 L40,0 Z" fill="rgba(255, 159, 28, 0.2)" stroke="rgba(255, 159, 28, 0.5)" />
+                        <path class="shape" d="M0,40 L-40,0 L40,0 Z" fill="rgba(255, 77, 109, 0.2)" stroke="rgba(255, 77, 109, 0.5)" />
+                    </g>
+                </svg>
+            `;
+            
+            // Animáció
+            let angle = 0;
+            function animateOctahedron() {
+                angle += 0.5;
+                octahedron.style.transform = `rotateX(${angle * 0.8}deg) rotateY(${angle * 1.2}deg)`;
+                requestAnimationFrame(animateOctahedron);
+            }
+            
+            animateOctahedron();
+        }
+        
+        // Dodekaéder létrehozása (egyszerűsített verzió)
+        function createDodecahedron(container) {
+            const dodecahedron = document.createElement('div');
+            dodecahedron.className = 'platonic-solid';
+            dodecahedron.style.top = '65%';
+            dodecahedron.style.left = '70%';
+            container.appendChild(dodecahedron);
+            
+            // SVG dodekaéder (egyszerűsített)
+            const size = 70;
+            
+            dodecahedron.innerHTML = `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                    <circle class="shape" cx="50" cy="50" r="40" fill="rgba(131, 56, 236, 0.2)" stroke="rgba(131, 56, 236, 0.5)" />
+                    <g transform="translate(50, 50)">
+                        <polygon class="shape" points="0,-40 23,-32 36,-10 23,32 0,40 -23,32 -36,10 -23,-32" fill="rgba(78, 204, 163, 0.2)" stroke="rgba(78, 204, 163, 0.5)" />
+                    </g>
+                </svg>
+            `;
+            
+            // Animáció
+            let angle = 0;
+            function animateDodecahedron() {
+                angle += 0.3;
+                dodecahedron.style.transform = `rotateZ(${angle}deg)`;
+                requestAnimationFrame(animateDodecahedron);
+            }
+            
+            animateDodecahedron();
+        }
+        
+        // Ikozaéder létrehozása
+        function createIcosahedron(container) {
+            const icosahedron = document.createElement('div');
+            icosahedron.className = 'platonic-solid';
+            icosahedron.style.top = '20%';
+            icosahedron.style.left = '80%';
+            container.appendChild(icosahedron);
+            
+            // SVG ikozaéder (egyszerűsített)
+            const size = 80;
+            
+            icosahedron.innerHTML = `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                    <g transform="translate(50, 50)">
+                        <polygon class="shape" points="0,-40 38,-12 23,32 -23,32 -38,-12" fill="rgba(255, 77, 109, 0.2)" stroke="rgba(255, 77, 109, 0.5)" />
+                        <polygon class="shape" points="0,-40 38,-12 0,0 -38,-12" fill="rgba(58, 134, 255, 0.2)" stroke="rgba(58, 134, 255, 0.5)" />
+                        <polygon class="shape" points="0,0 38,-12 23,32" fill="rgba(78, 204, 163, 0.2)" stroke="rgba(78, 204, 163, 0.5)" />
+                        <polygon class="shape" points="0,0 -38,-12 -23,32" fill="rgba(255, 159, 28, 0.2)" stroke="rgba(255, 159, 28, 0.5)" />
+                        <polygon class="shape" points="0,0 23,32 -23,32" fill="rgba(131, 56, 236, 0.2)" stroke="rgba(131, 56, 236, 0.5)" />
+                    </g>
+                </svg>
+            `;
+            
+            // Animáció
+            let angle = 0;
+            function animateIcosahedron() {
+                angle += 0.4;
+                icosahedron.style.transform = `rotateX(${angle * 0.5}deg) rotateY(${angle}deg)`;
+                requestAnimationFrame(animateIcosahedron);
+            }
+            
+            animateIcosahedron();
+        }
+        
+        // Háttéreffektek közötti váltás
+        function setupEffectSwitcher() {
+            const effectBtns = document.querySelectorAll('.effect-btn');
+            const containers = {
+                'math-shapes': document.getElementById('math-shapes'),
+                'grid': document.querySelector('.grid-container'),
+                'platonics': document.querySelector('.platonics-container')
+            };
+            
+            // Kezdetben csak az első effekt látható
+            Object.values(containers).forEach(container => {
+                container.style.opacity = '0';
+                container.style.zIndex = '1';
+            });
+            containers['math-shapes'].style.opacity = '1';
+            containers['math-shapes'].style.zIndex = '2';
+            
+            // Effekt váltás kezelése
+            effectBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const effect = this.getAttribute('data-effect');
+                    
+                    // Aktív gomb kezelése
+                    effectBtns.forEach(otherBtn => {
+                        otherBtn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Konténerek közötti váltás
+                    Object.entries(containers).forEach(([key, container]) => {
+                        if (key === effect) {
+                            container.style.opacity = '1';
+                            container.style.zIndex = '2';
+                        } else {
+                            container.style.opacity = '0';
+                            container.style.zIndex = '1';
+                        }
+                    });
+                });
+            });
+        }
+        
+        // Oldal betöltésekor
+        window.addEventListener('load', function() {
+            // Háttéreffektek inicializálása
+            setupMathShapes();
+            setup3DGrid();
+            setupPlatonicSolids();
+            setupEffectSwitcher();
+        });
+    </script>
+</body>
+</html>

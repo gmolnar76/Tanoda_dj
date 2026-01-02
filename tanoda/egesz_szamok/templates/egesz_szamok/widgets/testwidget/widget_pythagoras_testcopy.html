@@ -1,0 +1,7 @@
+{% extends "egesz_szamok/widgets/testwidget/testwidget_base.html" %}
+{% load static %}
+{% block content %}
+    {% include "egesz_szamok/widgets/widget_pythagoras.html" %}
+    <script src="{% static 'testwidget/pitagorasz_tabla_test.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'testwidget/pythagoras_test.css' %}">
+{% endblock %}

@@ -1,0 +1,139 @@
+{% load static %}
+<!-- Dashboard Header -->
+<header class="dashboard-header" style="
+    height: var(--header-height);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+">
+    <!-- Left Section: Toggle + Page Title -->
+    <div class="header-left" style="display: flex; align-items: center; gap: 16px;">
+        <!-- Mobile Sidebar Toggle -->
+        <button class="sidebar-toggle" onclick="toggleSidebar()" title="Menü megnyitása">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Page Title -->
+        <h1 class="page-title" style="font-size: 20px; font-weight: 600; margin: 0;">
+            {% block header_title %}Szorzás Gyakorló{% endblock %}
+        </h1>
+
+        <!-- Breadcrumb (Optional) -->
+        {% block header_breadcrumb %}{% endblock %}
+    </div>
+
+    <!-- Right Section: Widgets + Actions -->
+    <div class="header-right" style="display: flex; align-items: center; gap: 16px;">
+        <!-- Date Widget -->
+        <div class="header-widget" style="
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        ">
+            <span class="widget-label" style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+                Ma
+            </span>
+            <span class="widget-value" id="current-date" style="font-size: 14px; font-weight: 600; color: var(--text-primary);">
+                <!-- Filled by JavaScript -->
+            </span>
+        </div>
+
+        <!-- Points Widget -->
+        <div class="header-widget mobile-visible" style="
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            padding: 8px 16px;
+            background: rgba(78, 204, 163, 0.1);
+            border: 1px solid rgba(78, 204, 163, 0.2);
+            border-radius: 12px;
+        ">
+            <span class="widget-label" style="font-size: 10px; color: var(--neon-green); text-transform: uppercase; letter-spacing: 0.5px;">
+                Pontszám
+            </span>
+            <span class="widget-value" id="header-points" style="font-size: 16px; font-weight: 700; color: var(--neon-green);">
+                {{ osszes_pont|default:0 }}
+            </span>
+        </div>
+
+        <!-- Streak Widget (Optional) -->
+        {% if streak and streak > 0 %}
+        <div class="header-widget" style="
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            padding: 8px 16px;
+            background: rgba(255, 140, 66, 0.1);
+            border: 1px solid rgba(255, 140, 66, 0.2);
+            border-radius: 12px;
+        ">
+            <span class="widget-label" style="font-size: 10px; color: var(--neon-orange); text-transform: uppercase; letter-spacing: 0.5px;">
+                Sorozat
+            </span>
+            <span class="widget-value" style="font-size: 16px; font-weight: 700; color: var(--neon-orange);">
+                {{ streak }}x <i class="fas fa-fire" style="font-size: 14px;"></i>
+            </span>
+        </div>
+        {% endif %}
+
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle" onclick="toggleTheme()" title="Téma váltás" style="
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        ">
+            <i class="fas fa-sun"></i>
+        </button>
+
+        <!-- Help Button (Optional) -->
+        <button class="btn-icon btn-icon-sm btn-secondary" onclick="showHelp()" title="Súgó" style="
+            display: none; /* Show if help is available */
+        ">
+            <i class="fas fa-question"></i>
+        </button>
+    </div>
+</header>
+
+<style>
+    /* Header Responsive Styles */
+    @media (max-width: 768px) {
+        .dashboard-header {
+            padding: 0 16px !important;
+        }
+
+        .dashboard-header .header-widget:not(.mobile-visible) {
+            display: none !important;
+        }
+
+        .dashboard-header .page-title {
+            font-size: 16px !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .dashboard-header .theme-toggle {
+            width: 40px !important;
+            height: 40px !important;
+        }
+    }
+</style>

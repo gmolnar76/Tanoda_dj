@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Elérhető Kérdőívek{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Elérhető Kérdőívek</h1>
+
+    {% if kerdoivek %}
+        <div class="list-group">
+            {% for k in kerdoivek %}
+                <a href="{% url 'kerdoiv:kerdoiv_kitoltes' k.id %}" class="list-group-item list-group-item-action">
+                    <h5 class="mb-1">{{ k.cim }}</h5>
+                    {% if k.leiras %}
+                        <p class="mb-1">{{ k.leiras|truncatewords:20 }}</p>
+                    {% endif %}
+                    <small>Kérdések száma: {{ k.kerdesek.count }}</small>
+                    {# Itt lehetne jelezni, ha már kitöltötte, vagy az eredményét #}
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Jelenleg nincsenek elérhető kérdőívek.</p>
+    {% endif %}
+</div>
+{% endblock %}

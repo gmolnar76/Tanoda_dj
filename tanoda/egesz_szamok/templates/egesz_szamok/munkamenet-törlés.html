@@ -1,0 +1,28 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/munkamenet.css' %}">
+
+<div class="munkamenet-container">
+    <div class="munkamenet-lepes {% if aktiv_lepes == 'szorzas' %}aktiv{% endif %}" data-target="{% url 'egesz_szamok:szorzas' %}">
+        Szorzás
+    </div>
+    <div class="munkamenet-nyil"></div>
+    <div class="munkamenet-lepes {% if aktiv_lepes == 'sik_es_ter' %}aktiv{% endif %}" data-target="{% url 'plotly_chart:kordinata' %}">
+        Sík és tér
+    </div>
+    <div class="munkamenet-nyil"></div>
+    <div class="munkamenet-lepes {% if aktiv_lepes == 'blockly' %}aktiv{% endif %}" data-target="#">
+        Blockly
+    </div>
+    <div class="munkamenet-nyil"></div>
+    <div class="munkamenet-lepes {% if aktiv_lepes == 'ellenorzes' %}aktiv{% endif %}" data-target="#">
+        Ellenőrzés
+    </div>
+    <div class="munkamenet-nyil"></div>
+    <div class="munkamenet-lepes {% if aktiv_lepes == 'siker' %}aktiv{% endif %}" data-target="#">
+        Siker!
+    </div>
+</div>
+
+<script src="{% static 'js/plotly_init.js' %}"></script>
+<script src="{% static 'js/eg_szamok_munkamenet.js' %}"></script>

@@ -1,0 +1,54 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block title %}Kísérlet 3: Minimális Three.js Teszt{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <a href="{% url 'TRON_Bit:tron_index' %}" class="btn btn-secondary mb-3">Vissza a TRON menübe</a>
+    <h2>Kísérlet 3: Minimális Three.js Teszt</h2>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// A legegyszerűbb Three.js implementáció - közvetlen betöltés után
+// Ez a script az oldal alján fut le, amikor már minden DOM elem betöltődött
+console.log("Script betöltés kezdete");
+
+// 1. Alap komponensek létrehozása
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+
+// 2. Renderer méret beállítása
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// 3. Egyszerű piros kocka létrehozása
+const geometry = new THREE.BoxGeometry();
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
+
+// 4. Kamera pozicionálása
+camera.position.z = 5;
+
+// 5. Animáció
+function animate() {
+    requestAnimationFrame(animate);
+    
+    // Kocka forgatása
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+    
+    // Jelenet renderelése
+    renderer.render(scene, camera);
+}
+
+// 6. Animáció indítása
+animate();
+console.log("Three.js inicializálás befejezve");
+</script>
+{% endblock %}

@@ -1,0 +1,557 @@
+{% extends "threejs_app/base/base_threejs.html" %}
+{% load static %}
+
+{% block threejs_title %}Blockly és Three.js Integráció{% endblock %}
+{% block threejs_page_title %}Blockly és Three.js Programozás{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'blockly/css/blockly.css' %}">
+<style>
+    .integration-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 20px;
+    }
+    
+    .blockly-panel {
+        background-color: #1e1e1e;
+        border: 1px solid #444;
+        border-radius: 8px;
+        padding: 10px;
+        height: 500px;
+        position: relative;
+    }
+    
+    .blockly-toolbar {
+        display: flex;
+        margin-bottom: 10px;
+        gap: 10px;
+    }
+    
+    .threejs-panel {
+        background-color: #1e1e1e;
+        border: 1px solid #444;
+        border-radius: 8px;
+        padding: 10px;
+        height: 500px;
+    }
+    
+    #blocklyDiv {
+        position: absolute;
+        top: 50px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #252526;
+    }
+    
+    .code-panel {
+        margin-top: 20px;
+        background-color: #1e1e1e;
+        border: 1px solid #444;
+        border-radius: 8px;
+        padding: 10px;
+    }
+    
+    #generatedCode {
+        background-color: #252526;
+        color: #d4d4d4;
+        border: 1px solid #3c3c3c;
+        border-radius: 4px;
+        padding: 15px;
+        font-family: 'Consolas', 'Courier New', monospace;
+        height: 150px;
+        overflow-y: auto;
+    }
+    
+    .btn-run {
+        background-color: #6200ee;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .btn-run:hover {
+        background-color: #7e3ff2;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(124, 77, 255, 0.4);
+    }
+</style>
+{% endblock %}
+
+{% block threejs_controls %}
+<button id="runCodeButton" class="btn btn-run">Kód futtatása</button>
+<button id="resetSceneButton" class="btn btn-secondary">Alaphelyzet</button>
+<button id="toggleGridButton" class="btn btn-primary">Rács ki/be</button>
+<button id="toggleAxesButton" class="btn btn-primary">Tengelyek ki/be</button>
+{% endblock %}
+
+{% block threejs_content %}
+<div class="info-panel mb-3">
+    <h3>Programozz 3D objektumokat</h3>
+    <p>Ez a panel lehetővé teszi, hogy Blockly blokkok segítségével irányítsd a Three.js 3D objektumokat. Készíts programot a bal oldali Blockly szerkesztőben, majd futtasd le a "Kód futtatása" gomb megnyomásával!</p>
+</div>
+
+<div class="integration-container">
+    <div class="blockly-panel">
+        <div class="blockly-toolbar">
+            <button id="saveBlocksButton" class="btn btn-primary">Blokkok mentése</button>
+            <button id="loadBlocksButton" class="btn btn-primary">Blokkok betöltése</button>
+            <button id="showCodeButton" class="btn btn-primary">Kód megtekintése</button>
+        </div>
+        <div id="blocklyDiv"></div>
+    </div>
+    
+    <div class="threejs-panel">
+        <div id="threeJsRenderer" 
+             class="threejs-renderer"
+             data-width="100%"
+             data-height="450"
+             data-scene="blockly_scene"
+             data-background-color="#121212">
+        </div>
+    </div>
+</div>
+
+<div class="code-panel">
+    <h4>Generált JavaScript kód:</h4>
+    <pre id="generatedCode">// Itt jelenik meg a generált kód...</pre>
+</div>
+{% endblock %}
+
+{% block threejs_extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+<script src="https://unpkg.com/blockly/blockly.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ThreeJS inicializálása kis késleltetéssel, hogy biztosan betöltődjön minden függőség
+    setTimeout(function() {
+        if (typeof ThreeJSInitializer === 'undefined') {
+            console.error('ThreeJSInitializer nem található!');
+            return;
+        }
+        
+        // Three.js scene inicializálása
+        const threeJSInstance = ThreeJSInitializer.init('threeJsRenderer', {
+            defaultObjects: [],
+            enableControls: true
+        });
+        
+        // Blockly toolbox definíciója - 3D objektumokhoz
+        const toolbox = {
+            kind: 'categoryToolbox',
+            contents: [
+                {
+                    kind: 'category',
+                    name: '3D Objektumok',
+                    colour: '#5CA699',
+                    contents: [
+                        {
+                            kind: 'block',
+                            type: 'create_cube'
+                        },
+                        {
+                            kind: 'block',
+                            type: 'create_sphere'
+                        },
+                        {
+                            kind: 'block',
+                            type: 'create_cylinder'
+                        }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Transzformációk',
+                    colour: '#5C68A6',
+                    contents: [
+                        {
+                            kind: 'block',
+                            type: 'rotate_object'
+                        },
+                        {
+                            kind: 'block',
+                            type: 'move_object'
+                        },
+                        {
+                            kind: 'block',
+                            type: 'scale_object'
+                        }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Megjelenés',
+                    colour: '#A65C8B',
+                    contents: [
+                        {
+                            kind: 'block',
+                            type: 'set_object_color'
+                        },
+                        {
+                            kind: 'block',
+                            type: 'set_object_opacity'
+                        },
+                        {
+                            kind: 'block',
+                            type: 'set_object_wireframe'
+                        }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Vezérlés',
+                    colour: '#a55b5b',
+                    contents: [
+                        {
+                            kind: 'block',
+                            type: 'animation_loop'
+                        },
+                        {
+                            kind: 'block',
+                            type: 'wait_seconds'
+                        },
+                        {
+                            kind: 'block',
+                            type: 'clear_scene'
+                        }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Logika',
+                    colour: '%{BKY_LOGIC_HUE}',
+                    contents: [
+                        {
+                            kind: 'block',
+                            type: 'controls_if'
+                        },
+                        {
+                            kind: 'block',
+                            type: 'logic_compare'
+                        },
+                        {
+                            kind: 'block',
+                            type: 'logic_boolean'
+                        }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Ciklusok',
+                    colour: '%{BKY_LOOPS_HUE}',
+                    contents: [
+                        {
+                            kind: 'block',
+                            type: 'controls_repeat_ext'
+                        },
+                        {
+                            kind: 'block',
+                            type: 'controls_for'
+                        }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Matematika',
+                    colour: '%{BKY_MATH_HUE}',
+                    contents: [
+                        {
+                            kind: 'block',
+                            type: 'math_number'
+                        },
+                        {
+                            kind: 'block',
+                            type: 'math_arithmetic'
+                        },
+                        {
+                            kind: 'block',
+                            type: 'math_single'
+                        }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Változók',
+                    custom: 'VARIABLE',
+                    colour: '%{BKY_VARIABLES_HUE}'
+                }
+            ]
+        };
+        
+        // Blockly inicializálása
+        const workspace = Blockly.inject('blocklyDiv', {
+            toolbox: toolbox,
+            theme: Blockly.Themes.Dark,
+            grid: {
+                spacing: 20,
+                length: 3,
+                colour: '#ccc',
+                snap: true
+            },
+            zoom: {
+                controls: true,
+                wheel: true,
+                startScale: 1.0,
+                maxScale: 3,
+                minScale: 0.3,
+                scaleSpeed: 1.2
+            },
+            trashcan: true
+        });
+        
+        // Egyéni Blockly blokkok definiálása 3D-objektumokhoz
+        Blockly.Blocks['create_cube'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Kocka létrehozása");
+                this.appendValueInput("SIZE")
+                    .setCheck("Number")
+                    .appendField("méret");
+                this.appendValueInput("X")
+                    .setCheck("Number")
+                    .appendField("X pozíció");
+                this.appendValueInput("Y")
+                    .setCheck("Number")
+                    .appendField("Y pozíció");
+                this.appendValueInput("Z")
+                    .setCheck("Number")
+                    .appendField("Z pozíció");
+                this.appendDummyInput()
+                    .appendField("név")
+                    .appendField(new Blockly.FieldTextInput("kocka1"), "NAME");
+                this.setInputsInline(false);
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour('#5CA699');
+                this.setTooltip("Kocka létrehozása a megadott mérettel és pozícióval");
+                this.setHelpUrl("");
+            }
+        };
+        
+        Blockly.JavaScript['create_cube'] = function(block) {
+            var size = Blockly.JavaScript.valueToCode(block, 'SIZE', Blockly.JavaScript.ORDER_ATOMIC) || '1';
+            var x = Blockly.JavaScript.valueToCode(block, 'X', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            var y = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            var z = Blockly.JavaScript.valueToCode(block, 'Z', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            var name = block.getFieldValue('NAME');
+            var code = `
+            // Kocka létrehozása
+            const ${name} = ThreeJSInitializer.createObject('cube', {
+                size: ${size}
+            }, '${name}');
+            ${name}.position.set(${x}, ${y}, ${z});
+            `;
+            return code;
+        };
+        
+        Blockly.Blocks['create_sphere'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Gömb létrehozása");
+                this.appendValueInput("RADIUS")
+                    .setCheck("Number")
+                    .appendField("sugár");
+                this.appendValueInput("X")
+                    .setCheck("Number")
+                    .appendField("X pozíció");
+                this.appendValueInput("Y")
+                    .setCheck("Number")
+                    .appendField("Y pozíció");
+                this.appendValueInput("Z")
+                    .setCheck("Number")
+                    .appendField("Z pozíció");
+                this.appendDummyInput()
+                    .appendField("név")
+                    .appendField(new Blockly.FieldTextInput("gomb1"), "NAME");
+                this.setInputsInline(false);
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour('#5CA699');
+                this.setTooltip("Gömb létrehozása a megadott sugárral és pozícióval");
+                this.setHelpUrl("");
+            }
+        };
+        
+        Blockly.JavaScript['create_sphere'] = function(block) {
+            var radius = Blockly.JavaScript.valueToCode(block, 'RADIUS', Blockly.JavaScript.ORDER_ATOMIC) || '1';
+            var x = Blockly.JavaScript.valueToCode(block, 'X', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            var y = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            var z = Blockly.JavaScript.valueToCode(block, 'Z', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            var name = block.getFieldValue('NAME');
+            var code = `
+            // Gömb létrehozása
+            const ${name} = ThreeJSInitializer.createObject('sphere', {
+                radius: ${radius}
+            }, '${name}');
+            ${name}.position.set(${x}, ${y}, ${z});
+            `;
+            return code;
+        };
+        
+        Blockly.Blocks['set_object_color'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Szín beállítása")
+                    .appendField(new Blockly.FieldTextInput("kocka1"), "OBJECT_NAME")
+                    .appendField("objektumhoz")
+                    .appendField(new Blockly.FieldColour('#ff0000'), "COLOR");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour('#A65C8B');
+                this.setTooltip("Objektum színének beállítása");
+                this.setHelpUrl("");
+            }
+        };
+        
+        Blockly.JavaScript['set_object_color'] = function(block) {
+            var objectName = block.getFieldValue('OBJECT_NAME');
+            var color = block.getFieldValue('COLOR');
+            var hexColor = color.replace('#', '0x');
+            var code = `
+            // Szín beállítása
+            const obj_${objectName} = ThreeJSInitializer.getObject('${objectName}');
+            if (obj_${objectName} && obj_${objectName}.material) {
+                obj_${objectName}.material.color.setHex(${hexColor});
+            }
+            `;
+            return code;
+        };
+        
+        Blockly.Blocks['rotate_object'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Forgatás")
+                    .appendField(new Blockly.FieldTextInput("kocka1"), "OBJECT_NAME");
+                this.appendValueInput("X_ROT")
+                    .setCheck("Number")
+                    .appendField("X tengely körül");
+                this.appendValueInput("Y_ROT")
+                    .setCheck("Number")
+                    .appendField("Y tengely körül");
+                this.appendValueInput("Z_ROT")
+                    .setCheck("Number")
+                    .appendField("Z tengely körül");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour('#5C68A6');
+                this.setTooltip("Objektum forgatása a megadott szögekkel (radián)");
+                this.setHelpUrl("");
+            }
+        };
+        
+        Blockly.JavaScript['rotate_object'] = function(block) {
+            var objectName = block.getFieldValue('OBJECT_NAME');
+            var xRot = Blockly.JavaScript.valueToCode(block, 'X_ROT', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            var yRot = Blockly.JavaScript.valueToCode(block, 'Y_ROT', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            var zRot = Blockly.JavaScript.valueToCode(block, 'Z_ROT', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            var code = `
+            // Objektum forgatása
+            const obj_${objectName} = ThreeJSInitializer.getObject('${objectName}');
+            if (obj_${objectName}) {
+                obj_${objectName}.rotation.x += ${xRot};
+                obj_${objectName}.rotation.y += ${yRot};
+                obj_${objectName}.rotation.z += ${zRot};
+            }
+            `;
+            return code;
+        };
+        
+        // Grid és tengelyek hozzáadása
+        const grid = new THREE.GridHelper(10, 10);
+        grid.visible = false;
+        ThreeJSInitializer.addObject('grid', grid);
+        
+        const axes = new THREE.AxesHelper(5);
+        axes.visible = false;
+        ThreeJSInitializer.addObject('axes', axes);
+        
+        // Események kezelése
+        document.getElementById('runCodeButton').addEventListener('click', function() {
+            const code = Blockly.JavaScript.workspaceToCode(workspace);
+            document.getElementById('generatedCode').textContent = code;
+            
+            try {
+                // Előző objektumok törlése
+                const scene = ThreeJSInitializer.getScene();
+                const objects = ThreeJSInitializer.getObjects();
+                
+                Object.keys(objects).forEach(key => {
+                    if (key !== 'grid' && key !== 'axes') {
+                        scene.remove(objects[key]);
+                        if (objects[key].geometry) objects[key].geometry.dispose();
+                        if (objects[key].material) {
+                            if (Array.isArray(objects[key].material)) {
+                                objects[key].material.forEach(m => m.dispose());
+                            } else {
+                                objects[key].material.dispose();
+                            }
+                        }
+                        delete objects[key];
+                    }
+                });
+                
+                // A grid és axes megtartása
+                const gridVisible = grid.visible;
+                const axesVisible = axes.visible;
+                
+                // Kód futtatása
+                eval(code);
+                
+                // Grid és axes láthatóságának visszaállítása
+                grid.visible = gridVisible;
+                axes.visible = axesVisible;
+            } catch (e) {
+                console.error('Hiba a kód futtatásakor:', e);
+                document.getElementById('generatedCode').textContent = 'HIBA: ' + e.message;
+            }
+        });
+        
+        document.getElementById('showCodeButton').addEventListener('click', function() {
+            const code = Blockly.JavaScript.workspaceToCode(workspace);
+            document.getElementById('generatedCode').textContent = code;
+        });
+        
+        document.getElementById('saveBlocksButton').addEventListener('click', function() {
+            const xml = Blockly.Xml.workspaceToDom(workspace);
+            const xmlText = Blockly.Xml.domToText(xml);
+            const blob = new Blob([xmlText], {type: 'text/xml'});
+            const a = document.createElement('a');
+            a.download = 'three_js_blocks.xml';
+            a.href = URL.createObjectURL(blob);
+            a.click();
+        });
+        
+        document.getElementById('loadBlocksButton').addEventListener('click', function() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.xml';
+            fileInput.onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const xml = Blockly.utils.xml.textToDom(e.target.result);
+                    Blockly.Xml.clearWorkspaceAndLoadFromXml(xml, workspace);
+                };
+                reader.readAsText(file);
+            };
+            fileInput.click();
+        });
+        
+        document.getElementById('toggleGridButton').addEventListener('click', function() {
+            grid.visible = !grid.visible;
+        });
+        
+        document.getElementById('toggleAxesButton').addEventListener('click', function() {
+            axes.visible = !axes.visible;
+        });
+        
+        document.getElementById('resetSceneButton').addEventListener('click', function() {
+            ThreeJSInitializer.resetScene();
+        });
+        
+    }, 500);
+});
+</script>
+{% endblock %}

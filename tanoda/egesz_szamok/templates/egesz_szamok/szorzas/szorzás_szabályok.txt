@@ -1,0 +1,19 @@
+A szorzásban szereplő számokat tényezőknek, a szorzás eredményét pedig szorzatnak nevezzük.
+
+Ha egy egész számot 10-zel megszorzunk, akkor a számjegyei egy hellyel balra lépnek, az egyesek helyére pedig 0 kerül.
+
+Ha egy egész számot 100-zal megszorzunk, akkor a számjegyei két hellyel balra lépnek, az egyesek és tízesek helyére pedig 0 kerül.
+
+
+A maradék képzésre vonatkozó szabályok a többjegyű szorzás esetén a következők:
+
+Alapelv: A maradék az az érték, ami egy adott helyiértéken túlcsordul, és amit a következő (balra lévő) helyiértékhez kell hozzáadni.
+Maradék keletkezése: Maradék akkor keletkezik, amikor egy részművelet eredménye 10 vagy annál nagyobb egy adott helyiértéken.
+Maradék értéke: A maradék értéke mindig az eredmény 10-es osztásának egész része. Például, ha egy részművelet eredménye 27, akkor a maradék 2, és 7 marad az adott helyiértéken.
+Maradék átvitele: A keletkezett maradékot mindig a következő bal oldali helyiértékhez kell hozzáadni a szorzás következő lépésében.
+Többszörös maradék: Ha egy művelet során már van maradék az adott helyiértéken (az előző műveletből), akkor ezt hozzá kell adni az aktuális részművelet eredményéhez, mielőtt az új maradékot kiszámolnánk.
+Utolsó helyiérték: A legmagasabb helyiértéken (legbaloldalibb számjegy) keletkező maradék lesz a végeredmény legmagasabb helyiértékű számjegye.
+Nulla kezelése: Ha egy részművelet eredménye 0, de van maradék az előző műveletből, akkor ezt a maradékot kell az adott helyiértékre írni.
+Negatív számok: Negatív számok szorzásánál a maradék kezelése ugyanúgy történik, csak a végeredmény előjele változik a szorzás szabályai szerint.
+Folyamatos maradékkezelés: A szorzás során a maradékot folyamatosan kell kezelni, minden részművelet után azonnal át kell vinni a következő helyiértékre.
+Végső ellenőrzés: A szorzás végén ellenőrizni kell, hogy nem maradt-e kezeletlen maradék, amit még hozzá kell adni a legmagasabb helyiértékhez.

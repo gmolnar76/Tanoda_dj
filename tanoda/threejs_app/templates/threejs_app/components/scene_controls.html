@@ -1,0 +1,40 @@
+{% load static %}
+
+<div class="scene-controls-panel">
+    {% if control_type == 'basic' %}
+        <div class="basic-controls">
+            <button id="resetSceneButton" class="btn btn-secondary">Alaphelyzet</button>
+            <button id="toggleGridButton" class="btn btn-primary">Rács ki/be</button>
+            <button id="toggleAxesButton" class="btn btn-primary">Tengelyek ki/be</button>
+        </div>
+    {% elif control_type == 'advanced' %}
+        <div class="advanced-controls">
+            <button id="resetSceneButton" class="btn btn-secondary">Alaphelyzet</button>
+            <button id="toggleGridButton" class="btn btn-primary">Rács ki/be</button>
+            <button id="toggleAxesButton" class="btn btn-primary">Tengelyek ki/be</button>
+            <button id="toggleWireframeButton" class="btn btn-primary">Drótváz mód</button>
+            <button id="takeScreenshotButton" class="btn btn-success">Képernyőkép</button>
+        </div>
+        <div class="control-row mt-3">
+            <div class="control-group">
+                <label for="geometryColor">Szín:</label>
+                <input type="color" id="geometryColor" value="#bb86fc">
+            </div>
+            <div class="control-group">
+                <label for="lightIntensity">Fényerő:</label>
+                <input type="range" id="lightIntensity" min="0" max="2" step="0.1" value="1">
+                <span id="lightIntensityValue">1</span>
+            </div>
+        </div>
+    {% elif control_type == 'blockly' %}
+        <div class="blockly-controls">
+            <button id="runBlocklyButton" class="btn btn-primary">Kód futtatása</button>
+            <button id="resetSceneButton" class="btn btn-secondary">Alaphelyzet</button>
+            <button id="toggleGridButton" class="btn btn-primary">Rács ki/be</button>
+            <button id="toggleAxesButton" class="btn btn-primary">Tengelyek ki/be</button>
+        </div>
+    {% else %}
+        <!-- Alapértelmezett vezérlők -->
+        <button id="resetSceneButton" class="btn btn-secondary">Alaphelyzet</button>
+    {% endif %}
+</div>

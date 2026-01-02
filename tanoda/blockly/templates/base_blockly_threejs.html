@@ -1,0 +1,64 @@
+{% extends "evfolyamok/6/evf6.html" %}
+{% load static %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'blockly/css/blockly_base.css' %}">
+<link rel="stylesheet" href="{% static 'blockly/css/threejs_base.css' %}">
+<link rel="stylesheet" href="{% static 'blockly/css/integration.css' %}">
+{% block extra_combined_css %}{% endblock %}
+{% endblock %}
+
+{% block evf6_content %}
+<div class="blockly-threejs-container">
+    {% block header %}
+    <h1>{% block page_title %}Blockly és Three.js Integráció{% endblock %}</h1>
+    {% endblock %}
+    
+    <div class="workspace-container">
+        <div class="blockly-panel">
+            {% block blockly_editor %}
+            {% include "blockly/components/blockly_editor.html" %}
+            {% endblock %}
+        </div>
+        
+        <div class="threejs-panel">
+            {% block threejs_renderer %}
+            {% include "blockly/components/threejs_renderer.html" %}
+            {% endblock %}
+        </div>
+    </div>
+    
+    <div class="controls-container">
+        {% block combined_controls %}
+        <button id="runButton" class="btn btn-primary">Kód futtatása</button>
+        <button id="resetButton" class="btn btn-secondary">Alaphelyzet</button>
+        {% endblock %}
+    </div>
+    
+    <div class="output-container">
+        {% block output_section %}
+        {% include "blockly/components/code_output.html" %}
+        {% endblock %}
+    </div>
+    
+    {% if debug %}
+    <div id="debug-info">
+        {% include "blockly/components/debug_panel.html" %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="https://unpkg.com/blockly@9.3.3/blockly_compressed.js"></script>
+<script src="https://unpkg.com/blockly@9.3.3/blocks_compressed.js"></script>
+<script src="https://unpkg.com/blockly@9.3.3/javascript_compressed.js"></script>
+<script src="https://unpkg.com/blockly@9.3.3/msg/hu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="{% static 'blockly/js/core/blockly_init.js' %}"></script>
+<script src="{% static 'blockly/js/core/threejs_init.js' %}"></script>
+<script src="{% static 'blockly/js/core/integration.js' %}"></script>
+{% block extra_combined_js %}{% endblock %}
+{% endblock %}

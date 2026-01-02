@@ -1,0 +1,94 @@
+{% extends "egesz_szamok/eg_szamok_szorzasa.html" %}
+{% load static %}
+
+{% block pythagoras_content %}
+<p style="color: red; font-size: 2em;">TESZT - Ez a blokk tartalma</p> {# Teszt elem #}
+<div class="container my-4">
+    <div class="card bg-dark">
+        <div class="card-body">
+            <h2 class="text-center mb-4" style="color:#4ecca3;">Pythagorasz tábla (React)</h2>
+            {# Itt jelenik meg a React komponens #}
+            <div id="react-pythagorasz-root"></div>
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    {# Itt jelenítjük meg a Django formot, ha létezik #}
+    {% if form %}
+        <div class="card bg-dark">
+            <div class="card-body">
+                <h2 class="card-title text-white">Kérdőív: {{ form.kerdesek.first.kerdoiv.cim }}</h2> {# Fehér szövegszín #}
+                {# A form action URL-je a kerdoiv app kitöltő nézetére mutasson #}
+                <form method="post" action="{% url 'kerdoiv:kerdoiv_kitoltes' kerdoiv_id_for_action %}" class="text-white"> {# Fehér szövegszín a teljes űrlapnak #}
+                    {% csrf_token %}
+
+                    {# Globális form hibaüzenetek #}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {# Iterálás a form mezőin (kérdéseken) #}
+                    {% for field in form %}
+                        <div class="mb-3 border p-3 rounded {% if field.errors %}border-danger{% endif %}">
+                            <p class="fw-bold">{{ field.label_tag }} {{ field.help_text }}</p>
+
+                            {# Mező hibaüzenetei #}
+                            {% if field.errors %}
+                                <div class="alert alert-danger py-1">
+                                    {% for error in field.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {# A mező renderelése (pl. rádiógombok, checkboxok, textarea) #}
+                            {# Bootstrap 5 form-check stílus alkalmazása rádiógombokra/checkboxokra #}
+                            {% if field.field.widget.input_type == 'radio' or field.field.widget.input_type == 'checkbox' %}
+                                {% for choice in field %}
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label text-white" for="{{ choice.id_for_label }}"> {# Fehér szövegszín a címkékre #}
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {# Egyéb mezőtípusok (pl. textarea) alapértelmezett renderelése #}
+                                {{ field }}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary">Kérdőív beküldése</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        {# Opcionális üzenet, ha nincs megjeleníthető kérdőív #}
+        <p class="text-center text-muted">Nincs megjeleníthető kérdőív.</p>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/szorzas/Pythagorasz_tabla/pythagorasz_tabla.css' %}">
+{# Bootstrap már valószínűleg be van töltve a base.html-ben, de biztosítjuk %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    /* Egyedi stílusok az űrlaphoz, ha szükséges */
+    .form-check { margin-bottom: 0.5rem; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="{% static 'js/bundles/pythagorasz_tabla_bundle.bundle.js' %}"></script>
+{% endblock %}
+

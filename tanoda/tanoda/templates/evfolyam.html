@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Évfolyam{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/evfolyamok.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% include 'navbar/navbar.html' %}
+    <div class="container-fluid" style="max-width: 98%; margin: 0 auto; padding-top: 2rem; background-color: #121212; color: #e0e0e0; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); padding: 2rem;">
+        <div class="row">
+            <!-- Bal oldali menü -->
+            <div class="col-md-3">
+                <nav class="navbar navbar-expand-md navbar-dark flex-md-column" style="background-color: #1e1e1e; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="sidebarMenu">
+                            {% block sidebar %}{% endblock %}
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            
+            <!-- Középső tartalom -->
+            <div class="col-md-6">
+                <main>
+                    {% block content %}{% endblock %}
+                </main>
+            </div>
+            
+            <!-- Jobb oldali sáv -->
+            <div class="col-md-3">
+                <aside style="background-color: #1e1e1e; border-radius: 8px; padding: 15px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
+                    {% block sidebar_right %}{% endblock %}
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

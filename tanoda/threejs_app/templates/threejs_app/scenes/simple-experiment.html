@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Egyszerű Three.js Kísérlet</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        #scene-container {
+            width: 100%;
+            height: 80vh;
+            display: block;
+            background-color: #f0f0f0;
+        }
+        .controls {
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            background-color: #343a40;
+            color: white;
+        }
+        .btn {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .btn:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Egyszerű Three.js Kísérlet</h1>
+    
+    <div id="scene-container"></div>
+    
+    <div class="controls">
+        <a href="/threejs_app/" class="btn">Vissza a Three.js kezdőlapra</a>
+        <button id="rotate-toggle" class="btn">Forgatás ki/be</button>
+    </div>
+    
+    <!-- A JavaScript kód közvetlenül az oldal végén -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Ellenőrizzük, hogy a THREE objektum létezik-e
+        if (typeof THREE === 'undefined') {
+            console.error('THREE objektum nem található! A Three.js könyvtár nem töltődött be.');
+            document.body.innerHTML = '<div style="color: red; padding: 20px;">HIBA: A Three.js könyvtár nem töltődött be!</div>' + document.body.innerHTML;
+        } else {
+            console.log('THREE objektum sikeresen betöltve:', THREE);
+            
+            // Konténer referencia
+            const container = document.getElementById('scene-container');
+            
+            // Alap komponensek
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x222244);
+            
+            const camera = new THREE.PerspectiveCamera(
+                75, 
+                container.clientWidth / container.clientHeight, 
+                0.1, 
+                1000
+            );
+            camera.position.set(0, 2, 7);
+            
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+            
+            // Fények
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+            
+            // Geometriák
+            const torusGeometry = new THREE.TorusKnotGeometry(1, 0.4, 100, 16);
+            const torusMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0x00ff00,
+                shininess: 100
+            });
+            const torusKnot = new THREE.Mesh(torusGeometry, torusMaterial);
+            scene.add(torusKnot);
+            
+            // Animáció vezérlése
+            let isRotating = true;
+            document.getElementById('rotate-toggle').addEventListener('click', function() {
+                isRotating = !isRotating;
+                this.textContent = isRotating ? 'Forgatás ki' : 'Forgatás be';
+            });
+            
+            // Ablak átméretezés
+            window.addEventListener('resize', function() {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+            
+            // Animációs ciklus
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                if (isRotating) {
+                    torusKnot.rotation.x += 0.01;
+                    torusKnot.rotation.y += 0.01;
+                }
+                
+                renderer.render(scene, camera);
+            }
+            
+            // Indítás
+            animate();
+        }
+    </script>
+</body>
+</html>

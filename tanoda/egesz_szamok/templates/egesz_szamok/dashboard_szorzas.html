@@ -1,0 +1,194 @@
+{% extends "evfolyamok/6/evf6_dashboard.html" %}
+{% load static %}
+
+{% block page_title %}Szorzás Gyakorló{% endblock %}
+{% block header_title %}Szorzás Gyakorló{% endblock %}
+
+{% block dashboard_content %}
+<div class="widget-grid">
+    <!-- Row 1: Main Task Widget + Stats Widget -->
+    <div class="widget-row">
+        <!-- Szorzás Task Widget (Large) -->
+        <div class="widget widget-large glass-card" id="task-widget">
+            {% include "egesz_szamok/widgets/widget_szorzas_task.html" %}
+        </div>
+
+        <!-- Stats Widget (Medium) -->
+        <div class="widget widget-medium glass-card" id="stats-widget-container">
+            {% include "egesz_szamok/widgets/widget_stats.html" %}
+        </div>
+    </div>
+
+    <!-- Row 2: Progress Chart + Pythagorasz Table -->
+    <div class="widget-row">
+        <!-- Progress Widget -->
+        <div class="widget widget-medium glass-card" id="progress-widget-container">
+            {% include "egesz_szamok/widgets/widget_progress.html" %}
+        </div>
+
+        <!-- Pythagorasz Widget -->
+        <div class="widget widget-medium glass-card pythagoras-widget" id="pythagoras-widget-container">
+            {% include "egesz_szamok/widgets/widget_pythagoras.html" %}
+        </div>
+    </div>
+
+    <!-- Row 3: Leaderboard -->
+    <div class="widget-row">
+        <!-- Leaderboard Widget -->
+        <div class="widget widget-full glass-card" id="leaderboard-widget-container">
+            {% include "egesz_szamok/widgets/widget_leaderboard.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block dashboard_extra_css %}
+<!-- Multiplication Module Dashboard Styles -->
+<link rel="stylesheet" href="{% static 'css/szorzas/gyakorlo/dashboard-overrides.css' %}">
+<link rel="stylesheet" href="{% static 'css/szorzas/gyakorlo/szor_messages.css' %}">
+<link rel="stylesheet" href="{% static 'css/szorzas/gyakorlo/fejszamolas_tippek.css' %}">
+<link rel="stylesheet" href="{% static 'css/szorzas/gyakorlo/pythagoras.css' %}">
+<!-- Gamification CSS -->
+<link rel="stylesheet" href="{% static 'css/pont/gamification.css' %}">
+<!-- Mode Toggle CSS -->
+<link rel="stylesheet" href="{% static 'css/dashboard/mode-toggle.css' %}">
+{% endblock %}
+
+{% block dashboard_extra_js %}
+<!-- Real-time Gamification (globális) -->
+<script src="{% static 'js/pont/real_time_scoring.js' %}"></script>
+
+<!-- Legacy globális függvények (backward compatibility) -->
+<script src="{% static 'js/szorzas/gyakorlo/pitagorasz_tabla.js' %}"></script>
+<script src="{% static 'js/szorzas/gyakorlo/szorzas_kihivas.js' %}"></script>
+
+<!-- React Performance Chart (Recharts) -->
+<script src="{% static 'js/bundles/szorzas_performance_chart.bundle.js' %}"></script>
+
+<!-- Modern ESM modulok (main entry point) -->
+<script src="{% static 'js/szorzas/gyakorlo/main.js' %}" type="module"></script>
+
+<script>
+    // Dashboard-specific initialization
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set active module for sidebar
+        window.aktivModul = 'szorzas';
+
+        // Initialize points display sync
+        function syncPoints() {
+            const headerPoints = document.getElementById('header-points');
+            const sidebarPoints = document.getElementById('sidebar-points');
+            const totalPoints = document.getElementById('osszes-pont');
+
+            if (totalPoints && headerPoints) {
+                headerPoints.textContent = totalPoints.textContent;
+            }
+            if (totalPoints && sidebarPoints) {
+                sidebarPoints.textContent = totalPoints.textContent + ' pont';
+            }
+        }
+
+        // Observe points changes
+        const pointsElement = document.getElementById('osszes-pont');
+        if (pointsElement) {
+            const observer = new MutationObserver(syncPoints);
+            observer.observe(pointsElement, { childList: true, characterData: true, subtree: true });
+        }
+
+        // Initial sync
+        syncPoints();
+
+        // Set up difficulty stars renderer
+        function renderDifficultyStars(level) {
+            const container = document.getElementById('nehezseg-kijelzo');
+            if (!container) return;
+
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= level) {
+                    stars += '<i class="fas fa-star"></i>';
+                } else {
+                    stars += '<i class="fas fa-star empty"></i>';
+                }
+            }
+            container.innerHTML = stars;
+        }
+
+        // Initial difficulty render (if available)
+        if (typeof currentDifficulty !== 'undefined') {
+            renderDifficultyStars(currentDifficulty);
+        } else {
+            renderDifficultyStars(1); // Default to 1 star
+        }
+
+        // Expose for external use
+        window.renderDifficultyStars = renderDifficultyStars;
+
+        // Focus input on load
+        const inputField = document.getElementById('valasz');
+        if (inputField) {
+            setTimeout(() => inputField.focus(), 100);
+        }
+    });
+
+    // Update efficiency display (called from szorzas_gyakorlo.js)
+    function updateDashboardStats(stats) {
+        if (stats.efficiency !== undefined) {
+            updateEfficiencyRing(stats.efficiency);
+        }
+        
+        if (stats.correct !== undefined) {
+            const el = document.getElementById('helyes-szam');
+            if (el) {
+                // If it's an array (list of tasks), show the count
+                el.textContent = Array.isArray(stats.correct) ? stats.correct.length : stats.correct;
+            }
+        }
+        
+        if (stats.incorrect !== undefined) {
+            const el = document.getElementById('helytelen-szam');
+            if (el) {
+                // If it's an array (list of errors), show the count to avoid [object Object]
+                el.textContent = Array.isArray(stats.incorrect) ? stats.incorrect.length : stats.incorrect;
+            }
+        }
+
+        // Update Weak Points list
+        if (stats.gyenge_pontok && Array.isArray(stats.gyenge_pontok)) {
+            const container = document.getElementById('gyenge-pontok');
+            const list = document.getElementById('gyenge-pontok-lista');
+            
+            if (container && list) {
+                if (stats.gyenge_pontok.length > 0) {
+                    list.innerHTML = stats.gyenge_pontok.map(pont => `
+                        <div class="weak-point-item" style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem;">
+                            <span>${pont.szorzo} × ${pont.szorzando}</span>
+                            <span style="color: var(--neon-pink);">${Math.round(pont.hiba_arany * 100)}% hiba</span>
+                        </div>
+                    `).join('');
+                    container.style.display = 'block';
+                } else {
+                    container.style.display = 'none';
+                }
+            }
+        }
+    }
+    window.updateDashboardStats = updateDashboardStats;
+
+    // Initial stats update from server-side context
+    document.addEventListener('DOMContentLoaded', function() {
+        try {
+            const initialStats = {
+                efficiency: {{ hatekonysag|default:0 }},
+                correct: {{ megoldott_feladatok|safe|default:"[]" }},
+                incorrect: {{ hibas_valaszok|safe|default:"[]" }},
+                gyenge_pontok: {{ gyenge_pontok|safe|default:"[]" }},
+                total_points: {{ osszes_pont|default:0 }}
+            };
+            updateDashboardStats(initialStats);
+        } catch (e) {
+            console.error("Error initializing dashboard stats:", e);
+        }
+    });
+</script>
+{% endblock %}

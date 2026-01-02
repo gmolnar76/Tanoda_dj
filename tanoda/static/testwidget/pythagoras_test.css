@@ -1,0 +1,9 @@
+/* Pythagoras test CSS: copy or override styles as needed for test */
+#pitagorasz-tabla {
+    background: #181c1f;
+    box-shadow: 0 0 24px #000a, 0 0 8px #0ff4;
+}
+#pitagorasz-tabla .grid-item {
+    border: 1px solid rgba(0,255,255,0.08);
+}
+/* Add more test-specific or glossy overrides here */

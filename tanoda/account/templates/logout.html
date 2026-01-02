@@ -1,0 +1,13 @@
+{# filepath: f:\WEB\Tanoda_Dj\tanoda\account\templates\logout.html #}
+{% extends "index.html" %} {# Corrected path to base template #}
+
+{% block title %}Kijelentkezve{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="alert alert-success" role="alert">
+        Sikeresen kijelentkeztél.
+    </div>
+    <p><a href="{% url 'account:login' %}">Kattints ide az újbóli bejelentkezéshez.</a></p> {# Corrected URL tag with namespace #}
+</div>
+{% endblock %}

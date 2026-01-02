@@ -1,0 +1,392 @@
+/* pythagoras.css */
+/* Az 1-22-es táblázat megjelenítését vezérlő stílusok */
+
+/* Pitagorasz tábla konténer */
+.pitagorasz-tabla-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    overflow: auto;
+}
+
+/* Alap táblázat elrendezés */
+.pitagorasz-tabla {
+    display: grid;                       /* CSS Grid elrendezést használunk a táblázat létrehozásához */
+    grid-template-columns: repeat(23, minmax(15px, 1fr)); /* 23 oszlop (0-22) kisebb cellákkal */
+    grid-template-rows: repeat(23, minmax(15px, 1fr));    /* 23 sor (0-22) ugyanolyan méretű cellákkal */
+    gap: 1px;                            /* Kisebb távolság a cellák között */
+    width: 100%;                         /* Teljes szélesség a konténerben */
+    max-width: 400px;                    /* Maximum szélesség korlátozás */
+    height: auto;                        /* Magasság automatikus */
+    aspect-ratio: 1 / 1;                 /* Kényszerített négyzet arány */
+    margin: 0 auto;                      /* Középre igazítás */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Erősebb árnyék */
+    background-color: transparent;        /* Átlátszó háttér a panel színéhez */
+    border-radius: 8px;                  /* Lekerekített sarkok */
+    overflow: hidden;                    /* A túlnyúló tartalom levágása */
+}
+
+/* Alap cellaformázás */
+.pitagorasz-tabla .grid-item {
+    display: flex;                       /* Flexbox elrendezés a cellán belüli tartalomnak */
+    align-items: center;                 /* Függőlegesen középre igazítás */
+    justify-content: center;             /* Vízszintesen középre igazítás */
+    background-color: rgba(68, 68, 68, 0.7); /* Félig átlátszó sötétszürke háttér */
+    border: 1px solid rgba(85, 85, 85, 0.7); /* Félig átlátszó sötétebb keret */
+    font-size: 11px;                     /* Kisebb betűméret */
+    text-align: center;                  /* Szöveg középre igazítása */
+    padding: 1px;                        /* Kisebb belső térköz */
+    transition: all 0.3s ease;           /* Animáció minden változáshoz */
+    color: #eee;                         /* Világos szövegszín a sötét háttérhez */
+    user-select: none;                   /* Szövegkijelölés tiltása */
+}
+
+/* Hover effekt a cellákon */
+.pitagorasz-tabla .grid-item:hover {
+    background-color: rgba(85, 85, 85, 0.9); /* Kevésbé átlátszó világosabb szürke háttér hover állapotban */
+    transform: scale(1.1);               /* Nagyobb nagyítás hover esetén */
+    z-index: 5;                          /* Előrébb hozzuk a hover-elt cellát */
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Fehér ragyogás */
+}
+
+/* Fejléc cellák stílusa (az 1-22 számokat tartalmazó sor és oszlop) */
+.pitagorasz-tabla .header-cell {
+    background-color: rgba(0, 128, 128, 0.8); /* Félig átlátszó türkiz háttér */
+    color: white;                        /* Fehér szövegszín */
+    font-weight: bold;                   /* Félkövér betű */
+    border: 1px solid rgba(0, 102, 102, 0.8); /* Félig átlátszó sötétebb türkiz keret */
+    pointer-events: none;                /* Kattintás tiltása a fejléc cellákon */
+}
+
+/* Felfedett (megoldott) feladatok cellái - Enhanced gradient */
+.pitagorasz-tabla .revealed {
+    background: linear-gradient(135deg, #00aa00 0%, #00ff00 100%);
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+    transition: all 0.3s ease;
+}
+
+/* Aktuálisan kiemelt cella (épp most megoldott feladat) - Glowing effect */
+.pitagorasz-tabla .current-highlight {
+    background: linear-gradient(135deg, #00dd00 0%, #00ff88 100%);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+    transform: scale(1.15);
+    z-index: 10;
+    animation: glow 1s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 15px rgba(0, 255, 136, 0.8); }
+    50% { box-shadow: 0 0 25px rgba(0, 255, 136, 1); }
+}
+
+/* Kiemelt cellák */
+.pitagorasz-tabla .highlight {
+    background: linear-gradient(135deg, #cc0000 0%, #ff3333 100%);
+    font-weight: bold;
+}
+
+/* Hibás válaszokat tartalmazó cellák - Enhanced gradient */
+.pitagorasz-tabla .hibas {
+    background: linear-gradient(135deg, #cc0000 0%, #ff3333 100%);
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.4);
+}
+
+/* Partial mastery state (new) - Yellow gradient */
+.pitagorasz-tabla .partial {
+    background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+/* Hibás érték megjelenítése */
+.hibas-ertek {
+    color: #ff6666;                      /* Élénkebb piros szövegszín */
+    font-weight: bold;                   /* Félkövér betű */
+    position: relative;                  /* Relatív pozícionálás a hibaszámláló miatt */
+}
+
+/* Badge/Counter System - NEW */
+.grid-item {
+    position: relative;                  /* Allow absolute positioning for badges */
+}
+
+/* Badge container in cell */
+.cell-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    display: flex;
+    gap: 2px;
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Badge icons */
+.badge-icon {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.badge-correct {
+    background: linear-gradient(135deg, #00ff00, #00aa00);
+    box-shadow: 0 0 4px rgba(0, 255, 0, 0.6);
+}
+
+.badge-error {
+    background: linear-gradient(135deg, #ff0000, #aa0000);
+    box-shadow: 0 0 4px rgba(255, 0, 0, 0.6);
+}
+
+/* Error counter */
+.error-counter {
+    position: absolute;
+    bottom: 1px;
+    left: 1px;
+    background: rgba(255, 0, 0, 0.9);
+    color: #fff;
+    font-size: 7px;
+    font-weight: bold;
+    padding: 1px 3px;
+    border-radius: 3px;
+    min-width: 10px;
+    text-align: center;
+    z-index: 5;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Hibaszámláló jelölő */
+.hiba-jelolo {
+    position: absolute;                  /* Abszolút pozícionálás a cellán belül */
+    top: -5px;                           /* Felső pozíció eltolása */
+    right: -5px;                         /* Jobb oldali pozíció eltolása */
+    background-color: rgba(255, 51, 51, 0.9); /* Kevésbé átlátszó élénkpiros háttér */
+    color: white;                        /* Fehér szöveg */
+    border-radius: 50%;                  /* Kerek forma */
+    width: 12px;                         /* Kisebb szélesség */
+    height: 12px;                        /* Kisebb magasság */
+    font-size: 8px;                      /* Kisebb betűméret */
+    display: flex;                       /* Flexbox elrendezés */
+    align-items: center;                 /* Függőlegesen középre igazítás */
+    justify-content: center;             /* Vízszintesen középre igazítás */
+}
+
+/* Heatmap intensity levels - Error frequency visualization */
+.heatmap-0 {
+    background-color: rgba(0, 200, 0, 0.3) !important;   /* No errors - green */
+}
+.heatmap-1 {
+    background-color: rgba(150, 200, 0, 0.4) !important; /* 1 error - yellow-green */
+}
+.heatmap-2 {
+    background-color: rgba(255, 200, 0, 0.5) !important; /* 2 errors - yellow */
+}
+.heatmap-3 {
+    background-color: rgba(255, 150, 0, 0.6) !important; /* 3 errors - orange */
+}
+.heatmap-4 {
+    background-color: rgba(255, 100, 0, 0.7) !important; /* 4 errors - dark orange */
+}
+.heatmap-5 {
+    background-color: rgba(255, 0, 0, 0.8) !important;   /* 5+ errors - red */
+}
+
+/* Heatmap legend */
+.heatmap-legend {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(51, 51, 51, 0.9);
+    border-radius: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.heatmap-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: #eee;
+}
+
+.heatmap-legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Hőtérkép jelmagyarázat konténer */
+.hoterkep-jelmagyarazat {
+    margin-top: 15px;                    /* Felső margó */
+    padding: 10px;                       /* Belső térköz */
+    border: 1px solid rgba(85, 85, 85, 0.7); /* Félig átlátszó sötétszürke keret */
+    border-radius: 5px;                  /* Lekerekített sarkok */
+    background-color: rgba(51, 51, 51, 0.7); /* Félig átlátszó sötét háttérszín */
+    color: #eee;                         /* Világos szövegszín */
+    width: 100%;                         /* Szélesség 100% */
+    max-width: 200px;                    /* Maximum szélesség */
+    margin-left: auto;                   /* Jobbra igazítás */
+    margin-right: auto;                  /* Balra igazítás (középre helyezés) */
+}
+
+/* Jelmagyarázat címe */
+.hoterkep-jelmagyarazat h5 {
+    margin-top: 0;                       /* Felső margó eltávolítása */
+    margin-bottom: 10px;                 /* Alsó margó */
+    text-align: center;                  /* Középre igazítás */
+    color: #eee;                         /* Világos szövegszín */
+}
+
+/* Hőtérkép skála */
+.hoterkep-skala {
+    display: flex;                       /* Flexbox elrendezés */
+    height: 20px;                        /* Fix magasság */
+}
+
+/* Skála elem */
+.skala-elem {
+    flex-grow: 1;                        /* Egyenlően kitölti a rendelkezésre álló helyet */
+    height: 100%;                        /* Teljes magasság */
+}
+
+/* Skála címkék konténer */
+.skala-cimkek {
+    display: flex;                       /* Flexbox elrendezés */
+    justify-content: space-between;      /* Címkék a skála két végére */
+    margin-top: 5px;                     /* Felső margó */
+    color: #eee;                         /* Világos szövegszín */
+}
+
+/* Hiba részletek panel */
+.hiba-info-panel {
+    position: fixed;                     /* Fix pozícionálás, hogy ne legyen elcsúszás */
+    background-color: rgba(51, 51, 51, 0.9); /* Kevésbé átlátszó sötét háttér */
+    border: 1px solid rgba(85, 85, 85, 0.7); /* Félig átlátszó sötétszürke keret */
+    border-radius: 5px;                  /* Lekerekített sarkok */
+    padding: 10px;                       /* Belső térköz */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Erősebb árnyék */
+    z-index: 1000;                       /* Magas z-index, hogy más elemek felett jelenjen meg */
+    max-width: 300px;                    /* Maximum szélesség */
+    color: #eee;                         /* Világos szövegszín */
+    top: 50%;                            /* Középre helyezés */
+    left: 50%;                           /* Középre helyezés */
+    transform: translate(-50%, -50%);    /* Középre igazítás */
+}
+
+/* Hiba panel címe */
+.hiba-info-panel h4 {
+    color: #00cccc;                      /* Türkiz címszöveg */
+    margin-top: 0;
+}
+
+/* Hiba panel lista */
+.hiba-info-panel ul {
+    margin-bottom: 0;
+    padding-left: 20px;
+}
+
+/* Bezárás gomb */
+.close-btn {
+    position: absolute;                  /* Abszolút pozícionálás a panelen belül */
+    top: 5px;                            /* Felső pozíció */
+    right: 5px;                          /* Jobb oldali pozíció */
+    background: none;                    /* Nincs háttér */
+    border: none;                        /* Nincs keret */
+    cursor: pointer;                     /* Kurzor mutató */
+    font-weight: bold;                   /* Félkövér betű */
+    color: #aaa;                         /* Szürke szöveg */
+}
+
+.close-btn:hover {
+    color: #fff;                         /* Fehér szöveg hover esetén */
+}
+
+/* Gombok stílusának frissítése - átlátszó háttérrel */
+.feladat-gomb,
+.feladat-gomb-secondary,
+.feladat-gomb-warning {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    font-size: 20px;
+    background-color: transparent !important; /* Átlátszó háttér */
+    color: inherit; /* Örökölt szövegszín */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.feladat-gomb:hover,
+.feladat-gomb-secondary:hover,
+.feladat-gomb-warning:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.05) !important; /* Enyhe sötétítés hover esetén */
+}
+
+.feladat-gomb:active,
+.feladat-gomb-secondary:active,
+.feladat-gomb-warning:active {
+    background-color: rgba(0, 0, 0, 0.1) !important; /* Kattintáskor erősebb sötétítés */
+}
+
+/* Reszponzív viselkedés közepes képernyőméretekhez */
+@media (max-width: 992px) {
+    .pitagorasz-tabla {
+        max-width: 350px;                /* Kisebb szélesség */
+    }
+    
+    .pitagorasz-tabla .grid-item {
+        font-size: 10px;                 /* Kisebb betűméret */
+        padding: 1px;                    /* Kisebb belső térköz */
+    }
+}
+
+/* Reszponzív viselkedés kis képernyőméretekhez */
+@media (max-width: 768px) {
+    .pitagorasz-tabla {
+        max-width: 300px;                /* Még kisebb szélesség */
+    }
+    
+    .pitagorasz-tabla .grid-item {
+        font-size: 8px;                  /* Még kisebb betűméret */
+        padding: 0;                      /* Nincs belső térköz */
+    }
+    
+    .hiba-jelolo {
+        width: 8px;                      /* Kisebb jelölő */
+        height: 8px;                     /* Kisebb jelölő */
+        font-size: 6px;                  /* Kisebb szöveg */
+    }
+}
+
+/* Még kisebb képernyőkhöz */
+@media (max-width: 576px) {
+    .pitagorasz-tabla {
+        max-width: 250px;                /* Legkisebb szélesség */
+    }
+    
+    .pitagorasz-tabla .grid-item {
+        font-size: 6px;                  /* Legkisebb betűméret */
+    }
+}

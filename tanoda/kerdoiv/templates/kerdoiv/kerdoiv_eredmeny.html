@@ -1,0 +1,80 @@
+{% extends "egesz_szamok/eg_szamok_szorzasa.html" %}
+{% load static %}
+
+{% block title %}Eredmény: {{ kerdoiv.cim }}{% endblock %}
+
+{% block pythagoras_content %}
+<div class="container mt-4">
+    <h1 class="text-white">Eredmény: {{ kerdoiv.cim }}</h1>
+    <p class="text-white">Kitöltő: {{ kitoltes.felhasznalo.username }}</p>
+    <p class="text-white">Kitöltés dátuma: {{ kitoltes.kitoltes_datum|date:"Y.m.d H:i" }}</p>
+
+    <div class="alert alert-info" role="alert">
+        Elért pontszám: <strong>{{ kitoltes.pontszam }} / {{ max_pontszam }}</strong>
+        {% if max_pontszam > 0 %}
+            ({% widthratio kitoltes.pontszam max_pontszam 100 %}%) 
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <h2 class="text-white">Részletes válaszok:</h2>
+
+    {% for tanulo_valasz in tanulo_valaszok %}
+        {% with kerdes=tanulo_valasz.kerdes %}
+            <div class="card mb-3 {% if tanulo_valasz.helyes_e is True %}border-success{% elif tanulo_valasz.helyes_e is False %}border-danger{% else %}border-secondary{% endif %}">
+                <div class="card-header {% if tanulo_valasz.helyes_e is True %}bg-success text-white{% elif tanulo_valasz.helyes_e is False %}bg-danger text-white{% else %}bg-light{% endif %}">
+                   <strong>{{ forloop.counter }}. Kérdés:</strong> {{ kerdes.szoveg|safe }}
+                   <span class="float-end">
+                       {% if tanulo_valasz.helyes_e is True %}
+                           Helyes (+{{ kerdes.pontszam }} pont)
+                       {% elif tanulo_valasz.helyes_e is False %}
+                           Helytelen
+                       {% else %}
+                           (Nincs automatikus értékelés)
+                       {% endif %}
+                   </span>
+                </div>
+                <div class="card-body">
+                    {% if kerdes.tipus == 'FELELETVALASZTOS_EGY' or kerdes.tipus == 'FELELETVALASZTOS_TOBB' %}
+                        <p><strong>Válaszlehetőségek:</strong></p>
+                        <ul>
+                        {% for opcio in kerdes.valaszlehetosegek.all %}
+                            <li class="
+                                {% if opcio in tanulo_valasz.valasztott_lehetosegek.all and opcio.helyes %}
+                                    text-success fw-bold  {# Kiválasztott és helyes #}
+                                {% elif opcio in tanulo_valasz.valasztott_lehetosegek.all and not opcio.helyes %}
+                                    text-danger text-decoration-line-through {# Kiválasztott de helytelen #}
+                                {% elif opcio.helyes %}
+                                    text-success           {# Nem kiválasztott, de helyes lett volna #}
+                                {% endif %}
+                            ">
+                                {{ opcio.szoveg }}
+                                {% if opcio in tanulo_valasz.valasztott_lehetosegek.all %} (← Te választottad){% endif %}
+                                {% if opcio.helyes %} (✓ Helyes){% endif %}
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% elif kerdes.tipus == 'SZÖVEGES' %}
+                        <p><strong>A te válaszod:</strong></p>
+                        <pre>{{ tanulo_valasz.szoveges_valasz|default:"(Nem adtál meg választ)" }}</pre>
+                        {# Itt lehetne megjeleníteni a helyes szöveges választ, ha van #}
+                    {% endif %}
+                </div>
+            </div>
+        {% endwith %}
+    {% endfor %}
+
+    <a href="{% url 'kerdoiv:kerdoiv_lista' %}" class="btn btn-primary mt-3">Vissza a kérdőívek listájához</a>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+    /* Extra stílusok a kérdőív eredményekhez */
+    .card {
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}

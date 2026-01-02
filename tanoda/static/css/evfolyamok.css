@@ -1,0 +1,705 @@
+/* Színváltozók definiálása a neumorfikus dizájnhoz */
+:root {
+    --primary-bg: #0f1320;
+    --secondary-bg: #161b22;
+    --tertiary-bg: #1b1f2b;
+    --primary-text: #e0e6ed;
+    --accent-color: #3a7bd5;
+    --highlight-color: #6e40c9;
+    --error-color: #da3633;
+    --success-color: #238636;
+    --warning-color: #d29922;
+    --neumorphic-light: rgba(255, 255, 255, 0.05);
+    --neumorphic-dark: rgba(0, 0, 0, 0.8);
+    
+    /* Évfolyam-specifikus színek */
+    --class-1-color: #238636;  /* 1. évfolyam: zöld */
+    --class-2-color: #3a7bd5;  /* 2. évfolyam: kék */
+    --class-3-color: #6e40c9;  /* 3. évfolyam: lila */
+    --class-4-color: #d29922;  /* 4. évfolyam: sárga */
+    --class-5-color: #da3633;  /* 5. évfolyam: piros */
+    --class-6-color: #20c997;  /* 6. évfolyam: türkiz */
+    --class-7-color: #e83e8c;  /* 7. évfolyam: pink */
+    --class-8-color: #fd7e14;  /* 8. évfolyam: narancs */
+}
+
+/* Alap stílusok */
+body {
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+    font-family: 'Poppins', sans-serif;
+}
+
+.container {
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border-radius: 20px;
+    padding: 25px;
+    margin-top: 25px;
+    box-shadow: 0px 0px 15px var(--neumorphic-light);
+}
+
+/* Évfolyam kártyák */
+.card {
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border: none;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0px 0px 10px var(--neumorphic-light);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0px 0px 18px var(--neumorphic-light) !important;
+}
+
+.card-body {
+    padding: 25px;
+}
+
+.card-title {
+    color: var(--accent-color);
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.3);
+    font-weight: bold;
+}
+
+.card-text {
+    color: var(--primary-text);
+}
+
+/* Gombok */
+.btn-primary {
+    background: linear-gradient(145deg, var(--accent-color), #2a5ea1);
+    border: none;
+    color: var(--primary-text);
+    border-radius: 20px;
+    padding: 12px 20px;
+    box-shadow: 0px 0px 8px var(--neumorphic-light);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(145deg, #2a5ea1, var(--accent-color));
+    box-shadow: 0px 0px 15px var(--neumorphic-light);
+    transform: translateY(-3px);
+}
+
+.btn-outline-primary {
+    background: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    border-radius: 20px;
+    padding: 10px 18px;
+    box-shadow: 0px 0px 8px var(--neumorphic-light);
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background: linear-gradient(145deg, var(--accent-color), #2a5ea1);
+    color: var(--primary-text);
+    border-color: transparent;
+    box-shadow: 0px 0px 15px var(--neumorphic-light);
+    transform: translateY(-3px);
+}
+
+/* Évfolyam specifikus stílusok */
+.evfolyam-header {
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0px 0px 10px var(--neumorphic-light);
+}
+
+.evfolyam-header h1 {
+    color: var(--accent-color);
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.3);
+}
+
+.evfolyam-leiras {
+    color: var(--primary-text);
+    margin-bottom: 20px;
+}
+
+/* Tantárgy ikonok */
+.tantargy-ikon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    box-shadow: 0px 0px 8px var(--neumorphic-light);
+    transition: all 0.3s ease;
+}
+
+.tantargy-ikon i {
+    font-size: 24px;
+    color: var(--highlight-color);
+    transition: all 0.3s ease;
+}
+
+.tantargy-ikon:hover {
+    transform: scale(1.1);
+    background: linear-gradient(145deg, var(--highlight-color), #522d94);
+    box-shadow: 0px 0px 12px var(--neumorphic-light);
+}
+
+.tantargy-ikon:hover i {
+    color: var(--primary-text);
+}
+
+/* Témakör lista */
+.temakor-lista {
+    list-style-type: none;
+    padding: 0;
+}
+
+.temakor-item {
+    background: linear-gradient(145deg, var(--primary-bg), var(--secondary-bg));
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: inset 0px 0px 5px var(--neumorphic-light);
+    transition: all 0.3s ease;
+}
+
+.temakor-item:hover {
+    box-shadow: inset 0px 0px 8px var(--neumorphic-light);
+}
+
+.temakor-cim {
+    color: var(--accent-color);
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* Haladásjelző */
+.progress {
+    background: linear-gradient(145deg, var(--primary-bg), var(--secondary-bg));
+    height: 25px;
+    border-radius: 15px;
+    box-shadow: inset 0px 0px 5px var(--neumorphic-light);
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    background: linear-gradient(145deg, var(--accent-color), var(--highlight-color));
+    color: var(--primary-text);
+    font-weight: bold;
+    border-radius: 15px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Jelvény stílusok */
+.jelveny-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.jelveny-tooltip {
+    position: relative;
+    display: inline-block;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border-radius: 50%;
+    padding: 15px;
+    box-shadow: 0px 0px 10px var(--neumorphic-light);
+    transition: all 0.3s ease;
+}
+
+.jelveny-tooltip i {
+    transition: transform 0.3s ease;
+    color: var(--highlight-color);
+}
+
+.jelveny-tooltip:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 15px var(--neumorphic-light);
+}
+
+.jelveny-tooltip:hover i {
+    transform: scale(1.2);
+    color: var(--accent-color);
+}
+
+.jelveny-tooltip .jelveny-tooltip-text {
+    visibility: hidden;
+    width: 150px;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    color: var(--primary-text);
+    text-align: center;
+    border-radius: 15px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -75px;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    transform: translateY(10px);
+    box-shadow: 0px 0px 10px var(--neumorphic-light);
+}
+
+.jelveny-tooltip:hover .jelveny-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Alert stílusok */
+.alert-success {
+    background: linear-gradient(145deg, var(--success-color), #1a472a);
+    color: #a7f3d0;
+    border: none;
+    box-shadow: inset 0px 0px 5px rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+
+.alert-danger {
+    background: linear-gradient(145deg, var(--error-color), #7a252d);
+    color: #f8d7da;
+    border: none;
+    box-shadow: inset 0px 0px 5px rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+
+.alert-warning {
+    background: linear-gradient(145deg, var(--warning-color), #8a6a07);
+    color: #ffeeba;
+    border: none;
+    box-shadow: inset 0px 0px 5px rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+
+.alert-info {
+    background: linear-gradient(145deg, var(--accent-color), #163a8a);
+    color: #d0e7ff;
+    border: none;
+    box-shadow: inset 0px 0px 5px rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+
+/* Form elemek */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select,
+textarea {
+    background: linear-gradient(145deg, var(--primary-bg), var(--secondary-bg));
+    border: none;
+    color: var(--primary-text);
+    padding: 12px 15px;
+    border-radius: 15px;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+    box-shadow: inset 0px 0px 5px var(--neumorphic-light);
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    box-shadow: inset 0px 0px 8px var(--neumorphic-light);
+}
+
+/* Reszponzív viselkedés */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    .tantargy-ikon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .tantargy-ikon i {
+        font-size: 20px;
+    }
+    
+    .btn-primary,
+    .btn-outline-primary {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+}
+
+/* Évfolyamok modul - Neumorfikus dizájn adaptációja */
+
+/* Évfolyam kártyák */
+.evfolyam-kartya {
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border: none;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0px 0px 10px var(--neumorphic-light);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.evfolyam-kartya:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 15px var(--neumorphic-light);
+}
+
+.evfolyam-kartya .kartya-tartalom {
+    padding: 25px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Évfolyam-specifikus kártyák */
+.evfolyam-1 {
+    border-top: 5px solid var(--class-1-color);
+}
+
+.evfolyam-2 {
+    border-top: 5px solid var(--class-2-color);
+}
+
+.evfolyam-3 {
+    border-top: 5px solid var(--class-3-color);
+}
+
+.evfolyam-4 {
+    border-top: 5px solid var(--class-4-color);
+}
+
+.evfolyam-5 {
+    border-top: 5px solid var(--class-5-color);
+}
+
+.evfolyam-6 {
+    border-top: 5px solid var(--class-6-color);
+}
+
+.evfolyam-7 {
+    border-top: 5px solid var(--class-7-color);
+}
+
+.evfolyam-8 {
+    border-top: 5px solid var(--class-8-color);
+}
+
+/* Évfolyam ikon */
+.evfolyam-ikon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 2.5em;
+    color: var(--primary-text);
+    opacity: 0.2;
+    transition: all 0.3s ease;
+}
+
+.evfolyam-kartya:hover .evfolyam-ikon {
+    opacity: 0.5;
+    transform: scale(1.2);
+}
+
+/* Évfolyam címkék */
+.evfolyam-cimke {
+    display: inline-block;
+    padding: 8px 15px;
+    border-radius: 15px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0px 0px 5px var(--neumorphic-light);
+}
+
+.evfolyam-cimke:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 0px 8px var(--neumorphic-light);
+}
+
+.cimke-1 {
+    background: linear-gradient(145deg, var(--class-1-color), #1a472a);
+    color: #a7f3d0;
+}
+
+.cimke-2 {
+    background: linear-gradient(145deg, var(--class-2-color), #2a5ea1);
+    color: #d0e7ff;
+}
+
+.cimke-3 {
+    background: linear-gradient(145deg, var(--class-3-color), #522d94);
+    color: #d2a8ff;
+}
+
+.cimke-4 {
+    background: linear-gradient(145deg, var(--class-4-color), #8a6a07);
+    color: #ffeeba;
+}
+
+.cimke-5 {
+    background: linear-gradient(145deg, var(--class-5-color), #7a252d);
+    color: #f8d7da;
+}
+
+.cimke-6 {
+    background: linear-gradient(145deg, var(--class-6-color), #199473);
+    color: #d2f4ea;
+}
+
+.cimke-7 {
+    background: linear-gradient(145deg, var (--class-7-color), #ab2e67);
+    color: #fbd4e2;
+}
+
+.cimke-8 {
+    background: linear-gradient(145deg, var(--class-8-color), #ba5b0e);
+    color: #ffe5d0;
+}
+
+/* Téma kártyák */
+.tema-kartya {
+    background: linear-gradient(145deg, var(--primary-bg), var(--secondary-bg));
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0px 0px 8px var(--neumorphic-light);
+    transition: all 0.3s ease;
+}
+
+.tema-kartya:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 0px 12px var(--neumorphic-light);
+}
+
+.tema-kartya h4 {
+    color: var(--accent-color);
+    margin-bottom: 15px;
+}
+
+.tema-kartya p {
+    color: var(--primary-text);
+    opacity: 0.9;
+}
+
+/* Haladásjelző */
+.haladas-container {
+    margin: 20px 0;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 0px 8px var(--neumorphic-light);
+}
+
+.haladas-cim {
+    color: var(--accent-color);
+    margin-bottom: 15px;
+}
+
+.progress {
+    background: linear-gradient(145deg, var(--primary-bg), var(--secondary-bg));
+    height: 25px;
+    border-radius: 15px;
+    box-shadow: inset 0px 0px 5px var(--neumorphic-light);
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    border-radius: 15px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+}
+
+.progress-bar-1 {
+    background: linear-gradient(145deg, var(--class-1-color), #1a472a);
+}
+
+.progress-bar-2 {
+    background: linear-gradient(145deg, var(--class-2-color), #2a5ea1);
+}
+
+.progress-bar-3 {
+    background: linear-gradient(145deg, var(--class-3-color), #522d94);
+}
+
+.progress-bar-4 {
+    background: linear-gradient(145deg, var(--class-4-color), #8a6a07);
+}
+
+.progress-bar-5 {
+    background: linear-gradient(145deg, var(--class-5-color), #7a252d);
+}
+
+.progress-bar-6 {
+    background: linear-gradient(145deg, var(--class-6-color), #199473);
+}
+
+.progress-bar-7 {
+    background: linear-gradient(145deg, var(--class-7-color), #ab2e67);
+}
+
+.progress-bar-8 {
+    background: linear-gradient(145deg, var(--class-8-color), #ba5b0e);
+}
+
+/* Téma gombok */
+.tema-gomb {
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border: none;
+    color: var(--primary-text);
+    border-radius: 15px;
+    padding: 12px 20px;
+    margin-bottom: 15px;
+    display: block;
+    width: 100%;
+    text-align: left;
+    position: relative;
+    box-shadow: 0px 0px 8px var(--neumorphic-light);
+    transition: all 0.3s ease;
+}
+
+.tema-gomb:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 0px 12px var(--neumorphic-light);
+}
+
+.tema-gomb .tema-ikon {
+    margin-right: 10px;
+    color: var(--highlight-color);
+}
+
+.tema-gomb .nyil-ikon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s ease;
+}
+
+.tema-gomb:hover .nyil-ikon {
+    transform: translate(5px, -50%);
+}
+
+/* Keresés panel */
+.kereses-panel {
+    margin-bottom: 25px;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px var(--neumorphic-light);
+}
+
+.kereses-panel input[type="text"] {
+    background: linear-gradient(145deg, var(--primary-bg), var(--secondary-bg));
+    border: none;
+    color: var(--primary-text);
+    padding: 12px 15px;
+    border-radius: 15px;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: inset 0px 0px 5px var(--neumorphic-light);
+}
+
+.kereses-panel input[type="text"]:focus {
+    outline: none;
+    box-shadow: inset 0px 0px 8px var(--neumorphic-light);
+}
+
+/* Szűrők */
+.szurok {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.szuro-gomb {
+    background: linear-gradient(145deg, var(--primary-bg), var(--secondary-bg));
+    border: none;
+    color: var(--primary-text);
+    border-radius: 20px;
+    padding: 8px 15px;
+    box-shadow: 0px 0px 5px var(--neumorphic-light);
+    transition: all 0.3s ease;
+}
+
+.szuro-gomb:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 0px 8px var(--neumorphic-light);
+}
+
+.szuro-gomb.aktiv {
+    background: linear-gradient(145deg, var(--highlight-color), #522d94);
+    color: #d2a8ff;
+    box-shadow: inset 0px 0px 5px rgba(255, 255, 255, 0.1);
+}
+
+/* Reszponzív viselkedés */
+@media (max-width: 768px) {
+    .evfolyam-kartya .kartya-tartalom {
+        padding: 15px;
+    }
+    
+    .tema-kartya {
+        padding: 15px;
+    }
+    
+    .evfolyam-ikon {
+        font-size: 2em;
+    }
+    
+    .evfolyam-cimke {
+        padding: 5px 10px;
+        font-size: 0.9em;
+    }
+}
+
+/* Animációk */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0px 0px 8px var(--neumorphic-light);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0px 0px 12px var(--neumorphic-light);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0px 0px 8px var(--neumorphic-light);
+    }
+}
+
+.uj-anyag {
+    animation: pulse 2s infinite;
+    position: relative;
+}
+
+.uj-anyag::after {
+    content: "ÚJ";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: linear-gradient(145deg, var(--error-color), #7a252d);
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+    font-weight: bold;
+    box-shadow: 0px 0px 5px var(--neumorphic-light);
+}

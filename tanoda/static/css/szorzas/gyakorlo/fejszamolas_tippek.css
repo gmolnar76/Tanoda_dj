@@ -1,0 +1,106 @@
+/* Fejszámolási tippek stílusai */
+
+/* Sötét téma stílusok a fejszámolási tippekhez */
+.fejszamolas-tipp {
+    background: linear-gradient(145deg, #1e242c, #0a0e13); /* Neumorfikus hatás */
+    border-left: 4px solid #6e40c9; /* Lila */
+    color: #c9d1d9; /* Világos szöveg */
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 15px; /* Kerekített sarkok */
+    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.8), -8px -8px 15px rgba(255, 255, 255, 0.1); /* Neumorfikus árnyék */
+}
+
+.fejszamolas-tipp h4 {
+    color: #d2a8ff; /* Világos lila */
+    font-weight: bold;
+}
+
+.fejszamolas-tipp .leiras {
+    color: #79c0ff; /* Világos kék */
+    font-weight: bold;
+}
+
+.fejszamolas-tipp .magyarazat {
+    color: #c9d1d9; /* Világos szöveg */
+}
+
+.fejszamolas-tipp .trick {
+    background: linear-gradient(145deg, #0d1117, #161b22); /* Neumorfikus hatás */
+    color: #a7f3d0; /* Világos zöld */
+    border-left: 3px solid #238636;
+    padding: 15px;
+    border-radius: 12px; /* Kerekített sarkok */
+    box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.6), inset -4px -4px 8px rgba(255, 255, 255, 0.1);
+}
+
+.fejszamolas-tipp .trick-label {
+    display: inline-block;
+    background-color: #1f6feb;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-bottom: 5px;
+}
+
+/* Tipp gomb stílusai */
+#tipp-btn {
+    background: linear-gradient(145deg, #6e40c9, #8957e5); /* Neumorfikus hatás */
+    color: #ffffff;
+    border: none;
+    border-radius: 20px; /* Kerekített sarkok */
+    padding: 12px 20px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.8), -8px -8px 15px rgba(255, 255, 255, 0.1);
+}
+
+#tipp-btn:hover {
+    background: linear-gradient(145deg, #8957e5, #6e40c9); /* Világosabb lila */
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+}
+
+/* Számlálók és egyéb adatok stílusai */
+.szam-kiemelve {
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.minta-példa {
+    font-style: italic;
+    color: #7f8c8d;
+    padding: 3px 0;
+}
+
+/* Formázás az üzenetablakban */
+.unified-message .fejszamolas-info {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #ddd;
+}
+
+/* Speciális kategória-színek */
+.specialis-kilences {
+    border-left-color: #2ecc71;
+}
+
+.specialis-otos {
+    border-left-color: #e74c3c;
+}
+
+.specialis-negyzet {
+    border-left-color: #f39c12;
+}
+
+/* Reszponzív viselkedés */
+@media (max-width: 768px) {
+    .fejszamolas-tipp {
+        padding: 15px;
+    }
+
+    #tipp-btn {
+        width: 100%;
+    }
+}

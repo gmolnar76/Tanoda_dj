@@ -1,0 +1,101 @@
+/* User Dashboard CSS */
+.user-dashboard {
+  font-family: 'Roboto', sans-serif;
+  padding: 20px;
+}
+
+.dashboard-title {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.kpi-card {
+  transition: all 0.3s;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.kpi-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+.kpi-card .card-body {
+  padding: 20px;
+}
+
+.kpi-card .card-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.kpi-card .display-4 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.tab-nav {
+  display: flex;
+  overflow-x: auto;
+  background: #f8f9fa;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-nav button {
+  padding: 10px 20px;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: #555;
+  transition: all 0.2s;
+}
+
+.tab-nav button.active {
+  background: #fff;
+  color: #007bff;
+  border-bottom: 2px solid #007bff;
+}
+
+.trend-positive {
+  color: #28a745;
+}
+
+.trend-negative {
+  color: #dc3545;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.legend-color {
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  border-radius: 2px;
+}
+
+.chart-container {
+  height: 300px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .chart-container {
+    height: 250px;
+  }
+  
+  .kpi-card .display-4 {
+    font-size: 1.5rem;
+  }
+}

@@ -1,0 +1,69 @@
+{% extends "egesz_szamok/eg_szamok_szorzasa.html" %}
+{% load static %}
+
+{% block title %}Kérdőív kitöltése: {{ kerdoiv.cim }}{% endblock %}
+
+{% block pythagoras_content %}
+<div class="container mt-4">
+    <h1 class="text-white">{{ kerdoiv.cim }}</h1>
+    {% if kerdoiv.leiras %}
+        <p class="lead text-white">{{ kerdoiv.leiras }}</p>
+    {% endif %}
+
+    <div class="card bg-dark">
+        <div class="card-body">
+            <form method="post" action="{% url 'kerdoiv:kerdoiv_kitoltes' kerdoiv.id %}" class="text-white">
+                {% csrf_token %}
+
+                {# Globális form hibaüzenetek (ha vannak) #}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% for field in form %}
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            {# A field.label tartalmazza a kérdés szövegét #}
+                            <strong>{{ forloop.counter }}. Kérdés</strong> {{ field.help_text }} {# Pontszám #}
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">{{ field.label_tag }}</p> {# Vagy csak field.label, ha nem kell a <label> tag #}
+
+                            {# Mező hibaüzenetei #}
+                            {% if field.errors %}
+                                <div class="alert alert-danger">
+                                    {% for error in field.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {# A mező renderelése (a widget típusa alapján a formban definiáltak szerint) #}
+                            {{ field }}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="btn btn-primary">Kérdőív beküldése</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+    /* Egyedi stílusok az űrlaphoz, ha szükséges */
+    .form-check { margin-bottom: 0.5rem; }
+    
+    /* Fehér szöveg a rádiógombok és jelölőnégyzetek címkéin */
+    .form-check-label {
+        color: white;
+    }
+</style>
+{% endblock %}

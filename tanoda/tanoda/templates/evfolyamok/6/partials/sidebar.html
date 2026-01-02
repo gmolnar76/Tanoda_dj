@@ -1,0 +1,173 @@
+{% load static %}
+<!-- Sidebar Content -->
+<div class="sidebar-content">
+    <!-- Brand / Logo -->
+    <div class="sidebar-brand">
+        <div class="brand-icon">
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div>
+            <span class="brand-text">Tanoda</span>
+            <span class="brand-subtitle">6. évfolyam</span>
+        </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="sidebar-nav">
+        <!-- Main Section -->
+        <div class="nav-section">
+            <div class="nav-section-title">Gyakorlás</div>
+
+            <a href="{% url 'egesz_szamok:szorzas' %}"
+               class="nav-item {% if aktiv_modul == 'szorzas' %}active{% endif %}"
+               data-tooltip="Szorzás Gyakorló">
+                <i class="fas fa-calculator"></i>
+                <span>Szorzás Gyakorló</span>
+            </a>
+
+            <a href="#pythagoras-widget"
+               class="nav-item {% if aktiv_modul == 'pythagoras' %}active{% endif %}"
+               data-tooltip="Pitagorasz Tábla"
+               onclick="scrollToWidget('pythagoras-widget')">
+                <i class="fas fa-th"></i>
+                <span>Pitagorasz Tábla</span>
+            </a>
+
+            <a href="#progress-widget"
+               class="nav-item {% if aktiv_modul == 'progress' %}active{% endif %}"
+               data-tooltip="Fejlődés"
+               onclick="scrollToWidget('progress-widget')">
+                <i class="fas fa-chart-line"></i>
+                <span>Fejlődés</span>
+            </a>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="nav-section">
+            <div class="nav-section-title">Eredmények</div>
+
+            <a href="#stats-widget"
+               class="nav-item"
+               data-tooltip="Statisztikák"
+               onclick="scrollToWidget('stats-widget')">
+                <i class="fas fa-chart-pie"></i>
+                <span>Statisztikák</span>
+            </a>
+
+            <a href="#leaderboard-widget"
+               class="nav-item"
+               data-tooltip="Ranglista"
+               onclick="scrollToWidget('leaderboard-widget')">
+                <i class="fas fa-trophy"></i>
+                <span>Ranglista</span>
+                {% if user_rank and user_rank <= 5 %}
+                <span class="nav-badge">Top {{ user_rank }}</span>
+                {% endif %}
+            </a>
+        </div>
+
+        <!-- Other Modules -->
+        <div class="nav-section">
+            <div class="nav-section-title">Egyéb</div>
+
+            <a href="{% url 'evfolyam_6' %}"
+               class="nav-item"
+               data-tooltip="Vissza">
+                <i class="fas fa-arrow-left"></i>
+                <span>Vissza az évfolyamhoz</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Quick Stats (Optional) -->
+    {% if osszes_pont is not None %}
+    <div class="sidebar-stats">
+        <div class="stat-mini">
+            <span class="stat-mini-label">Mai pontok</span>
+            <span class="stat-mini-value" id="sidebar-today-points">{{ mai_pontok|default:0 }}</span>
+        </div>
+        <div class="stat-mini">
+            <span class="stat-mini-label">Sorozat</span>
+            <span class="stat-mini-value" id="sidebar-streak">{{ streak|default:0 }}x</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- User Profile Section -->
+    <div class="sidebar-user">
+        <div class="user-avatar">
+            {% if user.is_authenticated %}
+            <span>{{ user.email|first|upper }}</span>
+            {% else %}
+            <i class="fas fa-user"></i>
+            {% endif %}
+        </div>
+        <div class="user-info">
+            <span class="user-name">
+                {% if user.is_authenticated %}
+                    {{ user.email|truncatechars:20 }}
+                {% else %}
+                    Vendég
+                {% endif %}
+            </span>
+            <span class="user-points" id="sidebar-points">
+                {{ osszes_pont|default:0 }} pont
+            </span>
+        </div>
+
+        <!-- User Dropdown -->
+        <div class="user-dropdown">
+            <button class="user-dropdown-btn" onclick="toggleUserMenu()" title="Menü">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <div class="user-dropdown-menu" id="user-dropdown-menu">
+                {% if user.is_authenticated %}
+                <a href="{% url 'account:logout' %}" class="dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Kijelentkezés</span>
+                </a>
+                {% else %}
+                <a href="{% url 'account:login' %}" class="dropdown-item">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Bejelentkezés</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Collapse Button (Desktop) -->
+    <button class="sidebar-collapse-btn" onclick="collapseSidebar()" title="Oldalsáv összecsukása">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+</div>
+
+<script>
+    // User dropdown menu toggle
+    function toggleUserMenu() {
+        const menu = document.getElementById('user-dropdown-menu');
+        menu.classList.toggle('show');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        const dropdown = document.querySelector('.user-dropdown');
+        const menu = document.getElementById('user-dropdown-menu');
+        if (dropdown && menu && !dropdown.contains(e.target)) {
+            menu.classList.remove('show');
+        }
+    });
+
+    // Scroll to widget function
+    function scrollToWidget(widgetId) {
+        const widget = document.getElementById(widgetId);
+        if (widget) {
+            widget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // Close sidebar on mobile after navigation
+            if (window.innerWidth <= 1024) {
+                closeSidebar();
+            }
+        }
+    }
+</script>

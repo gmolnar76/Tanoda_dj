@@ -1,0 +1,18 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block title %}TRON Bit Kísérletek{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>TRON Bit Three.js Kísérletek</h1>
+    <p>Válassz a kísérleti animációk közül:</p>
+    <ul>
+        <li><a href="{% url 'TRON_Bit:experiment1' %}">Kísérlet 1: Lebegő Kockák</a></li>
+        <li><a href="{% url 'TRON_Bit:experiment2' %}">Kísérlet 2: Forgó Kocka</a></li>
+        <li><a href="{% url 'TRON_Bit:experiment3' %}">Kísérlet 3: Egyszerű 3D Test</a></li>
+        <li><a href="{% url 'TRON_Bit:tron_bit_original' %}">Eredeti TRON Bit</a></li>
+        <!-- Ide jöhetnek majd további linkek az új animációkhoz -->
+    </ul>
+</div>
+{% endblock %}

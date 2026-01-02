@@ -1,0 +1,127 @@
+{% extends "evfolyamok/base_evfolyam.html" %}
+{% load static %}
+
+{% block evfolyam_title %}4. Évfolyam - Matematika{% endblock %}
+
+{% block evfolyam_description %}
+    <p>A 4. évfolyam matematika tananyaga</p>
+{% endblock %}
+
+{% block evfolyam_css %}
+<style>
+    :root {
+        --evfolyam-primary-color: #ff6b6b;
+        --evfolyam-secondary-color: #4ecdc4;
+        --evfolyam-accent-color: #ffe66d;
+    }
+    
+    .evfolyam-header h1 {
+        color: var(--evfolyam-primary-color);
+    }
+    
+    .sidebar .nav-link.active {
+        background-color: var(--evfolyam-primary-color);
+    }
+    
+    /* 4. évfolyam specifikus stílusok - gyerekbarátabb dizájn */
+    .evfolyam-welcome {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 15px;
+        padding: 20px;
+        border: 2px solid var(--evfolyam-accent-color);
+    }
+    
+    .topic-card {
+        border-radius: 15px;
+        border: 2px solid var(--evfolyam-primary-color);
+        transition: transform 0.3s ease;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+    
+    .topic-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .topic-card .card-img {
+        height: 120px;
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .topic-card .card-body {
+        background-color: #1e1e1e;
+    }
+    
+    .topic-card .card-title {
+        color: var(--evfolyam-primary-color);
+        font-weight: bold;
+    }
+</style>
+<link rel="stylesheet" href="{% static 'css/evf4.css' %}">
+{% endblock %}
+
+{% block sidebar %}
+    {% include "evfolyamok/4/bal_menu.html" %}
+{% endblock %}
+
+{% block evfolyam_content %}
+    <div class="evfolyam-welcome">
+        <h2>Üdvözlünk a 4. évfolyamon!</h2>
+        <p>Itt megtanulhatod a matematika alapjait játékos formában!</p>
+        
+        <div class="featured-topics mt-5">
+            <h3>Mai ajánlott témák</h3>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card topic-card">
+                        <div class="card-img" style="background-image: url('{% static 'images/numbers_bg.jpg' %}');"></div>
+                        <div class="card-body">
+                            <h5 class="card-title">Számolás 100-ig</h5>
+                            <p class="card-text">Tanuld meg a számokat és műveleteket 100-ig!</p>
+                            <a href="#" class="btn btn-outline-light">Indítás</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card topic-card">
+                        <div class="card-img" style="background-image: url('{% static 'images/shapes_bg.jpg' %}');"></div>
+                        <div class="card-body">
+                            <h5 class="card-title">Síkidomok</h5>
+                            <p class="card-text">Ismerkedj meg a különböző formákkal!</p>
+                            <a href="#" class="btn btn-outline-light">Indítás</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card topic-card">
+                        <div class="card-img" style="background-image: url('{% static 'images/blocks_bg.jpg' %}');"></div>
+                        <div class="card-body">
+                            <h5 class="card-title">Blockly kezdőknek</h5>
+                            <p class="card-text">Az első lépések a programozás világában</p>
+                            <a href="#" class="btn btn-outline-light">Indítás</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="progress-section mt-5">
+            <h3>Mai haladásod</h3>
+            <div class="progress mt-3" style="height: 25px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" 
+                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+            </div>
+            <p class="mt-2">Még 3 feladat van hátra a mai célodhoz!</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block evfolyam_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('4. évfolyam specifikus JavaScript betöltve');
+    });
+</script>
+{% endblock %}
+

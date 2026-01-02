@@ -1,0 +1,54 @@
+{% load static %}
+
+<div class="debug-info">
+    <h3>Three.js Debug Panel</h3>
+    <div id="threejs-status"><p>Inicializálás...</p></div>
+    
+    {% if show_stats %}
+    <div id="stats-container"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r17/Stats.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                if (typeof Stats !== 'undefined') {
+                    const stats = new Stats();
+                    stats.showPanel(0); // 0: fps, 1: ms, 2: mb
+                    document.getElementById('stats-container').appendChild(stats.dom);
+                    
+                    // Animáció frissítéséhez
+                    function animate() {
+                        stats.begin();
+                        // A tényleges animáció a Three.js inicializálóban történik
+                        stats.end();
+                        requestAnimationFrame(animate);
+                    }
+                    animate();
+                }
+            }, 500);
+        });
+    </script>
+    {% endif %}
+    
+    <div class="scene-info">
+        <h4>Jelenet információk</h4>
+        <div class="info-row">
+            <span>FPS:</span>
+            <span id="fps-counter">-</span>
+        </div>
+        <div class="info-row">
+            <span>Poligonok:</span>
+            <span id="polygon-count">-</span>
+        </div>
+        <div class="info-row">
+            <span>Kamera pozíció:</span>
+            <span id="camera-position">-</span>
+        </div>
+    </div>
+    
+    <div class="console-output">
+        <h4>Konzol</h4>
+        <div id="debug-console" class="console-window">
+            <!-- Itt jelennek meg a konzol üzenetek -->
+        </div>
+    </div>
+</div>

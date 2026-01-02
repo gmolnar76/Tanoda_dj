@@ -1,0 +1,99 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block title %}Kísérlet 2: Forgó Kocka{% endblock %}
+
+{% block extra_head %}
+<style>
+    body { margin: 0; overflow: hidden; }
+    #tron-threejs-container { width: 100%; height: 600px; display: block; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="tron-threejs-container" style="background: #ff00ff22; border: 2px solid red; height: 600px;"></div>
+<div class="container mt-3">
+    <a href="{% url 'TRON_Bit:tron_index' %}" class="btn btn-secondary mb-3">Vissza a TRON menübe</a>
+    <h2>Kísérlet 2: Forgó Kocka</h2>
+    <div id="webgl-error" class="alert alert-danger" style="display: none;">
+        WebGL nem támogatott a böngésződben. Próbálj másik böngészőt használni.
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// Inline script az egyszerűbb hibakeresés érdekében
+document.addEventListener('DOMContentLoaded', function() {
+    // WebGL támogatás ellenőrzése
+    if (!window.WebGLRenderingContext) {
+        document.getElementById('webgl-error').style.display = 'block';
+        return;
+    }
+    
+    const container = document.getElementById('tron-threejs-container');
+    if (!container) {
+        console.error("Nem található a tron-threejs-container elem!");
+        return;
+    }
+    
+    try {
+        console.log("Three.js inicializálás kezdete...");
+        // Alap Three.js beállítások
+        const scene = new THREE.Scene();
+        // Átlátszó háttér, hogy lássuk, ha a canvas létrejön
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true, 
+            alpha: true 
+        });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setClearColor(0x000000, 0); // Teljesen átlátszó háttér
+        container.appendChild(renderer.domElement);
+        console.log("Renderer hozzáadva:", renderer);
+        
+        // Kamera
+        const camera = new THREE.PerspectiveCamera(
+            75, container.clientWidth / container.clientHeight, 0.1, 1000
+        );
+        camera.position.z = 5;
+        
+        // Egyszerű kocka létrehozása
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+        console.log("Kocka hozzáadva:", cube);
+        
+        // Egyszerű animáció
+        function animate() {
+            requestAnimationFrame(animate);
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        
+        // Indítás
+        animate();
+        console.log("Animáció elindítva!");
+        
+        // Canvas stílus ellenőrzése
+        const canvas = container.querySelector('canvas');
+        if (canvas) {
+            console.log("Canvas létezik:", canvas);
+            console.log("Canvas méret:", canvas.width, "x", canvas.height);
+            console.log("Canvas stílus:", window.getComputedStyle(canvas));
+            // Biztosítsuk, hogy a canvas látható
+            canvas.style.position = 'absolute';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.zIndex = '1';
+        } else {
+            console.error("Canvas nem jött létre!");
+        }
+    } catch (error) {
+        console.error("Three.js hiba:", error);
+    }
+});
+</script>
+{% endblock %}

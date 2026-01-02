@@ -1,0 +1,285 @@
+/* Egységesített üzenetkezelő CSS stílusai */
+
+/* Általános beállítások a sötét témához */
+body {
+    background-color: #0d1117; /* Mélyebb sötét háttér */
+    color: #c9d1d9; /* Világosabb szöveg */
+    font-family: 'Poppins', sans-serif; /* Modern sans-serif betűtípus */
+}
+
+/* Üzenet konténerek */
+#unified-message-container,
+#unified-message-fixed-container {
+    font-family: 'Roboto', 'Arial', sans-serif;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.8), -10px -10px 20px rgba(255, 255, 255, 0.05); /* Lágyabb árnyékok */
+    border-radius: 20px; /* Erősebben lekerekített sarkok */
+    overflow: hidden;
+    max-width: 400px;
+    width: 100%;
+    z-index: 9999;
+    background-color: #161b22; /* Sötétebb háttér */
+    color: #e6edf3;
+    max-width: 100%;
+    z-index: 9999;
+}
+
+#unified-message-fixed-container {
+    margin: 20px 0;
+}
+
+/* Alap üzenet stílus */
+.unified-message {
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    position: relative;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    background: linear-gradient(145deg, #21262d, #0d1117); /* Lágyabb átmenet */
+    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.7), -8px -8px 15px rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+    max-width: 100%;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.unified-message:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
+    transform: translateY(-2px);
+}
+
+/* Üzenet típusok */
+.unified-message-success {
+    background: linear-gradient(145deg, #238636, #1a472a); /* Lágyabb zöld átmenet */
+    color: #c8f0d4;
+    box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.6), inset -4px -4px 8px rgba(255, 255, 255, 0.1);
+}
+
+.unified-message-error {
+    background: linear-gradient(145deg, #da3633, #7a252d); /* Lágyabb piros átmenet */
+    color: #f8d7da;
+    box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.6), inset -4px -4px 8px rgba(255, 255, 255, 0.1);
+}
+
+.unified-message-warning {
+    background: linear-gradient(145deg, #b68b0a, #8a6a07); /* Lágyabb sárga átmenet */
+    color: #ffeeba;
+    box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.6), inset -4px -4px 8px rgba(255, 255, 255, 0.1);
+}
+
+.unified-message-info {
+    background: linear-gradient(145deg, #1e4fb8, #163a8a); /* Lágyabb kék átmenet */
+    color: #d0e7ff;
+    box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.6), inset -4px -4px 8px rgba(255, 255, 255, 0.1);
+}
+
+.unified-message-guide {
+    background-color: #6e40c9; /* Lila */
+    color: #d2a8ff; /* Világos lila */
+    border-left: 5px solid #8957e5;
+    padding: 15px;
+    background-color: #1e3b4d;
+    color: #aaddff;
+    border: 1px solid #0f2936;
+}
+
+.unified-message-success .alert-success {
+    background-color: #1e4d3b;
+    color: #4ecca3;
+    border-color: #0f362a;
+}
+
+.unified-message-error .alert-danger {
+    background-color: #4d1e1e;
+    color: #ffaaaa;
+    border-color: #360f0f;
+}
+
+.unified-message-warning .alert-warning {
+    background-color: #4d411e;
+    color: #ffd280;
+    border-color: #362c0f;
+}
+
+.unified-message-info .alert-info {
+    background-color: #1e3b4d;
+    color: #80c2ff;
+    border-color: #0f2936;
+}
+
+/* Fejléc és tartalom */
+.unified-message-header {
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 1.2em;
+    padding: 10px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.unified-message-body {
+    line-height: 1.6;
+    padding: 15px;
+}
+
+/* Animáció */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.unified-message.show {
+    animation: fadeInUp 0.4s ease forwards;
+}
+
+.unified-message.fade-out {
+    opacity: 0;
+    transform: translateY(-15px);
+}
+
+/* Speciális stílusok a toast-content osztályhoz (kompatibilitás) */
+.toast-content {
+    padding: 10px;
+    border-radius: 5px;
+    padding: 15px;
+    color: #e0e0e0;
+}
+
+.toast-content h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.toast-content.success {
+    background-color: #d4edda;
+    color: #155724;
+    background-color: #1e4d3b;
+    border-left: 4px solid #4ecca3;
+}
+
+.toast-content.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    background-color: #4d1e1e;
+    border-left: 4px solid #ff6666;
+}
+
+.toast-content.warning {
+    background-color: #fff3cd;
+    color: #856404;
+    background-color: #4d411e;
+    border-left: 4px solid #ffc107;
+}
+
+.toast-content.guide {
+    background-color: #e2f0ff;
+    color: #004085;
+    background-color: #1e3b4d;
+    border-left: 4px solid #17a2b8;
+}
+
+/* Lezáró gomb */
+.unified-message-close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.6;
+    padding: 5px;
+}
+
+.unified-message-close:hover {
+    opacity: 1;
+}
+
+/* Kattintásra bezárás jelzése */
+.unified-message-close-hint {
+    text-align: center;
+    font-size: 0.8em;
+    margin-top: 10px;
+    padding-top: 5px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.1);
+    opacity: 0.6;
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    font-size: 0.7rem;
+    opacity: 0.6;
+    font-style: italic;
+}
+
+/* Kattintható üzenetek */
+.unified-message[style*="cursor: pointer"]:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    transform: translateY(-3px);
+}
+
+/* Bootstrap alert stílusok finomítása */
+.unified-message .alert {
+    margin-bottom: 0;
+    border: none;
+    padding: 15px;
+    margin-bottom: 0;
+    border: 1px solid transparent;
+}
+
+.unified-message .alert.mt-0 {
+    border-top: 1px dashed rgba(0, 0, 0, 0.1) !important;
+}
+
+.alert-success, 
+.alert-danger, 
+.alert-warning, 
+.alert-info {
+    color: #e0e0e0;
+    background-color: transparent;
+}
+
+/* Reszponzív viselkedés */
+@media (max-width: 768px) {
+    #unified-message-container,
+    #unified-message-fixed-container {
+        width: 90%;
+        margin: 15px auto;
+    }
+    .unified-message {
+        width: 100%;
+    }
+    
+    .unified-message-header,
+    .unified-message-body {
+        padding: 10px;
+    }
+}
+
+/* Gombok */
+button {
+    background: linear-gradient(145deg, #238636, #1a472a); /* Neon zöld */
+    color: #ffffff;
+    border: none;
+    border-radius: 20px; /* Erősen lekerekített sarkok */
+    padding: 12px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.8), -8px -8px 15px rgba(255, 255, 255, 0.1);
+}
+
+button:hover {
+    background: linear-gradient(145deg, #1a472a, #238636); /* Sötétebb zöld */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+    transform: translateY(-3px);
+}

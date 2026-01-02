@@ -1,0 +1,420 @@
+{% extends "statisztika/dashboard_base.html" %}
+{% load static %}
+
+{% block dashboard_title %}Felhasználói Teljesítmény{% endblock %}
+
+{% block page_title %}Teljesítmény Dashboard{% endblock %}
+{% block page_description %}Részletes áttekintés a teljesítményedről és fejlődésedről{% endblock %}
+
+{% block dashboard_extra_css %}
+<link rel="stylesheet" href="{% static 'css/statisztika/user_dashboard.css' %}">
+<style>
+    .tab-container {
+        margin-bottom: 2rem;
+    }
+
+    .tab-buttons {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .tab-button {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.2s;
+        cursor: pointer;
+        border: none;
+    }
+
+    .tab-button:hover {
+        transform: translateY(-2px);
+    }
+
+    .tab-pane {
+        animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+        background: rgba(30, 41, 59, 0.95);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(78, 204, 163, 0.1);
+    }
+
+    .card-header {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #4ecca3;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .recommendation-card {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border-left: 4px solid #667eea;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+    }
+
+    .recommendation-card.priority-magas {
+        border-left-color: #ef4444;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+    }
+
+    .recommendation-card.priority-kozepes {
+        border-left-color: #f59e0b;
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
+    }
+
+    .recommendation-card.priority-alacsony {
+        border-left-color: #10b981;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+    }
+
+    .error-category {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .progress-ring {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 1rem;
+    }
+
+    .progress-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: conic-gradient(
+            #4ecca3 0deg,
+            #4ecca3 var(--progress-deg),
+            rgba(78, 204, 163, 0.1) var(--progress-deg)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .progress-circle::before {
+        content: '';
+        width: 90px;
+        height: 90px;
+        background: #1e293b;
+        border-radius: 50%;
+        position: absolute;
+    }
+
+    .progress-value {
+        position: relative;
+        z-index: 1;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+</style>
+{% endblock %}
+
+{% block dashboard_content %}
+<!-- Tab Navigation -->
+<div class="tab-container">
+    <div class="tab-buttons">
+        <button class="tab-button bg-blue-600 text-white active" data-tab="overview">
+            <i class="fas fa-home mr-2"></i>Áttekintés
+        </button>
+        <button class="tab-button bg-gray-700 text-gray-300" data-tab="teljesitmeny">
+            <i class="fas fa-chart-line mr-2"></i>Teljesítmény
+        </button>
+        <button class="tab-button bg-gray-700 text-gray-300" data-tab="hibak">
+            <i class="fas fa-exclamation-circle mr-2"></i>Hibaelemzés
+        </button>
+        <button class="tab-button bg-gray-700 text-gray-300" data-tab="ajanlasok">
+            <i class="fas fa-lightbulb mr-2"></i>Ajánlások
+        </button>
+        <button class="tab-button bg-gray-700 text-gray-300" data-tab="badges">
+            <i class="fas fa-trophy mr-2"></i>Kitűzők
+        </button>
+    </div>
+
+    <!-- Tab Panes -->
+
+    <!-- Overview Tab -->
+    <div class="tab-pane" data-tab-pane="overview">
+        <!-- React Mount Point for Overview Dashboard -->
+        <div id="react-user-dashboard" data-dashboard-data='{{ dashboard_data }}'></div>
+    </div>
+
+    <!-- Teljesítmény Tab -->
+    <div class="tab-pane hidden" data-tab-pane="teljesitmeny">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-chart-bar"></i>
+                Teljesítmény Mutatók
+            </div>
+            <!-- React mount point for performance charts -->
+            <div id="react-performance-charts"></div>
+        </div>
+    </div>
+
+    <!-- Hibák Tab -->
+    <div class="tab-pane hidden" data-tab-pane="hibak">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-bug"></i>
+                Hibaelemzés
+            </div>
+            <div id="error-analysis-container"></div>
+        </div>
+    </div>
+
+    <!-- Ajánlások Tab -->
+    <div class="tab-pane hidden" data-tab-pane="ajanlasok">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-tasks"></i>
+                Személyre Szabott Ajánlások
+            </div>
+            <div id="recommendations-container"></div>
+        </div>
+    </div>
+
+    <!-- Badges Tab -->
+    <div class="tab-pane hidden" data-tab-pane="badges">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-award"></i>
+                Kitűzők és Jutalmak
+            </div>
+            <div id="badges-container"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Legacy fallback content (hidden by default) -->
+<div class="legacy-content" style="display: none;">
+    <div class="card">
+        <h2>Felhasználói Teljesítmény</h2>
+        <p>Összes pontszám: {{ osszesitett.osszes_pont }}</p>
+
+        <h3>Legutóbbi pontszámok</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Dátum</th>
+                    <th>Pontszám</th>
+                    <th>Max</th>
+                    <th>Hatékonyság</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pont in pontszamok %}
+                <tr>
+                    <td>{{ pont.datum }}</td>
+                    <td>{{ pont.pontszam }}</td>
+                    <td>{{ pont.max_pontszam }}</td>
+                    <td>{{ pont.hatekonysag }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block dashboard_extra_js %}
+<!-- React User Dashboard Bundle -->
+<script src="{% static 'js/bundles/user_dashboard.bundle.js' %}"></script>
+
+<!-- Dashboard initialization script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dashboardElement = document.getElementById('react-user-dashboard');
+        if (!dashboardElement) {
+            console.warn('React dashboard mount point not found');
+            return;
+        }
+
+        const dashboardData = JSON.parse(dashboardElement.dataset.dashboardData || '{}');
+
+        console.log('Dashboard Data:', dashboardData);
+
+        // Initialize sidebar stats from gamification data
+        if (dashboardData.gamification) {
+            const { szint, streak } = dashboardData.gamification;
+
+            if (szint) {
+                document.getElementById('user-level').textContent = szint.jelenlegi || 1;
+                document.getElementById('user-rang').textContent = szint.rang || 'Kezdő';
+                const progressBar = document.getElementById('xp-progress');
+                if (progressBar && szint.progress_percent !== undefined) {
+                    progressBar.style.width = szint.progress_percent + '%';
+                }
+            }
+
+            if (streak) {
+                document.getElementById('user-streak').textContent = streak.aktualis || 0;
+            }
+
+            document.getElementById('navbar-osszes-pont').textContent = dashboardData.osszes_pont || 0;
+        }
+
+        // Render error analysis
+        if (dashboardData.hibaelemzes) {
+            renderErrorAnalysis(dashboardData.hibaelemzes);
+        }
+
+        // Render recommendations
+        if (dashboardData.ajanlasok) {
+            renderRecommendations(dashboardData.ajanlasok);
+        }
+
+        // Render progress
+        if (dashboardData.progress) {
+            renderProgress(dashboardData.progress);
+        }
+
+        // Render badges
+        if (dashboardData.gamification && dashboardData.gamification.badges) {
+            renderBadges(dashboardData.gamification.badges, dashboardData.gamification.megszerzett_badges);
+        }
+
+        // Fallback check
+        setTimeout(function() {
+            const reactRoot = document.getElementById('react-user-dashboard');
+            if (reactRoot && reactRoot.childElementCount === 0) {
+                document.querySelector('.legacy-content').style.display = 'block';
+                console.warn('React nem töltődött be, fallback mód aktiválva');
+            }
+        }, 2000);
+    });
+
+    // Error Analysis Renderer
+    function renderErrorAnalysis(hibaelemzes) {
+        const container = document.getElementById('error-analysis-container');
+        if (!container) return;
+
+        let html = '<div class="space-y-4">';
+
+        // Top problémák
+        if (hibaelemzes.top_problemak && hibaelemzes.top_problemak.length > 0) {
+            html += '<h3 class="text-lg font-semibold mb-3">Főbb Problémás Területek</h3>';
+
+            hibaelemzes.top_problemak.forEach(problema => {
+                html += `
+                    <div class="error-category">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-semibold text-red-400">${problema.nev}</h4>
+                            <span class="bg-red-600 text-white px-2 py-1 rounded text-sm">${problema.hiba_db} hiba</span>
+                        </div>
+                        <div class="text-sm text-gray-400 mb-2">Példák:</div>
+                        <div class="flex flex-wrap gap-2">
+                `;
+
+                problema.peldak.forEach(pelda => {
+                    html += `
+                        <div class="bg-gray-700 px-3 py-1 rounded text-sm">
+                            ${pelda.szorzo} × ${pelda.szorzando} = ${pelda.eredmeny}
+                            <span class="text-red-400 ml-1">(${pelda.hibak_szama}×)</span>
+                        </div>
+                    `;
+                });
+
+                html += '</div></div>';
+            });
+        } else {
+            html += '<p class="text-green-400"><i class="fas fa-check-circle mr-2"></i>Remek! Nincsenek jelentős hibáid.</p>';
+        }
+
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    // Recommendations Renderer
+    function renderRecommendations(ajanlasok) {
+        const container = document.getElementById('recommendations-container');
+        if (!container) return;
+
+        let html = '<div class="space-y-3">';
+
+        if (ajanlasok && ajanlasok.length > 0) {
+            ajanlasok.forEach(ajanlas => {
+                html += `
+                    <div class="recommendation-card priority-${ajanlas.prioritas}">
+                        <div class="flex items-start gap-3">
+                            <div class="text-3xl">${ajanlas.ikon}</div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start mb-1">
+                                    <h4 class="font-semibold">${ajanlas.cim}</h4>
+                                    <span class="text-xs px-2 py-1 rounded ${
+                                        ajanlas.prioritas === 'magas' ? 'bg-red-600' :
+                                        ajanlas.prioritas === 'kozepes' ? 'bg-yellow-600' :
+                                        'bg-green-600'
+                                    }">${ajanlas.prioritas.toUpperCase()}</span>
+                                </div>
+                                <p class="text-sm text-gray-300 mb-2">${ajanlas.leiras}</p>
+                                <p class="text-xs text-gray-400"><i class="fas fa-arrow-right mr-1"></i>${ajanlas.akcio}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            html += '<p class="text-gray-400">Jelenleg nincsenek új ajánlások. Folytasd a jó munkát!</p>';
+        }
+
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    // Progress Renderer
+    function renderProgress(progress) {
+        // This could be rendered as circular progress bars in the overview
+        console.log('Progress metrics:', progress);
+    }
+
+    // Badges Renderer
+    function renderBadges(allBadges, userBadges) {
+        const container = document.getElementById('badges-container');
+        if (!container) return;
+
+        const userBadgeCodes = new Set((userBadges || []).map(b => b.kod));
+
+        let html = '<div class="badge-grid">';
+
+        if (allBadges && allBadges.length > 0) {
+            allBadges.forEach(badge => {
+                const unlocked = userBadgeCodes.has(badge.kod);
+                html += `
+                    <div class="badge-card ${unlocked ? '' : 'locked'} ${badge.ritka ? 'rare' : ''}">
+                        <div class="badge-icon">${badge.ikon}</div>
+                        <div class="badge-name">${badge.nev}</div>
+                        <div class="badge-description">${badge.leiras}</div>
+                        ${unlocked ? '<div class="text-green-400 text-xs mt-2"><i class="fas fa-check-circle"></i> Megszerzve</div>' : ''}
+                    </div>
+                `;
+            });
+        } else {
+            html += '<p class="text-gray-400 col-span-full">Nincsenek elérhető kitűzők.</p>';
+        }
+
+        html += '</div>';
+        container.innerHTML = html;
+    }
+</script>
+{% endblock %}

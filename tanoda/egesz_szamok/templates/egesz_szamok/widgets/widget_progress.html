@@ -1,0 +1,125 @@
+{% load static %}
+<!-- Progress Chart Widget -->
+<div class="widget-header">
+    <h3><i class="fas fa-chart-line"></i> Fejlődés</h3>
+    <div class="widget-header-actions">
+        <select class="glass-select time-filter" id="progress-time-filter" onchange="updateProgressChart()">
+            <option value="today">Ma</option>
+            <option value="week">Hét</option>
+            <option value="month">Hónap</option>
+        </select>
+    </div>
+</div>
+
+<div class="widget-body" id="progress-widget">
+    <!-- Bar Chart Container -->
+    <div id="teljesitmeny-grafikon" class="progress-chart">
+        <!-- Check if we have data -->
+        {% if teljesitmeny_data %}
+        <div class="bar-chart" id="bar-chart">
+            <!-- Bars will be rendered by JavaScript -->
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="progress-chart-empty">
+            <i class="fas fa-chart-bar"></i>
+            <p>Még nincs elegendő adat a grafikon megjelenítéséhez.</p>
+            <p style="font-size: 12px; opacity: 0.7;">Oldj meg néhány feladatot a fejlődésed nyomon követéséhez!</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Summary Stats (Below Chart) -->
+    <div class="stat-grid mt-4" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="stat-item">
+            <span class="stat-value green" id="progress-total">{{ napi_pontok|default:0 }}</span>
+            <span class="stat-label">Mai pontok</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value cyan" id="progress-tasks">{{ napi_feladatok|default:0 }}</span>
+            <span class="stat-label">Feladatok</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value orange" id="progress-accuracy">{{ napi_pontossag|default:'-' }}</span>
+            <span class="stat-label">Pontosság</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Simple bar chart renderer
+    function renderBarChart(data) {
+        const container = document.getElementById('bar-chart');
+        if (!container || !data || data.length === 0) return;
+
+        container.innerHTML = '';
+
+        const maxValue = Math.max(...data.map(d => d.value), 1);
+
+        data.forEach((item, index) => {
+            const barItem = document.createElement('div');
+            barItem.className = 'bar-item';
+
+            const barValue = document.createElement('span');
+            barValue.className = 'bar-value';
+            barValue.textContent = item.value;
+
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            bar.style.height = ((item.value / maxValue) * 150) + 'px';
+            bar.title = `${item.label}: ${item.value} pont`;
+
+            const barLabel = document.createElement('span');
+            barLabel.className = 'bar-label';
+            barLabel.textContent = item.label;
+
+            barItem.appendChild(barValue);
+            barItem.appendChild(bar);
+            barItem.appendChild(barLabel);
+            container.appendChild(barItem);
+        });
+    }
+
+    // Demo data for bar chart (replace with actual data from context)
+    function updateProgressChart() {
+        const filter = document.getElementById('progress-time-filter').value;
+
+        // Example data - replace with actual AJAX call or context data
+        const demoData = {
+            'today': [
+                { label: '9:00', value: 10 },
+                { label: '10:00', value: 25 },
+                { label: '11:00', value: 15 },
+                { label: '12:00', value: 30 },
+                { label: '13:00', value: 20 },
+                { label: '14:00', value: 45 },
+            ],
+            'week': [
+                { label: 'H', value: 80 },
+                { label: 'K', value: 120 },
+                { label: 'Sze', value: 95 },
+                { label: 'Cs', value: 140 },
+                { label: 'P', value: 110 },
+                { label: 'Szo', value: 60 },
+                { label: 'V', value: 40 },
+            ],
+            'month': [
+                { label: '1. hét', value: 350 },
+                { label: '2. hét', value: 480 },
+                { label: '3. hét', value: 420 },
+                { label: '4. hét', value: 520 },
+            ]
+        };
+
+        // Check if we have chart container (not empty state)
+        const chartContainer = document.getElementById('bar-chart');
+        if (chartContainer) {
+            renderBarChart(demoData[filter] || []);
+        }
+    }
+
+    // Initialize chart on load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateProgressChart();
+    });
+</script>

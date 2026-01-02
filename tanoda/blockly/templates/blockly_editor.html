@@ -1,0 +1,36 @@
+{% load static %}
+<div id="blocklyDiv" class="blockly-editor" data-config="{{ editor_config|default:'default' }}"></div>
+
+<xml id="toolbox" style="display: none">
+    {% if 'basic' in toolbox_categories %}
+    <category name="Alap blokkok" colour="#5C81A6">
+        <!-- Alap blokkok -->
+        {% include "blockly/components/toolbox/basic_blocks.html" %}
+    </category>
+    {% endif %}
+    
+    {% if '3d' in toolbox_categories %}
+    <category name="3D objektumok" colour="#5C81A6">
+        <!-- 3D blokkok -->
+        {% include "blockly/components/toolbox/3d_blocks.html" %}
+    </category>
+    {% endif %}
+    
+    {% if 'control' in toolbox_categories %}
+    <category name="Vezérlés" colour="#5CA699">
+        <!-- Vezérlő blokkok -->
+        {% include "blockly/components/toolbox/control_blocks.html" %}
+    </category>
+    {% endif %}
+    
+    {% if 'math' in toolbox_categories %}
+    <category name="Matematika" colour="#A6745C">
+        <!-- Matematikai blokkok -->
+        {% include "blockly/components/toolbox/math_blocks.html" %}
+    </category>
+    {% endif %}
+    
+    {% if 'variables' in toolbox_categories %}
+    <category name="Változók" colour="#A65CA4" custom="VARIABLE"></category>
+    {% endif %}
+</xml>

@@ -1,0 +1,92 @@
+{% extends "egesz_szamok/eg_szamok_szorzasa.html" %}
+{% load static %}
+
+{% block extra_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/szorzas/szorz_hely_matrix.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+{% endblock %}
+
+{% block title %}Helyiérték Mátrix Szorzás - Tanoda{% endblock %}
+
+{% block matrix_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="matrix-container">
+                <div class="matrix-wrapper">
+                    <div id="helyiertek-matrix" class="helyiertek-matrix"></div>
+
+                    <div class="control-panel mb-2 d-flex flex-wrap justify-content-center gap-2">
+                        <button id="ellenorzes-btn" class="btn btn-sm btn-success">Ellenőrzés</button>
+                        <button id="uj-feladat-btn" class="btn btn-sm btn-primary">Új</button>
+                        <button id="demo-btn" class="btn btn-sm btn-info">
+                            <i class="fas fa-play"></i> <span class="d-none d-md-inline">Bemutató</span>
+                        </button>
+                        <button id="sajat-feladat-btn" class="btn btn-sm btn-warning">Saját</button>
+
+                        <div class="form-check form-check-inline ms-1">
+                            <input class="form-check-input" type="checkbox" id="show-carry-digits">
+                            <label class="form-check-label small" for="show-carry-digits">
+                                Maradékok
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="keyboard-instructions text-muted small mt-1 d-none d-md-block">
+                        <p class="mb-1">
+                            <i class="fas fa-keyboard"></i>
+                            <span class="badge bg-light text-dark">0-9</span> számok,
+                            <span class="badge bg-light text-dark">←→↑↓</span> mozgás
+                        </p>
+                    </div>
+                </div>
+
+                <div class="numpad-container mt-2">
+                    <div id="message-container" class="p-1 border rounded"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="pontszam-panel mt-2">
+                <h5>Pontszám: <span id="pontszam">0</span></h5>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script type="module" src="{% static 'js/szorzas/szorz_hely_matrix_resz.js' %}"></script>
+
+<script type="module">
+    import { initHelyiertekMatrix } from '{% static "js/szorzas/tobbjegyuvel/szorz_hely_matrix.js" %}';
+    import { debugMatrix } from '{% static "js/szorzas/tobbjegyuvel/debug.js" %}';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const matrix = initHelyiertekMatrix();
+
+        function adjustGridHeight() {
+            const gridEl = document.querySelector('.helyiertek-matrix');
+            if (gridEl) {
+                const cellWidth = gridEl.offsetWidth / 12;
+                const gridHeight = cellWidth * 5;
+                gridEl.style.height = gridHeight + 'px';
+            }
+        }
+
+        adjustGridHeight();
+        window.addEventListener('resize', adjustGridHeight);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('debug')) {
+            document.querySelector('.helyiertek-matrix').classList.add('debug-mode');
+            setTimeout(() => {
+                const result = debugMatrix(matrix);
+                console.table(result);
+            }, 500);
+        }
+    });
+</script>
+{% endblock %}

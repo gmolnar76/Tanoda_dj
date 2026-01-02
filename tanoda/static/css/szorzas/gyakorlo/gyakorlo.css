@@ -1,0 +1,470 @@
+/* Eltávolítva a Pitagorasz-tábla megjelenésére vonatkozó összes CSS */
+/* Tartalom színének világosabbá tétele a sötét háttérhez */
+
+/* Szorzás gyakorló modul alapvető stílusai sötét témához */
+
+body {
+    background-color: #222;
+    color: #e0e0e0;
+}
+
+/* Kártya stílusok - Gamification-heavy */
+.card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(102, 126, 234, 0.6);
+}
+
+.card-body {
+    color: #e0e0e0;
+}
+
+.card-header {
+    font-weight: 600;
+    border-bottom: 1px solid #444;
+}
+
+/* Feladat konténer */
+.feladat-container {
+    padding: 15px 0;
+}
+
+/* Feladat számok - Animated gradient text */
+.szorzat-szam {
+    font-size: 3rem;
+    background: linear-gradient(45deg, #4ecca3, #00d4ff, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 900;
+    text-shadow: 0 4px 8px rgba(78, 204, 163, 0.4);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { filter: brightness(1) hue-rotate(0deg); }
+    50% { filter: brightness(1.3) hue-rotate(10deg); }
+}
+
+/* Bemeneti mezők és gombok - Modern glow effect */
+#valasz {
+    font-size: 2.2rem;
+    font-weight: bold;
+    text-align: center;
+    background: linear-gradient(145deg, #2d2d44, #1a1a2e);
+    border: 2px solid #4ecca3;
+    color: #fff;
+    height: 70px;
+    width: 160px;
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(78, 204, 163, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    appearance: none;
+    -moz-appearance: textfield;
+    border-radius: 12px;
+}
+
+/* Inset input styles */
+.inset-input {
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(78, 204, 163, 0.3);
+    border: 2px solid #4ecca3;
+}
+
+.inset-input:focus {
+    outline: none;
+    border: 2px solid #00ff88;
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(0, 255, 136, 0.6) !important;
+}
+
+#valasz:focus {
+    background: linear-gradient(145deg, #3a3a55, #252540);
+    border-color: #00ff88;
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(0, 255, 136, 0.6);
+    transform: scale(1.05);
+}
+
+/* Új gombstílusok - 3D domború hatással */
+.feladat-gomb {
+    padding: 10px 25px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background-color: transparent; /* Színtelen háttér */
+    border: none; /* Keret eltávolítása */
+    color: #ffffff; /* Fehér szöveg */
+    border-radius: 25px; /* Lekerekített sarkok */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Árnyék */
+    transition: all 0.3s ease; /* Animáció */
+}
+
+.feladat-gomb:hover {
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4); /* Erősebb árnyék */
+    transform: translateY(-2px); /* Enyhe emelkedés */
+}
+
+.feladat-gomb:active {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Gyengébb árnyék */
+    transform: translateY(0); /* Visszaállítás */
+}
+
+.feladat-gomb-secondary {
+    padding: 10px 20px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    background-color: transparent; /* Színtelen háttér */
+    border: none;
+    color: #cccccc; /* Világosszürke szöveg */
+    border-radius: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.feladat-gomb-secondary:hover {
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.feladat-gomb-secondary:active {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+}
+
+.feladat-gomb-warning {
+    padding: 10px 20px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    background-color: transparent; /* Színtelen háttér */
+    border: none;
+    color: #ffcc00; /* Élénk sárga szöveg */
+    border-radius: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.feladat-gomb-warning:hover {
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.feladat-gomb-warning:active {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+}
+
+/* Funkció gombok egységes stílusa (tipp és kihívás gombok) - Pulsing effect */
+.feature-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6); }
+}
+
+.feature-btn:hover {
+    animation: none;
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.8);
+}
+
+.feature-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+}
+
+.feature-btn i {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+}
+
+/* Szint kijelző badge */
+.szint-badge {
+    background: linear-gradient(to bottom, #4ecca3 0%, #2a7d63 100%);
+    font-size: 1.1rem;
+    padding: 8px 15px;
+    border-radius: 5px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+/* Kihívás és nehézségi szint modul */
+.nehezseg-resz,
+.kihivas-resz {
+    display: flex;
+    align-items: center;
+}
+
+.kihivas-resz {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Statisztika elemek */
+#osszes-pont {
+    font-size: 1.2rem;
+    padding: 5px 10px;
+    background-color: #4ecca3;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.progress {
+    height: 25px;
+    border-radius: 5px;
+    margin-top: 5px;
+    background-color: #444;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.5s ease;
+    font-weight: 600;
+    background: linear-gradient(to right, #4ecca3, #2a7d63);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+/* Nehézségi szint kijelző */
+#nehezseg-kijelzo {
+    padding: 5px 10px;
+    font-size: 1rem;
+    background-color: #4ecca3;
+}
+
+/* Eredmény üzenetek */
+#eredmeny {
+    transition: all 0.3s ease;
+}
+
+.alert-success {
+    background-color: #1e4d3b;
+    color: #4ecca3;
+    border-color: #0f362a;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.alert-danger {
+    background-color: #4d1e1e;
+    color: #ffaaaa;
+    border-color: #360f0f;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.alert-warning {
+    background-color: #4d411e;
+    color: #ffd280;
+    border-color: #362c0f;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Teljesítmény grafikon */
+#teljesitmeny-container {
+    border-top: 1px solid #444;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+#teljesitmeny-grafikon {
+    height: 200px;
+    margin-top: 10px;
+    background-color: #333;
+    border: 1px solid #444;
+    border-radius: 5px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Gyenge pontok panel */
+#gyenge-pontok {
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Kihívás mód stílusai */
+#kihivas-start {
+    transition: all 0.3s ease;
+    background-color: #d4a017;
+    border-color: #b38814;
+}
+
+#kihivas-start:hover {
+    transform: scale(1.05);
+    background-color: #c09015;
+}
+
+#kihivas-feladat-container {
+    padding: 15px;
+}
+
+#kihivas-ido {
+    font-weight: bold;
+    color: #ffd280;
+}
+
+/* Animációk */
+@keyframes pulzalas {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.pulzalas {
+    animation: pulzalas 1s ease;
+}
+
+/* Mobilnézet stílusok */
+@media (max-width: 992px) {
+    .szorzat-szam {
+        font-size: 2rem;
+    }
+    
+    #valasz {
+        font-size: 1.8rem;
+    }
+    
+    .feladat-gomb, .feladat-gomb-secondary, .feladat-gomb-warning {
+        padding: 8px 15px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .szorzat-szam {
+        font-size: 1.8rem;
+    }
+    
+    #valasz {
+        font-size: 1.5rem;
+        width: 100px !important;
+    }
+    
+    .feladat-rész, .kihivas-rész, .nehezseg-resz {
+        width: 100%;
+        margin-bottom: 10px;
+        justify-content: center;
+    }
+    
+    .kihivas-resz {
+        margin-top: 10px;
+    }
+    
+    .nehezseg-resz {
+        justify-content: center;
+    }
+    
+    #teljesitmeny-grafikon {
+        height: 150px;
+    }
+    
+    /* Mobilon a kihívás és nehézség panel stílusai */
+    .nehezseg-resz, .kihivas-resz {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .szorzat-szam {
+        font-size: 1.5rem;
+    }
+    
+    #valasz {
+        font-size: 1.3rem;
+        width: 80px !important;
+    }
+}
+
+/* Kör alakú gombok */
+.btn-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.btn-circle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: black;
+    border: none;
+}
+
+/* Transparent button style */
+.transparent-btn {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.transparent-btn:hover {
+    background-color: rgba(0,0,0,0.05) !important;
+}
+
+.transparent-btn:active {
+    background-color: rgba(0,0,0,0.1) !important;
+}
+
+/* Keep the warning color for challenge button but make it semi-transparent */
+.btn-warning.transparent-btn {
+    background-color: rgba(255, 193, 7, 0.2) !important;
+}
+
+.btn-warning.transparent-btn:hover {
+    background-color: rgba(255, 193, 7, 0.3) !important;
+}

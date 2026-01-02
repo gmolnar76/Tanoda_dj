@@ -1,0 +1,90 @@
+{% load static %}
+<!-- Szorzás Task Widget - Multiplication Practice -->
+<div class="widget-header">
+    <h3><i class="fas fa-calculator"></i> Feladat</h3>
+    <div class="widget-header-actions">
+        <!-- Mode Toggle Buttons -->
+        <div class="mode-toggle" id="mode-toggle">
+            <button class="mode-btn active" data-mode="practice" title="Gyakorló mód">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Gyak</span>
+            </button>
+            <button class="mode-btn" data-mode="scoring" title="Pontozásos mód">
+                <i class="fas fa-bolt"></i>
+                <span>Pont</span>
+            </button>
+            <button class="mode-btn" data-mode="challenge" title="Időzített Kihívás - 10 feladat, 60 mp">
+                <i class="fas fa-stopwatch"></i>
+                <span>Kihívás</span>
+            </button>
+        </div>
+
+        <!-- Difficulty Stars -->
+        <div class="difficulty-stars" id="nehezseg-kijelzo">
+            <!-- Stars rendered by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<div class="widget-body task-widget">
+    <!-- Large Numbers Display -->
+    <div class="task-display feladat-rész">
+        <span id="szorzo" class="task-number neon-cyan">5</span>
+        <span class="task-operator">×</span>
+        <span id="szorzando" class="task-number neon-cyan">7</span>
+        <span class="task-operator">=</span>
+        <input type="number"
+               id="valasz"
+               class="task-input glass-input"
+               autocomplete="off"
+               inputmode="numeric"
+               autocapitalize="off"
+               autocorrect="off"
+               spellcheck="false"
+               placeholder="?">
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="task-actions">
+        <button id="ellenorzes-btn" class="btn-action btn-glass-circle" title="Ellenőrzés [Enter]">
+            <i class="fas fa-check"></i>
+        </button>
+        <button id="reset-btn" class="btn-action btn-glass-circle" title="Újraindítás [R]">
+            <i class="fas fa-redo"></i>
+        </button>
+        <button id="tipp-btn" class="btn-action btn-glass-circle" title="Tipp kérése [T]">
+            <i class="fas fa-lightbulb"></i>
+        </button>
+    </div>
+
+    <!-- Result Message -->
+    <div id="eredmeny" class="result-message" style="display: none;"></div>
+
+    <!-- Challenge Mode Timer and Progress -->
+    <div id="kihivas-feladat-container" class="challenge-info mt-4" style="display: none; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;">
+        <div class="text-center">
+            <div class="challenge-timer-display mb-3">
+                <i class="fas fa-stopwatch"></i>
+                <span id="kihivas-ido" class="timer-value">60</span>
+                <span class="timer-unit">mp</span>
+            </div>
+            <div class="challenge-progress-text mb-3">
+                <span>Feladat: </span>
+                <span id="kihivas-feladat-szam" class="progress-number">0</span>
+                <span> / 10</span>
+            </div>
+            <button id="kihivas-stop-btn" class="btn-action btn-secondary btn-sm">
+                <i class="fas fa-stop"></i>
+                <span>Megállítás</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Challenge Result -->
+    <div id="kihivas-eredmeny" class="alert alert-success mt-3" style="display: none;"></div>
+</div>
+
+<!-- Keyboard Shortcuts (Below Task) -->
+<div class="mt-4 pt-3" style="border-top: 1px solid rgba(255,255,255,0.05);">
+    {% include "egesz_szamok/widgets/widget_help_shortcuts.html" %}
+</div>

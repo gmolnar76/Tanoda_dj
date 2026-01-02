@@ -1,0 +1,44 @@
+/* static/css/dark_theme.css */
+
+body {
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+}
+
+.container, .card {
+    background-color: #16213e;
+    border-color: #0f3460;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #4ecca3;
+}
+
+.btn-primary {
+    background-color: #0f3460;
+    border-color: #0f3460;
+}
+
+.btn-primary:hover {
+    background-color: #16213e;
+    border-color: #16213e;
+}
+
+.nav-link {
+    color: #e0e0e0;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: #4ecca3;
+}
+
+.list-group-item {
+    background-color: #16213e;
+    color: #e0e0e0;
+    border-color: #0f3460;
+}
+
+.list-group-item:hover, .list-group-item.active {
+    background-color: #0f3460;
+    color: #4ecca3;
+}

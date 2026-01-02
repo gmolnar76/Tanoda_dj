@@ -1,0 +1,80 @@
+{% extends "evfolyamok/base_evfolyam.html" %}
+{% load static %}
+
+{% block evfolyam_title %}5. Évfolyam - Matematika{% endblock %}
+
+{% block evfolyam_description %}
+    <p>Az 5. évfolyam matematika tananyaga</p>
+{% endblock %}
+
+{% block evfolyam_css %}
+<style>
+    :root {
+        --evfolyam-primary-color: #4ecca3;
+        --evfolyam-secondary-color: #1a2849;
+        --evfolyam-accent-color: #ff8c42;
+    }
+    
+    .evfolyam-header h1 {
+        color: var(--evfolyam-primary-color);
+    }
+    
+    .sidebar .nav-link.active {
+        background-color: var(--evfolyam-primary-color);
+    }
+</style>
+<link rel="stylesheet" href="{% static 'css/evf5.css' %}">
+{% endblock %}
+
+{% block sidebar %}
+    {% include "evfolyamok/5/bal_menu.html" %}
+{% endblock %}
+
+{% block evfolyam_content %}
+    <div class="evfolyam-welcome">
+        <h2>Üdvözlünk az 5. évfolyamon!</h2>
+        <p>Válassz egy témakört a bal oldali menüből a tanulás megkezdéséhez.</p>
+        
+        <div class="featured-topics mt-5">
+            <h3>Kiemelt témakörök</h3>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card bg-dark text-white mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Természetes számok</h5>
+                            <p class="card-text">Ismerkedés a számokkal és alapműveletekkel</p>
+                            <a href="#" class="btn btn-outline-light">Ugrás a leckére</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-dark text-white mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Geometriai alapok</h5>
+                            <p class="card-text">Síkbeli alakzatok, mérések</p>
+                            <a href="#" class="btn btn-outline-light">Ugrás a leckére</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-dark text-white mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Törtek</h5>
+                            <p class="card-text">Bevezetés a törtek világába</p>
+                            <a href="#" class="btn btn-outline-light">Ugrás a leckére</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block evfolyam_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('5. évfolyam specifikus JavaScript betöltve');
+    });
+</script>
+{% endblock %}
+

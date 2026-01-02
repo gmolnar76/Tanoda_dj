@@ -1,0 +1,12 @@
+// Teljesítmény grafikon frissítése
+function frissitTeljesitmenyGrafikon(data) {
+    teljesitmenyAdatok.push(data.pontszam || 0);
+    if (teljesitmenyAdatok.length > 10) teljesitmenyAdatok.shift();
+
+    // Use React Performance Chart instead of Plotly
+    if (window.performanceChartInstance && typeof window.performanceChartInstance.update === 'function') {
+        window.performanceChartInstance.update(teljesitmenyAdatok);
+    } else {
+        console.warn('Performance Chart React instance not initialized');
+    }
+}

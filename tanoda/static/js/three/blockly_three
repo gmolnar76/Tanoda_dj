@@ -1,0 +1,137 @@
+let scene, camera, renderer, cube;
+
+// Three.js inicializálása
+function initThreeJs() {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, 400 / 480, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(400, 480);
+    document.getElementById('threeJsRenderer').appendChild(renderer.domElement);
+
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    camera.position.z = 5;
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+}
+
+// Blockly inicializálása
+function initBlockly() {
+    // Ellenőrizzük, hogy a Blockly objektum létezik-e
+    if (typeof Blockly === 'undefined') {
+        console.log('Blockly még nem töltődött be, várakozás...');
+        // Ha nem létezik, próbáljuk újra 100ms múlva
+        setTimeout(initBlockly, 100);
+        return;
+    }
+    
+    console.log('Blockly betöltve, inicializálás...');
+    
+    const toolbox = {
+        kind: "categoryToolbox",
+        contents: [
+            {
+                kind: "category",
+                name: "Műveletek",
+                contents: [
+                    {
+                        kind: "block",
+                        type: "rotate_cube",
+                    }
+                ]
+            }
+        ]
+    };
+
+    const workspace = Blockly.inject('blocklyDiv', { toolbox: toolbox });
+
+    Blockly.Blocks['rotate_cube'] = {
+        init: function() {
+            this.appendDummyInput()
+                .appendField("Forgasd a kockát")
+                .appendField(new Blockly.FieldDropdown([["X","x"], ["Y","y"], ["Z","z"]]), "AXIS")
+                .appendField("tengelyen")
+                .appendField(new Blockly.FieldNumber(0, -360, 360), "ANGLE")
+                .appendField("fokkal");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(230);
+        }
+    };
+
+    // JavaScript generátor a blokkhoz
+    Blockly.JavaScript['rotate_cube'] = function(block) {
+        var axis = block.getFieldValue('AXIS');
+        var angle = block.getFieldValue('ANGLE');
+        return 'rotateCube("' + axis + '", ' + angle + ');\n';
+    };
+
+    // Tesztblokk hozzáadása
+    const testBlock = workspace.newBlock('rotate_cube');
+    testBlock.setFieldValue('x', 'AXIS');
+    testBlock.setFieldValue(90, 'ANGLE');
+    testBlock.initSvg();
+    testBlock.render();
+}
+
+
+function rotateCube(axis, angle) {
+    console.log(`Rotating cube on ${axis} axis by ${angle} degrees`);
+    const radians = THREE.MathUtils.degToRad(parseFloat(angle));
+    switch(axis) {
+        case 'x': cube.rotation.x = radians; break;
+        case 'y': cube.rotation.y = radians; break;
+        case 'z': cube.rotation.z = radians; break;
+    }
+}
+
+function runCode() {
+    // Ellenőrizzük, hogy a Blockly létezik-e
+    if (typeof Blockly === 'undefined') {
+        console.error('Blockly nincs betöltve, nem lehet kódot futtatni');
+        alert('Hiba: A Blockly könyvtár nincs betöltve!');
+        return;
+    }
+    
+    const code = Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
+    console.log('Generated code:', code);
+    alert('Generated code: ' + code);
+    try {
+        eval(code);
+    } catch (e) {
+        console.error('Error executing code:', e);
+        alert('Error: ' + e.message);
+    }
+}
+
+// Inicializálás
+document.addEventListener('DOMContentLoaded', () => {
+    // Először inicializáljuk a Three.js részt
+    initThreeJs();
+    animate();
+    
+    // Ellenőrizzük rendszeresen, hogy a Blockly elérhető-e már
+    const checkBlocklyLoaded = () => {
+        if (typeof Blockly !== 'undefined') {
+            console.log('Blockly betöltve, inicializálás...');
+            initBlockly();
+        } else {
+            console.log('Blockly még nem töltődött be, várakozás...');
+            setTimeout(checkBlocklyLoaded, 300);
+        }
+    };
+    
+    // Kezdjük meg a Blockly betöltöttségének ellenőrzését
+    checkBlocklyLoaded();
+    
+    console.log('Initialization started');
+});
+
+// Globális objektumok elérhetővé tétele
+window.runCode = runCode;

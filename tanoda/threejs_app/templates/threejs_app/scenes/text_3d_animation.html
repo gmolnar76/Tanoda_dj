@@ -1,0 +1,493 @@
+{% extends "threejs_app/base/base_threejs.html" %}
+{% load static %}
+
+{% block threejs_title %}3D Tanoda Szöveg | Tanoda{% endblock %}
+{% block threejs_page_title %}3D Tanoda Szöveg Animáció{% endblock %}
+
+{% block threejs_extra_css %}
+<style>
+    #canvas-container {
+        width: 100%;
+        height: 500px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(45deg, #2b2b2b 0%, #1a1a1a 100%);
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    #scene-controls {
+        margin-top: 20px;
+        padding: 20px;
+        background: #2b2b2b;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .control-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+        gap: 15px;
+    }
+    
+    .control-group {
+        flex: 1;
+        min-width: 150px;
+    }
+    
+    .control-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #bb86fc;
+        font-weight: 500;
+    }
+    
+    .btn-effect {
+        background-color: #3700b3;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-effect:hover {
+        background-color: #6200ee;
+    }
+    
+    .btn-effect.active {
+        background-color: #cf6679;
+        box-shadow: 0 0 8px rgba(207, 102, 121, 0.6);
+    }
+    
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        color: #fff;
+        font-size: 18px;
+    }
+    
+    .instructions {
+        margin-top: 20px;
+        padding: 15px;
+        background: #1e1e1e;
+        border-left: 4px solid #03dac6;
+        color: #e0e0e0;
+        border-radius: 0 4px 4px 0;
+    }
+</style>
+{% endblock %}
+
+{% block threejs_content %}
+<div class="container">
+    <div class="instructions">
+        <p><strong>Útmutató:</strong> Ez a demonstráció egy 3D "tanoda" szöveget jelenít meg különféle animációkkal és effektekkel.
+        Használd a lenti vezérlőket a különböző effektek aktiválásához és a színek módosításához.</p>
+    </div>
+    
+    <div id="canvas-container">
+        <div class="loading-overlay" id="loadingOverlay">
+            <p>Three.js betöltése... <span id="loadingProgress">0%</span></p>
+        </div>
+        <canvas id="textScene"></canvas>
+    </div>
+    
+    <div id="scene-controls">
+        <h3>Effektek és vezérlők</h3>
+        
+        <div class="control-row">
+            <div class="control-group">
+                <label class="control-label">Betűtípus</label>
+                <select id="fontSelector" class="form-control">
+                    <option value="helvetiker">Helvetiker</option>
+                    <option value="optimer">Optimer</option>
+                    <option value="gentilis">Gentilis</option>
+                    <option value="droid sans">Droid Sans</option>
+                    <option value="droid serif">Droid Serif</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Szöveg színe</label>
+                <input type="color" id="textColor" class="form-control" value="#03dac6">
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Háttér színe</label>
+                <input type="color" id="bgColor" class="form-control" value="#191919">
+            </div>
+        </div>
+        
+        <div class="control-row">
+            <div class="control-group">
+                <label class="control-label">Effektek</label>
+                <div>
+                    <button id="btnRotate" class="btn-effect active">Forgatás</button>
+                    <button id="btnPulse" class="btn-effect">Pulzálás</button>
+                    <button id="btnWave" class="btn-effect">Hullámzás</button>
+                    <button id="btnParticles" class="btn-effect">Részecskék</button>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Betűmélység</label>
+                <input type="range" id="depthSlider" class="form-control" min="1" max="50" value="20">
+            </div>
+        </div>
+        
+        <div class="control-row">
+            <div class="control-group">
+                <label class="control-label">Animáció sebessége</label>
+                <input type="range" id="speedSlider" class="form-control" min="1" max="20" value="10">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block threejs_extra_js %}
+<!-- A fő Three.js könyvtárat már betölti a base_threejs.html, ezért nem importáljuk újra -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Változók inicializálása
+    let scene, camera, renderer, textMesh;
+    let particles, particleSystem;
+    let controls;
+    let clock = new THREE.Clock();
+    let fontLoader = new THREE.FontLoader();
+    let loadingManager = new THREE.LoadingManager();
+    
+    // Effekt beállítások
+    let settings = {
+        text: "tanoda",
+        font: "helvetiker",
+        textColor: "#03dac6",
+        bgColor: "#191919",
+        depth: 20,
+        size: 70,
+        height: 20,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 2,
+        bevelSize: 1.5,
+        bevelOffset: 0,
+        bevelSegments: 5,
+        rotationEnabled: true,
+        pulseEnabled: false,
+        waveEnabled: false,
+        particlesEnabled: false,
+        animationSpeed: 0.5
+    };
+    
+    // Betöltési állapot kezelése
+    loadingManager.onProgress = function(url, loaded, total) {
+        const percentage = (loaded / total * 100).toFixed(0);
+        document.getElementById('loadingProgress').textContent = percentage + '%';
+    };
+    
+    loadingManager.onLoad = function() {
+        document.getElementById('loadingOverlay').style.display = 'none';
+    };
+    
+    // Inicializálás
+    init();
+    
+    // Three.js jelenet inicializálása
+    function init() {
+        // Jelenet létrehozása
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(settings.bgColor);
+        
+        // Kamera beállítása
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+        camera.position.z = 400;
+        
+        // Renderer beállítása
+        const container = document.getElementById('canvas-container');
+        renderer = new THREE.WebGLRenderer({ 
+            canvas: document.getElementById('textScene'), 
+            antialias: true
+        });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        
+        // Fények hozzáadása
+        addLights();
+        
+        // Orbit Controls hozzáadása
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        
+        // 3D Szöveg betöltése
+        loadFont(settings.font);
+        
+        // Eseménykezelők
+        setupEventListeners();
+        
+        // Animációs loop indítása
+        animate();
+        
+        // Ablak átméretezés kezelése
+        window.addEventListener('resize', onWindowResize);
+    }
+    
+    // Fények hozzáadása a jelenethez
+    function addLights() {
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(1, 1, 1).normalize();
+        scene.add(directionalLight);
+        
+        const pointLight1 = new THREE.PointLight(0x03dac6, 1, 1000);
+        pointLight1.position.set(100, 100, 100);
+        scene.add(pointLight1);
+        
+        const pointLight2 = new THREE.PointLight(0xff0266, 1, 1000);
+        pointLight2.position.set(-100, -100, -100);
+        scene.add(pointLight2);
+    }
+    
+    // Betűtípus betöltése
+    function loadFont(fontName) {
+        const fontFile = `https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/${fontName}_regular.typeface.json`;
+        
+        fontLoader.load(fontFile, function(font) {
+            createText(font);
+        });
+    }
+    
+    // 3D Szöveg létrehozása
+    function createText(font) {
+        // Ha már létezik szöveg, eltávolítjuk
+        if (textMesh) scene.remove(textMesh);
+        
+        // Szöveg geometria létrehozása
+        const textGeometry = new THREE.TextGeometry(settings.text, {
+            font: font,
+            size: settings.size,
+            height: settings.depth,
+            curveSegments: settings.curveSegments,
+            bevelEnabled: settings.bevelEnabled,
+            bevelThickness: settings.bevelThickness,
+            bevelSize: settings.bevelSize,
+            bevelOffset: settings.bevelOffset,
+            bevelSegments: settings.bevelSegments
+        });
+        
+        // Szöveg középre igazítása
+        textGeometry.computeBoundingBox();
+        const textWidth = textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x;
+        const textHeight = textGeometry.boundingBox.max.y - textGeometry.boundingBox.min.y;
+        
+        // Material létrehozása
+        const textMaterial = new THREE.MeshStandardMaterial({
+            color: new THREE.Color(settings.textColor),
+            metalness: 0.3,
+            roughness: 0.4,
+        });
+        
+        // Mesh létrehozása és középre igazítása
+        textMesh = new THREE.Mesh(textGeometry, textMaterial);
+        textMesh.position.x = -textWidth / 2;
+        textMesh.position.y = -textHeight / 2;
+        
+        // Szöveg hozzáadása a jelenethez
+        scene.add(textMesh);
+        
+        // Részecskék létrehozása, ha engedélyezve van
+        if (settings.particlesEnabled) {
+            createParticles();
+        }
+    }
+    
+    // Részecske rendszer létrehozása
+    function createParticles() {
+        // Ha már létezik részecske rendszer, eltávolítjuk
+        if (particleSystem) scene.remove(particleSystem);
+        
+        const particleCount = 5000;
+        const particleGeometry = new THREE.BufferGeometry();
+        const particlePositions = new Float32Array(particleCount * 3);
+        
+        for (let i = 0; i < particleCount * 3; i += 3) {
+            particlePositions[i] = (Math.random() - 0.5) * 1000;
+            particlePositions[i + 1] = (Math.random() - 0.5) * 1000;
+            particlePositions[i + 2] = (Math.random() - 0.5) * 1000;
+        }
+        
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        
+        const particleMaterial = new THREE.PointsMaterial({
+            color: new THREE.Color(settings.textColor),
+            size: 2,
+            transparent: true,
+            opacity: 0.8
+        });
+        
+        particleSystem = new THREE.Points(particleGeometry, particleMaterial);
+        scene.add(particleSystem);
+    }
+    
+    // Animációs loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        const delta = clock.getDelta() * settings.animationSpeed;
+        const time = clock.getElapsedTime() * settings.animationSpeed;
+        
+        if (textMesh) {
+            // Forgatás animáció
+            if (settings.rotationEnabled) {
+                textMesh.rotation.y += delta * 0.5;
+            }
+            
+            // Pulzálás animáció
+            if (settings.pulseEnabled) {
+                const scale = 1 + Math.sin(time * 2) * 0.1;
+                textMesh.scale.set(scale, scale, scale);
+            }
+            
+            // Hullámzás animáció
+            if (settings.waveEnabled && textMesh.geometry.isBufferGeometry) {
+                const positions = textMesh.geometry.attributes.position.array;
+                const initialPositions = textMesh.geometry.attributes.position.array.slice();
+                
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i + 1] = initialPositions[i + 1] + Math.sin(time * 2 + positions[i] / 50) * 5;
+                }
+                
+                textMesh.geometry.attributes.position.needsUpdate = true;
+            }
+        }
+        
+        // Részecske rendszer animálása
+        if (particleSystem && settings.particlesEnabled) {
+            particleSystem.rotation.y += delta * 0.1;
+            
+            // Részecskék pozíciójának frissítése
+            const particlePositions = particleSystem.geometry.attributes.position.array;
+            
+            for (let i = 0; i < particlePositions.length; i += 3) {
+                particlePositions[i] += Math.sin(time + i) * 0.3;
+                particlePositions[i + 1] += Math.cos(time + i) * 0.3;
+                particlePositions[i + 2] += Math.sin(time + i) * 0.3;
+            }
+            
+            particleSystem.geometry.attributes.position.needsUpdate = true;
+        }
+        
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    
+    // Ablak átméretezés kezelése
+    function onWindowResize() {
+        const container = document.getElementById('canvas-container');
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+    
+    // Eseménykezelők beállítása
+    function setupEventListeners() {
+        // Betűtípus váltás
+        document.getElementById('fontSelector').addEventListener('change', function(e) {
+            settings.font = e.target.value;
+            loadFont(settings.font);
+        });
+        
+        // Szöveg szín váltás
+        document.getElementById('textColor').addEventListener('input', function(e) {
+            settings.textColor = e.target.value;
+            
+            if (textMesh) {
+                textMesh.material.color.set(settings.textColor);
+            }
+            
+            if (particleSystem) {
+                particleSystem.material.color.set(settings.textColor);
+            }
+        });
+        
+        // Háttér szín váltás
+        document.getElementById('bgColor').addEventListener('input', function(e) {
+            settings.bgColor = e.target.value;
+            scene.background.set(settings.bgColor);
+        });
+        
+        // Betűmélység változtatása
+        document.getElementById('depthSlider').addEventListener('input', function(e) {
+            settings.depth = parseInt(e.target.value);
+            
+            // Újrarajzolás a fonttal
+            if (textMesh) {
+                fontLoader.load(`https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/${settings.font}_regular.typeface.json`, function(font) {
+                    createText(font);
+                });
+            }
+        });
+        
+        // Animáció sebesség változtatása
+        document.getElementById('speedSlider').addEventListener('input', function(e) {
+            settings.animationSpeed = parseInt(e.target.value) / 10;
+        });
+        
+        // Effekt gombok
+        document.getElementById('btnRotate').addEventListener('click', function(e) {
+            settings.rotationEnabled = !settings.rotationEnabled;
+            e.target.classList.toggle('active');
+            
+            if (!settings.rotationEnabled && textMesh) {
+                textMesh.rotation.set(0, 0, 0);
+            }
+        });
+        
+        document.getElementById('btnPulse').addEventListener('click', function(e) {
+            settings.pulseEnabled = !settings.pulseEnabled;
+            e.target.classList.toggle('active');
+            
+            if (!settings.pulseEnabled && textMesh) {
+                textMesh.scale.set(1, 1, 1);
+            }
+        });
+        
+        document.getElementById('btnWave').addEventListener('click', function(e) {
+            settings.waveEnabled = !settings.waveEnabled;
+            e.target.classList.toggle('active');
+        });
+        
+        document.getElementById('btnParticles').addEventListener('click', function(e) {
+            settings.particlesEnabled = !settings.particlesEnabled;
+            e.target.classList.toggle('active');
+            
+            if (settings.particlesEnabled) {
+                createParticles();
+            } else if (particleSystem) {
+                scene.remove(particleSystem);
+                particleSystem = null;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

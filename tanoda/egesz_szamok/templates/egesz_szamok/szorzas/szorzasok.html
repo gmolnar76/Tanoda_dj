@@ -1,0 +1,54 @@
+{% comment %}
+{% extends "egesz_szamok/eg_szamok_szorzasa.html" %}
+{% load static %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/szorzas/bemutato.css' %}">
+<link rel="stylesheet" href="{% static 'css/szorzas/szorzas_ver.css' %}">
+{% endblock %}
+
+
+{% block title %}Szorzások - Tanoda{% endblock %}
+{% block szorzasok_content %}
+<div class="multiplication-wrapper">
+    <!-- Vezérlő panel -->
+    <div class="control-panel">
+        <button id="new-task-btn" class="control-btn">Új feladat</button>
+        <button id="show-solution-btn" class="control-btn">Segítség</button>
+    </div>
+
+    <!-- Fő grid konténer -->
+    <div class="grid-container">
+        <div id="multiplication-grid" class="number-grid"></div>
+    </div>
+
+    <!-- Magyarázat panel -->
+    <div class="explanation-panel">
+        <div id="current-step" class="step-display"></div>
+        <div id="hint-text" class="hint-text"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{% static 'js/szorzas/bemutato.js' %}"></script>
+    <script src="{% static 'js/szorzas/szorzas_ver.js' %}"></script>
+    <script src="{% static 'js/szorzas/resz_er.js' %}"></script>
+
+{% endblock %}
+{% endcomment %}
+
+{% extends "egesz_szamok/eg_szamok_szorzasa.html" %}
+{% load static %}
+
+{% block szorzasok_content %}
+<!-- A szorzások modul jelenleg nem elérhető -->
+<div class="mt-4">
+    <div class="alert alert-info">
+        <h4 class="alert-heading">Fejlesztés alatt</h4>
+        <p>A szorzások modul jelenleg nem elérhető. Hamarosan újabb fejlesztésekkel bővül ez a funkció.</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% load static %}
+
+<div class="sidebar p-3">
+    <h2 class="sidebar-heading mb-4">{{ evfolyam_config.title|default:"Tananyagok" }}</h2>
+    
+    <!-- Dinamikus modul menü -->
+    <nav class="nav flex-column">
+        {% for module in evfolyam_config.modules|default:"" %}
+            <div class="sidebar-module mb-3">
+                <div class="sidebar-module-header">
+                    <a class="nav-link {% if active_module == module.id %}active{% endif %}" 
+                       href="{% url 'evfolyam_modul' evfolyam_id=evfolyam_id modul=module.id %}">
+                        {% if module.icon %}
+                            <i class="{{ module.icon }} me-2"></i>
+                        {% endif %}
+                        {{ module.title }}
+                    </a>
+                </div>
+                
+                {% if active_module == module.id %}
+                    <div class="sidebar-module-lessons ps-3">
+                        <ul class="nav flex-column">
+                            {% for lesson in module.lessons %}
+                                <li class="nav-item">
+                                    <a class="nav-link submenu-item {% if active_lesson == lesson.id %}active{% endif %}"
+                                       href="{% url 'evfolyam_lecke' evfolyam_id=evfolyam_id modul=module.id lecke=lesson.id %}">
+                                        {{ lesson.title }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        
+        <!-- Fallback menü a fejlesztés alatt álló évfolyamokhoz -->
+        {% if not evfolyam_config.modules %}
+            <div class="sidebar-module mb-3">
+                <div class="sidebar-module-header">
+                    <span class="nav-link">Fejlesztés alatt...</span>
+                </div>
+            </div>
+        {% endif %}
+    </nav>
+    
+    <!-- Segédanyagok vagy egyéb linkek -->
+    <div class="sidebar-additional mt-5">
+        <h5 class="mb-3">Egyéb anyagok</h5>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-book me-2"></i> Tankönyv</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-question-circle me-2"></i> Segítség</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<style>
+    .sidebar {
+        background-color: #1e1e1e;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .sidebar-heading {
+        color: var(--evfolyam-primary-color);
+        font-weight: bold;
+    }
+    
+    .sidebar-module-header {
+        border-left: 3px solid transparent;
+    }
+    
+    .sidebar-module-header .nav-link.active {
+        border-left-color: var(--evfolyam-accent-color);
+    }
+    
+    .submenu-item {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .submenu-item.active {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-left: 2px solid var(--evfolyam-secondary-color);
+    }
+</style>

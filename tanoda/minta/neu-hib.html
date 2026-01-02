@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skeuomorph-Neumorf Hibrid Stílus</title>
+    <style>
+        :root {
+            --bg-color: #192231;
+            --button-bg: #1e2839;
+            --button-shadow-dark: #151d2c;
+            --button-shadow-light: #273346;
+            --accent: #ff9800;
+            --text: #e0e6f0;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.05) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.05) 75%);
+            background-size: 20px 20px;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .calculator-btn {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            border-radius: 12px;
+            background: var(--button-bg);
+            box-shadow: 8px 8px 16px var(--button-shadow-dark),
+                       -8px -8px 16px var(--button-shadow-light);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .calculator-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, 
+                transparent, 
+                rgba(255, 255, 255, 0.1),
+                transparent);
+        }
+        
+        .calculator-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, 
+                transparent, 
+                rgba(255, 255, 255, 0.1),
+                transparent);
+        }
+        
+        .inner-shadow {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            border-radius: 10px;
+            box-shadow: inset 2px 2px 4px var(--button-shadow-dark),
+                        inset -2px -2px 4px var(--button-shadow-light);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .calculator-btn:hover {
+            transform: translateY(-5px);
+        }
+        
+        .calculator-btn:active .inner-shadow {
+            opacity: 1;
+        }
+        
+        .calculator-btn:active {
+            transform: translateY(0);
+            box-shadow: 5px 5px 10px var(--button-shadow-dark),
+                       -5px -5px 10px var(--button-shadow-light);
+        }
+        
+        .icon-container {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(145deg, #1a2432, #222c3f);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            box-shadow: 3px 3px 6px var(--button-shadow-dark),
+                       -3px -3px 6px var(--button-shadow-light);
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .calculator-btn:hover .icon-container {
+            transform: scale(1.1);
+            box-shadow: 4px 4px 8px var(--button-shadow-dark),
+                       -4px -4px 8px var(--button-shadow-light);
+        }
+        
+        .calculator-btn:active .icon-container {
+            transform: scale(0.95);
+            box-shadow: 2px 2px 4px var(--button-shadow-dark),
+                       -2px -2px 4px var(--button-shadow-light);
+        }
+        
+        .icon {
+            font-size: 24px;
+            color: var(--accent);
+            filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+        }
+        
+        .btn-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            margin-top: 8px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+        
+        .highlight {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            transform: scale(0);
+            transition: all 0.5s ease;
+        }
+        
+        .calculator-btn:hover .highlight {
+            transform: scale(4);
+        }
+        
+        .reflection {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to bottom, 
+                rgba(255, 255, 255, 0.08), 
+                transparent);
+            border-radius: 12px 12px 0 0;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        /* Reszponzív beállítások */
+        @media (max-width: 768px) {
+            .container {
+                gap: 15px;
+            }
+            
+            .calculator-btn {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .icon-container {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .icon {
+                font-size: 20px;
+            }
+            
+            .btn-title {
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .calculator-btn {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .icon-container {
+                width: 30px;
+                height: 30px;
+            }
+            
+            .icon {
+                font-size: 16px;
+            }
+            
+            .btn-title {
+                font-size: 10px;
+            }
+        }
+        
+        /* Egyedi animáció */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Összeadás -->
+        <div class="calculator-btn">
+            <div class="inner-shadow"></div>
+            <div class="highlight"></div>
+            <div class="reflection"></div>
+            <div class="icon-container">
+                <i class="fas fa-plus icon"></i>
+            </div>
+            <div class="btn-title">Összeadás</div>
+        </div>
+        
+        <!-- Kivonás -->
+        <div class="calculator-btn">
+            <div class="inner-shadow"></div>
+            <div class="highlight"></div>
+            <div class="reflection"></div>
+            <div class="icon-container">
+                <i class="fas fa-minus icon"></i>
+            </div>
+            <div class="btn-title">Kivonás</div>
+        </div>
+        
+        <!-- Szorzás -->
+        <div class="calculator-btn">
+            <div class="inner-shadow"></div>
+            <div class="highlight"></div>
+            <div class="reflection"></div>
+            <div class="icon-container">
+                <i class="fas fa-times icon"></i>
+            </div>
+            <div class="btn-title">Szorzás</div>
+        </div>
+        
+        <!-- Osztás -->
+        <div class="calculator-btn">
+            <div class="inner-shadow"></div>
+            <div class="highlight"></div>
+            <div class="reflection"></div>
+            <div class="icon-container">
+                <i class="fas fa-divide icon"></i>
+            </div>
+            <div class="btn-title">Osztás</div>
+        </div>
+        
+        <!-- Százalék -->
+        <div class="calculator-btn">
+            <div class="inner-shadow"></div>
+            <div class="highlight"></div>
+            <div class="reflection"></div>
+            <div class="icon-container">
+                <i class="fas fa-percentage icon"></i>
+            </div>
+            <div class="btn-title">Százalék</div>
+        </div>
+        
+        <!-- Négyzetgyök -->
+        <div class="calculator-btn">
+            <div class="inner-shadow"></div>
+            <div class="highlight"></div>
+            <div class="reflection"></div>
+            <div class="icon-container">
+                <i class="fas fa-square-root-alt icon"></i>
+            </div>
+            <div class="btn-title">Gyökvonás</div>
+        </div>
+        
+        <!-- Hatványozás -->
+        <div class="calculator-btn">
+            <div class="inner-shadow"></div>
+            <div class="highlight"></div>
+            <div class="reflection"></div>
+            <div class="icon-container pulse-animation">
+                <i class="fas fa-superscript icon"></i>
+            </div>
+            <div class="btn-title">Hatványozás</div>
+        </div>
+        
+        <!-- Egyenlő -->
+        <div class="calculator-btn">
+            <div class="inner-shadow"></div>
+            <div class="highlight"></div>
+            <div class="reflection"></div>
+            <div class="icon-container">
+                <i class="fas fa-equals icon"></i>
+            </div>
+            <div class="btn-title">Egyenlő</div>
+        </div>
+    </div>
+    
+    <script>
+        // Interaktivitás hozzáadása
+        document.querySelectorAll('.calculator-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Aktív állapot kezelése
+                document.querySelectorAll('.calculator-btn').forEach(otherBtn => {
+                    otherBtn.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Egyszerű hangeffektus lejátszása kattintáskor
+                const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU==');
+                audio.play().catch(e => console.log('Audio play failed:', e));
+                
+                // Pulse animáció hozzáadása átmenetileg
+                const iconContainer = this.querySelector('.icon-container');
+                iconContainer.classList.add('pulse-animation');
+                setTimeout(() => {
+                    iconContainer.classList.remove('pulse-animation');
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>

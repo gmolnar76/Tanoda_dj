@@ -1,0 +1,96 @@
+{% load static %}
+<!-- Statistics Widget -->
+<div class="widget-header">
+    <h3><i class="fas fa-chart-pie"></i> Statisztika</h3>
+</div>
+
+<div class="widget-body" id="stats-widget">
+    <!-- Circular Progress Dial - Efficiency -->
+    <div class="stat-dial-container">
+        <div class="stat-dial">
+            <svg class="progress-ring" viewBox="0 0 120 120">
+                <circle class="progress-ring-bg" cx="60" cy="60" r="50"/>
+                <circle class="progress-ring-fill" cx="60" cy="60" r="50"
+                        id="efficiency-ring"
+                        style="stroke: url(#progress-gradient);"/>
+            </svg>
+            <div class="dial-center">
+                <span class="dial-value" id="hatekonysag-value">0</span>
+                <span class="dial-unit">%</span>
+            </div>
+        </div>
+        <div class="dial-label">Hatékonyság</div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stat-grid">
+        <div class="stat-item">
+            <span class="stat-value green" id="osszes-pont">{{ osszes_pont|default:0 }}</span>
+            <span class="stat-label">Összpontszám</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value cyan" id="helyes-szam">0</span>
+            <span class="stat-label">Helyes válasz</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value orange" id="helytelen-szam">0</span>
+            <span class="stat-label">Hibás válasz</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value" id="atlagido">-</span>
+            <span class="stat-label">Átlag idő</span>
+        </div>
+    </div>
+
+    <!-- Weak Points Alert -->
+    <div id="gyenge-pontok" class="mt-4" style="display: none;">
+        <div class="tip-content" style="border-left-color: var(--neon-pink);">
+            <div class="tip-title" style="color: var(--neon-pink);">
+                <i class="fas fa-exclamation-triangle"></i>
+                Gyenge pontok
+            </div>
+            <div class="weak-points-list" id="gyenge-pontok-lista">
+                <!-- Filled by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="mt-4">
+        <div class="flex justify-between mb-2">
+            <span class="text-muted" style="font-size: 12px;">Mai haladás</span>
+            <span class="text-muted" style="font-size: 12px;" id="progress-label">0/100</span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="hatekonysag-progress" style="width: 0%;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Update efficiency ring animation
+    function updateEfficiencyRing(percentage) {
+        const ring = document.getElementById('efficiency-ring');
+        if (ring) {
+            const circumference = 2 * Math.PI * 50; // r=50
+            const offset = circumference - (percentage / 100) * circumference;
+            ring.style.strokeDasharray = circumference;
+            ring.style.strokeDashoffset = offset;
+        }
+
+        const valueEl = document.getElementById('hatekonysag-value');
+        if (valueEl) {
+            valueEl.textContent = Math.round(percentage);
+        }
+
+        const progressBar = document.getElementById('hatekonysag-progress');
+        if (progressBar) {
+            progressBar.style.width = percentage + '%';
+        }
+    }
+
+    // Initial call with 0
+    document.addEventListener('DOMContentLoaded', function() {
+        updateEfficiencyRing(0);
+    });
+</script>

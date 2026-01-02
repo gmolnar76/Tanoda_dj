@@ -1,0 +1,23 @@
+{% extends "plotly/kordinata/kordinata_1.html" %}
+{% load static %}
+
+{% block tab_content %}
+        <div class="tab-pane fade" id="pitagorasz" role="tabpanel" aria-labelledby="pitagorasz-tab">
+            <h3 class="mt-4">Pitagorasz Szorzótábla</h3>
+            <div class="zoom-container">
+                <div class="zoom-controls">
+                    <button id="zoom-in">+</button>
+                    <button id="zoom-out">-</button>
+                    <button id="zoom-reset">Reset</button>
+                </div>
+                <div class="kordinata-pitagorasz-wrapper">
+                    <div class="kordinata-pitagorasz-container">
+                      <div class="kordinata-pitagorasz-tabla">
+                            <!-- A grid tartalma dinamikusan generálódik -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--PITAGORASZ TÁBLA -->
+{% endblock %}

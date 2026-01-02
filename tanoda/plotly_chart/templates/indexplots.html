@@ -1,0 +1,77 @@
+{% extends "tanoda/index.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid mt-5">
+    <h1 class="text-center mb-5">Üdvözöljük a Tanodában!</h1>
+    
+    <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">3D Animált Felület</h5>
+                    {{ plot_3d_surface|safe }}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">2D Rezgő Hanghullám</h5>
+                    {{ plot_2d_wave|safe }}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-12 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">3D Forgó Kocka</h5>
+                    {{ plot_3d_cube|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    // Reszponzív viselkedés beállítása
+    function makeChartResponsive() {
+        const charts = document.querySelectorAll('.js-plotly-plot');
+        charts.forEach(chart => {
+            Plotly.Plots.resize(chart);
+        });
+    }
+
+    // Eseményfigyelő hozzáadása az ablak átméretezéséhez
+    window.addEventListener('resize', makeChartResponsive);
+
+    // Kezdeti méretezés
+    makeChartResponsive();
+
+    // Mobil nézet kezelése
+    function handleMobileView() {
+        if (window.innerWidth < 768) {  // mobil nézet
+            const charts = document.querySelectorAll('.card');
+            charts.forEach((chart, index) => {
+                if (index > 0) {
+                    chart.style.display = 'none';
+                }
+            });
+        } else {
+            const charts = document.querySelectorAll('.card');
+            charts.forEach(chart => {
+                chart.style.display = 'block';
+            });
+        }
+    }
+
+    // Eseményfigyelő hozzáadása a mobil nézet kezeléséhez
+    window.addEventListener('resize', handleMobileView);
+
+    // Kezdeti mobil nézet ellenőrzés
+    handleMobileView();
+</script>
+{% endblock %}

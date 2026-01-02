@@ -1,0 +1,922 @@
+{% extends "egesz_szamok/eg_szamok_szorzasa.html" %}
+{% load static %}
+
+{% block title %}Robot Kaland - Ciklusok Gyakorlása{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+    /* Blockly munkaterület és eszköztár stílusok */
+    .blocklyToolboxDiv {
+        background-color: #f8f9fa !important;
+        color: #212529 !important;
+    }
+    .blocklyMainBackground {
+        fill: #ffffff !important;
+    }
+    .blocklyTreeLabel {
+        color: #212529 !important;
+    }
+    .blocklyTreeRow:not(.blocklyTreeSelected):hover {
+        background-color: #e9ecef !important;
+    }
+    .blocklyTreeSelected {
+        background-color: #007bff !important;
+    }
+    .blocklyTreeSelected .blocklyTreeLabel {
+        color: #ffffff !important;
+    }
+    
+    /* Játékos elemek stílusai */
+    .game-container {
+        display: block;
+        position: relative;
+        margin-top: 20px;
+        height: 400px;
+        border: 3px solid #5b80a5;
+        border-radius: 10px;
+        overflow: hidden;
+        background-color: #f0f8ff;
+    }
+    
+    .game-board {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    .game-cell {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        background-color: #FFFFFF;
+    }
+    
+    .game-wall {
+        background-color: #7f8c8d;
+        border: 1px solid #6a7a7b;
+    }
+    
+    .game-robot {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background-image: url('{% static "images/robot.png" %}');
+        background-size: contain;
+        background-repeat: no-repeat;
+        transition: all 0.5s ease;
+        z-index: 10;
+    }
+    
+    .game-item {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #f1c40f;
+        box-shadow: 0 0 10px #f39c12;
+        margin: 10px;
+        animation: pulse 1s ease-in-out infinite alternate;
+        z-index: 5;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(0.8); }
+        100% { transform: scale(1.2); }
+    }
+    
+    .robot-north {
+        transform: rotate(0deg);
+    }
+    
+    .robot-east {
+        transform: rotate(90deg);
+    }
+    
+    .robot-south {
+        transform: rotate(180deg);
+    }
+    
+    .robot-west {
+        transform: rotate(270deg);
+    }
+    
+    .game-score {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #5b67a5;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    
+    .level-selector {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .controls {
+        margin-top: 20px;
+    }
+    
+    #output {
+        font-family: monospace;
+        white-space: pre-wrap;
+        max-height: 200px;
+        overflow-y: auto;
+        background: #f8f9fa;
+        border-radius: 5px;
+        padding: 10px;
+        margin-top: 15px;
+        border: 1px solid #dee2e6;
+    }
+
+    #blocklyDiv {
+        height: 2000px; /* Further increased height */
+        width: 100%;
+        border: 1px solid #ccc;
+    }
+</style>
+{% endblock %}
+
+{% block blockly_content %}
+<div class="card">
+    <div class="card-body">
+        <h2 class="card-title mb-4">Robot Kaland - Ciklusok Gyakorlása</h2>
+        
+        <div class="level-selector">
+            <div class="form-group">
+                <label for="levelSelect">Pálya kiválasztása:</label>
+                <select class="form-control" id="levelSelect" onchange="loadSelectedLevel()">
+                    <option value="1">1. szint - For ciklus gyakorlás</option>
+                    <option value="2">2. szint - While ciklus gyakorlás</option>
+                    <option value="3">3. szint - For és While ciklusok</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div id="blocklyDiv" style="height: 2000px; width: 100%;"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="game-container" class="game-container">
+                    <div class="game-score">Pontszám: <span id="score">0</span></div>
+                    <div id="game-board" class="game-board"></div>
+                </div>
+                <div id="output" class="mt-3">Robot programozásra kész!</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button onclick="runCode()" class="btn btn-primary">Kód futtatása</button>
+            <button onclick="resetGame()" class="btn btn-secondary ml-2">Újrakezdés</button>
+            <button onclick="showHint()" class="btn btn-info ml-2">Segítség</button>
+        </div>
+    </div>
+</div>
+
+<xml id="toolbox" style="display: none">
+    <category name="Robot mozgások" colour="#5b80a5">
+        <block type="robot_move_forward"></block>
+        <block type="robot_turn_left"></block>
+        <block type="robot_turn_right"></block>
+        <block type="robot_collect_item"></block>
+    </category>
+    <category name="Érzékelők" colour="#5ba55b">
+        <block type="robot_detect_wall"></block>
+        <block type="robot_detect_item"></block>
+        <block type="robot_position"></block>
+    </category>
+    <category name="Ciklusok" colour="#5ba58c">
+        <block type="controls_repeat_ext">
+            <value name="TIMES">
+                <block type="math_number">
+                    <field name="NUM">10</field>
+                </block>
+            </value>
+        </block>
+        <block type="controls_whileUntil"></block>
+        <block type="controls_for">
+            <value name="FROM">
+                <block type="math_number">
+                    <field name="NUM">1</field>
+                </block>
+            </value>
+            <value name="TO">
+                <block type="math_number">
+                    <field name="NUM">10</field>
+                </block>
+            </value>
+            <value name="BY">
+                <block type="math_number">
+                    <field name="NUM">1</field>
+                </block>
+            </value>
+        </block>
+    </category>
+    <category name="Logika" colour="#5b67a5">
+        <block type="controls_if"></block>
+        <block type="logic_compare"></block>
+        <block type="logic_operation"></block>
+        <block type="logic_negate"></block>
+    </category>
+    <category name="Matematika" colour="#a55b5b">
+        <block type="math_number"></block>
+        <block type="math_arithmetic"></block>
+    </category>
+    <category name="Változók" custom="VARIABLE" colour="#5ba59f"></category>
+</xml>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="https://unpkg.com/blockly/blockly.min.js"></script>
+<script>
+    // Játék változók
+    let gameBoard;
+    let robot;
+    let items = [];
+    let walls = [];
+    let gameRunning = false;
+    let currentLevel = 1;
+    let itemsCollected = 0;
+    let totalItems = 0;
+    let robotDirection = 0; // 0: észak, 1: kelet, 2: dél, 3: nyugat
+    let boardSize = 10; // 10x10-es pálya
+    let cellSize = 40; // 40px cellák
+    
+    // Robot típusú blokkok definiálása
+    
+    // Előre mozgás
+    Blockly.Blocks['robot_move_forward'] = {
+        init: function() {
+            this.appendDummyInput()
+                .appendField("Robot előre")
+                .appendField(new Blockly.FieldImage("{% static 'images/arrow_forward.png' %}", 15, 15, "*"));
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(230);
+            this.setTooltip("A robot egy mezőt előre megy");
+            this.setHelpUrl("");
+        }
+    };
+    
+    // Balra fordulás
+    Blockly.Blocks['robot_turn_left'] = {
+        init: function() {
+            this.appendDummyInput()
+                .appendField("Robot balra fordulás")
+                .appendField(new Blockly.FieldImage("{% static 'images/turn_left.png' %}", 15, 15, "*"));
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(230);
+            this.setTooltip("A robot balra fordul");
+            this.setHelpUrl("");
+        }
+    };
+    
+    // Jobbra fordulás
+    Blockly.Blocks['robot_turn_right'] = {
+        init: function() {
+            this.appendDummyInput()
+                .appendField("Robot jobbra fordulás")
+                .appendField(new Blockly.FieldImage("{% static 'images/turn_right.png' %}", 15, 15, "*"));
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(230);
+            this.setTooltip("A robot jobbra fordul");
+            this.setHelpUrl("");
+        }
+    };
+    
+    // Érme begyűjtése
+    Blockly.Blocks['robot_collect_item'] = {
+        init: function() {
+            this.appendDummyInput()
+                .appendField("Érme begyűjtése")
+                .appendField(new Blockly.FieldImage("{% static 'images/collect.png' %}", 15, 15, "*"));
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(230);
+            this.setTooltip("Az érme begyűjtése, ha a robot mezőjén van");
+            this.setHelpUrl("");
+        }
+    };
+    
+    // Fal érzékelése
+    Blockly.Blocks['robot_detect_wall'] = {
+        init: function() {
+            this.appendDummyInput()
+                .appendField("Fal van előttem?")
+                .appendField(new Blockly.FieldImage("{% static 'images/wall.png' %}", 15, 15, "*"));
+            this.setOutput(true, "Boolean");
+            this.setColour(120);
+            this.setTooltip("Ellenőrzi, hogy fal van-e a robot előtt");
+            this.setHelpUrl("");
+        }
+    };
+    
+    // Érme érzékelése
+    Blockly.Blocks['robot_detect_item'] = {
+        init: function() {
+            this.appendDummyInput()
+                .appendField("Érme van itt?")
+                .appendField(new Blockly.FieldImage("{% static 'images/coin.png' %}", 15, 15, "*"));
+            this.setOutput(true, "Boolean");
+            this.setColour(120);
+            this.setTooltip("Ellenőrzi, hogy van-e érme a robot mezőjén");
+            this.setHelpUrl("");
+        }
+    };
+    
+    // Robot pozíció
+    Blockly.Blocks['robot_position'] = {
+        init: function() {
+            this.appendDummyInput()
+                .appendField("Robot pozíció")
+                .appendField(new Blockly.FieldDropdown([
+                    ["X koordináta", "X"],
+                    ["Y koordináta", "Y"]
+                ]), "COORD");
+            this.setOutput(true, "Number");
+            this.setColour(120);
+            this.setTooltip("A robot X vagy Y koordinátáját adja vissza");
+            this.setHelpUrl("");
+        }
+    };
+    
+    // JavaScript generátorok a robot blokkokhoz
+    
+    Blockly.JavaScript['robot_move_forward'] = function(block) {
+        return 'moveForward();\n';
+    };
+    
+    Blockly.JavaScript['robot_turn_left'] = function(block) {
+        return 'turnLeft();\n';
+    };
+    
+    Blockly.JavaScript['robot_turn_right'] = function(block) {
+        return 'turnRight();\n';
+    };
+    
+    Blockly.JavaScript['robot_collect_item'] = function(block) {
+        return 'collectItem();\n';
+    };
+    
+    Blockly.JavaScript['robot_detect_wall'] = function(block) {
+        return ['detectWall()', Blockly.JavaScript.ORDER_FUNCTION_CALL];
+    };
+    
+    Blockly.JavaScript['robot_detect_item'] = function(block) {
+        return ['detectItem()', Blockly.JavaScript.ORDER_FUNCTION_CALL];
+    };
+    
+    Blockly.JavaScript['robot_position'] = function(block) {
+        const coordinate = block.getFieldValue('COORD');
+        return ['getRobotPosition("' + coordinate + '")', Blockly.JavaScript.ORDER_FUNCTION_CALL];
+    };
+    
+    // Játék inicializálása
+    function initGame() {
+        gameBoard = document.getElementById('game-board');
+        
+        // Pálya létrehozása
+        createBoard();
+        
+        // Pálya betöltése
+        loadLevel(currentLevel);
+    }
+    
+    // Pálya létrehozása
+    function createBoard() {
+        // Pálya törlése, ha már létezik
+        gameBoard.innerHTML = '';
+        
+        // Cellák létrehozása
+        for(let y = 0; y < boardSize; y++) {
+            for(let x = 0; x < boardSize; x++) {
+                const cell = document.createElement('div');
+                cell.className = 'game-cell';
+                cell.style.left = (x * cellSize) + 'px';
+                cell.style.top = (y * cellSize) + 'px';
+                cell.dataset.x = x;
+                cell.dataset.y = y;
+                gameBoard.appendChild(cell);
+            }
+        }
+    }
+    
+    // Robot létrehozása
+    function createRobot(x, y) {
+        // Régi robot törlése, ha már létezik
+        if (robot) {
+            robot.remove();
+        }
+        
+        // Új robot létrehozása
+        robot = document.createElement('div');
+        robot.className = 'game-robot robot-north';
+        robot.style.left = (x * cellSize) + 'px';
+        robot.style.top = (y * cellSize) + 'px';
+        robot.dataset.x = x;
+        robot.dataset.y = y;
+        
+        gameBoard.appendChild(robot);
+        updateRobotDirection();
+    }
+    
+    // Robot irányának frissítése
+    function updateRobotDirection() {
+        if (!robot) return;
+        
+        // CSS osztályok törlése
+        robot.classList.remove('robot-north', 'robot-east', 'robot-south', 'robot-west');
+        
+        // Megfelelő irány beállítása
+        switch(robotDirection) {
+            case 0: // Észak
+                robot.classList.add('robot-north');
+                break;
+            case 1: // Kelet
+                robot.classList.add('robot-east');
+                break;
+            case 2: // Dél
+                robot.classList.add('robot-south');
+                break;
+            case 3: // Nyugat
+                robot.classList.add('robot-west');
+                break;
+        }
+    }
+    
+    // Érme létrehozása
+    function createItem(x, y) {
+        const item = document.createElement('div');
+        item.className = 'game-item';
+        item.style.left = (x * cellSize + 10) + 'px';
+        item.style.top = (y * cellSize + 10) + 'px';
+        item.dataset.x = x;
+        item.dataset.y = y;
+        
+        gameBoard.appendChild(item);
+        items.push(item);
+        totalItems++;
+    }
+    
+    // Fal létrehozása
+    function createWall(x, y) {
+        const cell = document.querySelector(`.game-cell[data-x="${x}"][data-y="${y}"]`);
+        if (cell) {
+            cell.classList.add('game-wall');
+            walls.push(cell);
+        }
+    }
+    
+    // Pálya betöltése
+    function loadLevel(level) {
+        // Régi elemek törlése
+        clearLevel();
+        
+        // Alapértékek beállítása
+        itemsCollected = 0;
+        totalItems = 0;
+        document.getElementById('score').textContent = 0;
+        robotDirection = 0;
+        
+        // Új pálya létrehozása
+        switch(level) {
+            case 1:
+                // For ciklus gyakorlás - egyenes vonalban gyűjtendő elemek
+                createRobot(0, 0);
+                
+                // Falak az útvonal mellett
+                for(let i = 0; i < 10; i++) {
+                    createWall(i, -1);
+                    createWall(i, 1);
+                }
+                
+                // Érmék
+                for(let i = 1; i < 9; i += 2) {
+                    createItem(i, 0);
+                }
+                
+                logMessage("1. SZINT: Gyűjtsd össze az összes aranyérmét! Használj FOR ciklust a hatékony programozáshoz!");
+                break;
+                
+            case 2:
+                // While ciklus gyakorlás - elemek gyűjtése, amíg el nem érünk egy falig
+                createRobot(0, 0);
+                robotDirection = 1; // Kelet felé néz
+                
+                // Falak
+                for(let i = -1; i < 10; i++) {
+                    createWall(i, -1);
+                    createWall(i, 2);
+                }
+                
+                // Fal a végén
+                createWall(8, 0);
+                createWall(8, 1);
+                
+                // Érmék
+                createItem(1, 0);
+                createItem(3, 0);
+                createItem(5, 0);
+                createItem(7, 0);
+                createItem(1, 1);
+                createItem(3, 1);
+                createItem(5, 1);
+                createItem(7, 1);
+                
+                logMessage("2. SZINT: Gyűjtsd össze az összes érmét! Használj WHILE ciklust, amely addig fut, amíg falat nem érzékelsz!");
+                break;
+                
+            case 3:
+                // Kombinált for és while ciklusok - bonyolultabb pálya
+                createRobot(0, 0);
+                
+                // Külső falak
+                for(let i = -1; i < 10; i++) {
+                    createWall(i, -1);
+                    createWall(-1, i);
+                    createWall(10, i);
+                    createWall(i, 10);
+                }
+                
+                // Belső falak
+                createWall(2, 2);
+                createWall(2, 3);
+                createWall(2, 4);
+                createWall(4, 2);
+                createWall(5, 2);
+                createWall(6, 2);
+                createWall(4, 4);
+                createWall(5, 4);
+                createWall(6, 4);
+                createWall(6, 5);
+                createWall(6, 6);
+                createWall(2, 6);
+                createWall(2, 7);
+                createWall(2, 8);
+                createWall(4, 6);
+                createWall(4, 7);
+                createWall(4, 8);
+                createWall(6, 8);
+                createWall(7, 8);
+                createWall(8, 8);
+                createWall(8, 6);
+                createWall(8, 4);
+                createWall(8, 2);
+                
+                // Érmék
+                createItem(1, 1);
+                createItem(3, 1);
+                createItem(5, 1);
+                createItem(7, 1);
+                createItem(9, 1);
+                createItem(1, 3);
+                createItem(3, 3);
+                createItem(7, 3);
+                createItem(9, 3);
+                createItem(1, 5);
+                createItem(3, 5);
+                createItem(5, 5);
+                createItem(7, 5);
+                createItem(9, 5);
+                createItem(1, 7);
+                createItem(5, 7);
+                createItem(9, 7);
+                createItem(1, 9);
+                createItem(3, 9);
+                createItem(5, 9);
+                createItem(7, 9);
+                createItem(9, 9);
+                
+                logMessage("3. SZINT: Navigálj a labirintusban és gyűjtsd össze az összes érmét! Kombinálj FOR és WHILE ciklusokat a hatékony megoldáshoz!");
+                break;
+        }
+        
+        // Robot irány frissítése
+        updateRobotDirection();
+    }
+    
+    // Pálya törlése
+    function clearLevel() {
+        // Robot törlése
+        if (robot) {
+            robot.remove();
+            robot = null;
+        }
+        
+        // Érmék törlése
+        for(const item of items) {
+            item.remove();
+        }
+        items = [];
+        
+        // Falak törlése
+        for(const wall of walls) {
+            wall.classList.remove('game-wall');
+        }
+        walls = [];
+    }
+    
+    // Robot funkciók
+    async function moveForward() {
+        if (!gameRunning || !robot) return;
+        
+        // Robot jelenlegi pozíciója
+        const x = parseInt(robot.dataset.x);
+        const y = parseInt(robot.dataset.y);
+        
+        // Új pozíció kiszámítása
+        let newX = x;
+        let newY = y;
+        
+        switch(robotDirection) {
+            case 0: // Észak
+                newY = y - 1;
+                break;
+            case 1: // Kelet
+                newX = x + 1;
+                break;
+            case 2: // Dél
+                newY = y + 1;
+                break;
+            case 3: // Nyugat
+                newX = x - 1;
+                break;
+        }
+        
+        // Ellenőrizzük, hogy van-e fal az új pozíción
+        const cellAtNewPos = document.querySelector(`.game-cell[data-x="${newX}"][data-y="${newY}"]`);
+        const wallAtNewPos = cellAtNewPos && cellAtNewPos.classList.contains('game-wall');
+        
+        // Ha nincs fal, mozoghat a robot
+        if (!wallAtNewPos && cellAtNewPos) {
+            // Animált mozgás
+            robot.style.transition = 'all 0.5s ease';
+            robot.style.left = (newX * cellSize) + 'px';
+            robot.style.top = (newY * cellSize) + 'px';
+            robot.dataset.x = newX;
+            robot.dataset.y = newY;
+            
+            // Várunk, amíg a mozgás befejeződik
+            await new Promise(resolve => setTimeout(resolve, 500));
+        } else {
+            logMessage("A robot falba ütközött!");
+        }
+    }
+    
+    async function turnLeft() {
+        if (!gameRunning || !robot) return;
+        
+        robotDirection = (robotDirection + 3) % 4;
+        updateRobotDirection();
+        
+        // Várunk, amíg a fordulás befejeződik
+        await new Promise(resolve => setTimeout(resolve, 300));
+    }
+    
+    async function turnRight() {
+        if (!gameRunning || !robot) return;
+        
+        robotDirection = (robotDirection + 1) % 4;
+        updateRobotDirection();
+        
+        // Várunk, amíg a fordulás befejeződik
+        await new Promise(resolve => setTimeout(resolve, 300));
+    }
+    
+    async function collectItem() {
+        if (!gameRunning || !robot) return;
+        
+        const x = parseInt(robot.dataset.x);
+        const y = parseInt(robot.dataset.y);
+        
+        // Keressük az érmét ezen a pozíción
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            const itemX = parseInt(item.dataset.x);
+            const itemY = parseInt(item.dataset.y);
+            
+            if (itemX === x && itemY === y) {
+                // Érme begyűjtése
+                item.remove();
+                items.splice(i, 1);
+                itemsCollected++;
+                document.getElementById('score').textContent = itemsCollected;
+                
+                logMessage(`Érme begyűjtve! (${itemsCollected}/${totalItems})`);
+                
+                // Ha minden érmét összegyűjtöttünk, győzelem
+                if (itemsCollected === totalItems) {
+                    winGame();
+                }
+                
+                // Várunk egy kis ideig
+                await new Promise(resolve => setTimeout(resolve, 300));
+                return;
+            }
+        }
+        
+        logMessage("Itt nincs érme!");
+        await new Promise(resolve => setTimeout(resolve, 300));
+    }
+    
+    function detectWall() {
+        if (!gameRunning || !robot) return false;
+        
+        const x = parseInt(robot.dataset.x);
+        const y = parseInt(robot.dataset.y);
+        
+        // Új pozíció kiszámítása
+        let checkX = x;
+        let checkY = y;
+        
+        switch(robotDirection) {
+            case 0: // Észak
+                checkY = y - 1;
+                break;
+            case 1: // Kelet
+                checkX = x + 1;
+                break;
+            case 2: // Dél
+                checkY = y + 1;
+                break;
+            case 3: // Nyugat
+                checkX = x - 1;
+                break;
+        }
+        
+        // Ellenőrizzük, hogy van-e fal az új pozíción
+        const cellAtNewPos = document.querySelector(`.game-cell[data-x="${checkX}"][data-y="${checkY}"]`);
+        return !cellAtNewPos || cellAtNewPos.classList.contains('game-wall');
+    }
+    
+    function detectItem() {
+        if (!gameRunning || !robot) return false;
+        
+        const x = parseInt(robot.dataset.x);
+        const y = parseInt(robot.dataset.y);
+        
+        // Keresünk érmét ezen a pozíción
+        return items.some(item => {
+            const itemX = parseInt(item.dataset.x);
+            const itemY = parseInt(item.dataset.y);
+            return itemX === x && itemY === y;
+        });
+    }
+    
+    function getRobotPosition(coord) {
+        if (!gameRunning || !robot) return 0;
+        
+        if (coord === "X") {
+            return parseInt(robot.dataset.x);
+        } else {
+            return parseInt(robot.dataset.y);
+        }
+    }
+    
+    // Választott pálya betöltése
+    function loadSelectedLevel() {
+        const selectElement = document.getElementById('levelSelect');
+        currentLevel = parseInt(selectElement.value);
+        loadLevel(currentLevel);
+        
+        // Workspace törlése
+        workspace.clear();
+    }
+    
+    // Játék újraindítása
+    function resetGame() {
+        gameRunning = false;
+        loadLevel(currentLevel);
+    }
+    
+    // Győzelem
+    function winGame() {
+        logMessage(`Gratulálunk! Összegyűjtöttél minden érmét (${itemsCollected}/${totalItems})!`);
+        gameRunning = false;
+    }
+    
+    // Segítség mutatása
+    function showHint() {
+        let hint = "";
+        switch(currentLevel) {
+            case 1:
+                hint = "TIPP: Használj egy FOR ciklust, ami 4-szer ismétlődik.\n" +
+                       "Minden iterációban menj előre, gyűjtsd be az érmét, majd menj előre újra.";
+                break;
+            case 2:
+                hint = "TIPP: Használj egy WHILE ciklust, amely addig fut, amíg nem érzékelsz falat előtted.\n" +
+                       "A cikluson belül: menj előre, ha van érme, gyűjtsd össze, majd fordulj jobbra, menj előre, fordulj balra.";
+                break;
+            case 3:
+                hint = "TIPP: Használj külső WHILE ciklust, amely addig fut, amíg van érme a pályán.\n" +
+                       "Belül használj egy FOR ciklust az egyenes vonalakon való haladáshoz, és feltételes elágazást, ha falba ütközöl.";
+                break;
+        }
+        logMessage(hint);
+    }
+    
+    // Napló üzenet
+    function logMessage(message) {
+        const output = document.getElementById('output');
+        output.textContent = message;
+    }
+    
+    // Kód futtatása
+    async function runCode() {
+        if (gameRunning) return; // Már fut a játék
+        
+        gameRunning = true;
+        
+        const code = Blockly.JavaScript.workspaceToCode(workspace);
+        logMessage('Program futtatása...');
+        
+        try {
+            // JavaScript kód futtatása aszinkron módon
+            await eval('(async function() { try { ' + code + ' } catch(e) { logMessage("Hiba: " + e.message); } })()');
+            
+            // Ha nem nyertünk, akkor a program vége
+            if (gameRunning) {
+                if (itemsCollected === totalItems) {
+                    logMessage(`Gratulálunk! Összegyűjtöttél minden érmét! (${itemsCollected}/${totalItems})`);
+                } else {
+                    logMessage(`Program vége. Összegyűjtött érmék: ${itemsCollected}/${totalItems}`);
+                }
+                gameRunning = false;
+            }
+        } catch (e) {
+            logMessage('Hiba: ' + e.message);
+            gameRunning = false;
+        }
+    }
+    
+    // Blockly munkaterület inicializálása
+    let workspace = Blockly.inject('blocklyDiv', {
+        toolbox: document.getElementById('toolbox'),
+        scrollbars: true,
+        sounds: true,
+        trashcan: true,
+        zoom: {
+            controls: true,
+            wheel: true,
+            startScale: 1.0,
+            maxScale: 3,
+            minScale: 0.3,
+            scaleSpeed: 1.2
+        },
+        grid: {
+            spacing: 20,
+            length: 3,
+            colour: '#ccc',
+            snap: true
+        }
+    });
+    
+    // Oldal betöltésekor
+    document.addEventListener('DOMContentLoaded', function() {
+        initGame();
+    });
+
+    function loadWorkspace(level) {
+        // Load workspace from localStorage if available
+        var xml_text = localStorage.getItem('blocklyWorkspace_level' + level);
+        if (xml_text) {
+            try {
+                // Check if Blockly.Xml and textToDom are available before calling
+                if (Blockly.Xml && typeof Blockly.Xml.textToDom === 'function') {
+                    var xml = Blockly.Xml.textToDom(xml_text);
+                    // Check if clearWorkspaceAndLoadFromXml is available before calling
+                    if (Blockly.Xml && typeof Blockly.Xml.clearWorkspaceAndLoadFromXml === 'function') {
+                        Blockly.Xml.clearWorkspaceAndLoadFromXml(xml, workspace);
+                        console.log('Workspace loaded for level ' + level);
+                    } else {
+                         console.error('Blockly.Xml.clearWorkspaceAndLoadFromXml is not available.');
+                         workspace.clear(); // Clear workspace as a fallback
+                    }
+                } else {
+                    console.error('Blockly.Xml.textToDom is not available.');
+                    workspace.clear(); // Clear workspace as a fallback
+                }
+            } catch (e) {
+                console.error('Error processing workspace XML:', e);
+                // Optionally clear corrupted data
+                // localStorage.removeItem('blocklyWorkspace_level' + level);
+                workspace.clear();
+            }
+        } else {
+            workspace.clear(); // Clear workspace if no saved state
+            console.log('No saved workspace found for level ' + level + ', starting fresh.');
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanoda - Dinamikus Háttéreffektek</title>
+    <style>
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: local('Poppins Regular'), local('Poppins-Regular'),
+                 url('/static/css/fonts/poppins/poppins-regular.woff2') format('woff2');
+        }
+
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 500;
+            font-display: swap;
+            src: local('Poppins Medium'), local('Poppins-Medium'),
+                 url('/static/css/fonts/poppins/poppins-medium.woff2') format('woff2');
+        }
+
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: local('Poppins SemiBold'), local('Poppins-SemiBold'),
+                 url('/static/css/fonts/poppins/poppins-semibold.woff2') format('woff2');
+        }
+
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: local('Poppins Bold'), local('Poppins-Bold'),
+                 url('/static/css/fonts/poppins/poppins-bold.woff2') format('woff2');
+        }
+
+        /* Fallback rendszerbetűtípusok */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            color: #e0e6f0;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            background-color: #192231;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -10px;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #4ecca3, #3a86ff);
+            border-radius: 2px;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            color: #b0b9cc;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #4ecca3, #3a86ff);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        /* Háttér effekt switcher */
+        .effect-switcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+        
+        .effect-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .effect-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .effect-btn.active {
+            background: linear-gradient(135deg, #4ecca3, #3a86ff);
+            transform: scale(1.1);
+        }
+        
+        /* 1. Matematikai részecskék háttér */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #192231;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        /* 2. Hullámok animáció */
+        .waves-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        
+        .waves-container.active {
+            opacity: 1;
+        }
+        
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%233a86ff" fill-opacity="0.2" d="M0,192L60,208C120,224,240,256,360,245.3C480,235,600,181,720,160C840,139,960,149,1080,170.7C1200,192,1320,224,1380,240L1440,256L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>');
+            background-size: 1440px 100px;
+            animation: wave-animation 20s infinite linear;
+        }
+        
+        .wave:nth-child(2) {
+            bottom: 10px;
+            opacity: 0.6;
+            animation-delay: 5s;
+            animation-duration: 15s;
+            height: 90px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%234ecca3" fill-opacity="0.2" d="M0,64L60,96C120,128,240,192,360,202.7C480,213,600,171,720,144C840,117,960,107,1080,122.7C1200,139,1320,181,1380,202.7L1440,224L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>');
+        }
+        
+        .wave:nth-child(3) {
+            bottom: 20px;
+            opacity: 0.4;
+            animation-delay: 10s;
+            animation-duration: 12s;
+            height: 80px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,288L60,266.7C120,245,240,203,360,192C480,181,600,203,720,213.3C840,224,960,224,1080,213.3C1200,203,1320,181,1380,170.7L1440,160L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>');
+        }
+        
+        @keyframes wave-animation {
+            0% {
+                background-position-x: 0;
+            }
+            100% {
+                background-position-x: 1440px;
+            }
+        }
+        
+        /* 3. Matematikai szimbólumok eső */
+        .math-rain-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        
+        .math-rain-container.active {
+            opacity: 1;
+        }
+        
+        .math-symbol {
+            position: absolute;
+            top: -20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-family: 'Times New Roman', serif;
+            font-size: 16px;
+            animation: mathRain linear infinite;
+        }
+        
+        @keyframes mathRain {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+        
+        /* 4. Modern Fluid Particles */
+        .grid-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            perspective: 800px;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 1s ease;
+            background-color: #192231;
+        }
+        
+        .grid-container.active {
+            opacity: 1;
+        }
+        
+        /* 5. Szabálytalan formák */
+        .shapes-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        
+        .shapes-container.active {
+            opacity: 1;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(78, 204, 163, 0.2), rgba(58, 134, 255, 0.2));
+            animation: float 20s infinite ease-in-out;
+            filter: blur(10px);
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            25% {
+                transform: translate(5%, 15%) scale(1.1) rotate(5deg);
+            }
+            50% {
+                transform: translate(10%, 5%) scale(0.9) rotate(10deg);
+            }
+            75% {
+                transform: translate(5%, -5%) scale(1.05) rotate(15deg);
+            }
+        }
+    </style>
+    <!-- Font Awesome ikonok lokálisan vagy CDN-ről, ez kisebb valószínűséggel okoz Tracking Prevention hibát -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="content">
+        <h1>Tanoda Projekt</h1>
+        <p>Lépj be a matematika lenyűgöző világába interaktív és vizuális magyarázatokkal. Fedezd fel a számok és formák rejtett titkait!</p>
+        <a href="#" class="btn">Kezdjük el</a>
+    </div>
+    
+    <!-- Háttér effekt váltó gombok -->
+    <div class="effect-switcher">
+        <div class="effect-btn active" data-effect="particles" title="Részecskék">
+            <i class="fas fa-atom"></i>
+        </div>
+        <div class="effect-btn" data-effect="waves" title="Hullámok">
+            <i class="fas fa-water"></i>
+        </div>
+        <div class="effect-btn" data-effect="math-rain" title="Matematikai Eső">
+            <i class="fas fa-square-root-variable"></i>
+        </div>
+        <div class="effect-btn" data-effect="grid" title="3D Grid">
+            <i class="fas fa-border-all"></i>
+        </div>
+        <div class="effect-btn" data-effect="shapes" title="Formák">
+            <i class="fas fa-shapes"></i>
+        </div>
+    </div>
+    
+    <!-- 1. Matematikai részecskék háttér -->
+    <div id="particles-js"></div>
+    
+    <!-- 2. Hullámok animáció -->
+    <div class="waves-container">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+    
+    <!-- 3. Matematikai szimbólumok eső -->
+    <div class="math-rain-container" id="math-rain-container"></div>
+    
+    <!-- 4. 3D Grid -->
+    <div class="grid-container">
+        <div class="grid" id="grid"></div>
+    </div>
+    
+    <!-- 5. Szabálytalan formák -->
+    <div class="shapes-container" id="shapes-container"></div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        // Részecskék konfiguráció
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ellenőrizzük, hogy a particlesJS függvény elérhető-e
+            if (typeof particlesJS !== 'undefined') {
+                particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": ["#4ecca3", "#3a86ff", "#ffffff"]
+                },
+                "shape": {
+                    "type": ["circle", "triangle", "edge", "polygon"],
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 2,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#4ecca3",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 1,
+                    "direction": "none",
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": true,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+                });
+            } else {
+                console.error("A particles.js könyvtár nem töltődött be megfelelően!");
+                // Alternatív háttér, ha nem töltődött be a library
+                document.getElementById('particles-js').style.background = 'linear-gradient(135deg, #192231 0%, #24344d 100%)';
+            }
+        });
+        
+        // Platóni testek csúcspontjait és éleit leíró adatszerkezetek
+        const platonicSolids = {
+            tetrahedron: {
+                vertices: [
+                    [1, 1, 1], [-1, -1, 1], [-1, 1, -1], [1, -1, -1]
+                ],
+                edges: [
+                    [0,1],[0,2],[0,3],[1,2],[1,3],[2,3]
+                ]
+            },
+            cube: {
+                vertices: [
+                    [-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],
+                    [-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]
+                ],
+                edges: [
+                    [0,1],[1,2],[2,3],[3,0],
+                    [4,5],[5,6],[6,7],[7,4],
+                    [0,4],[1,5],[2,6],[3,7]
+                ]
+            },
+            octahedron: {
+                vertices: [
+                    [1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]
+                ],
+                edges: [
+                    [0,2],[0,3],[0,4],[0,5],
+                    [1,2],[1,3],[1,4],[1,5],
+                    [2,4],[2,5],[3,4],[3,5]
+                ]
+            },
+            dodecahedron: {
+                vertices: (function(){
+                    const PHI = (1 + Math.sqrt(5)) / 2;
+                    const a = 1/PHI, b = 1;
+                    return [
+                        [-a, 0, b], [a, 0, b], [-a, 0, -b], [a, 0, -b],
+                        [0, b, a], [0, b, -a], [0, -b, a], [0, -b, -a],
+                        [b, a, 0], [-b, a, 0], [b, -a, 0], [-b, -a, 0],
+                        [1,1,1], [1,1,-1], [1,-1,1], [1,-1,-1],
+                        [-1,1,1], [-1,1,-1], [-1,-1,1], [-1,-1,-1]
+                    ];
+                })(),
+                edges: [
+                    [0,1],[0,6],[0,16],[1,8],[1,14],[2,3],[2,7],[2,17],[3,9],[3,15],
+                    [4,5],[4,8],[4,16],[5,9],[5,17],[6,10],[6,18],[7,11],[7,19],
+                    [8,12],[8,13],[9,12],[9,13],[10,14],[10,15],[11,14],[11,15],
+                    [12,13],[14,15],[16,17],[18,19]
+                ]
+            },
+            icosahedron: {
+                vertices: (function(){
+                    const PHI = (1 + Math.sqrt(5)) / 2;
+                    return [
+                        [-1, PHI, 0], [1, PHI, 0], [-1, -PHI, 0], [1, -PHI, 0],
+                        [0, -1, PHI], [0, 1, PHI], [0, -1, -PHI], [0, 1, -PHI],
+                        [PHI, 0, -1], [PHI, 0, 1], [-PHI, 0, -1], [-PHI, 0, 1]
+                    ];
+                })(),
+                edges: [
+                    [0,1],[0,5],[0,7],[0,10],[0,11],[1,5],[1,7],[1,8],[1,9],
+                    [2,3],[2,4],[2,6],[2,10],[2,11],[3,4],[3,6],[3,8],[3,9],
+                    [4,5],[4,9],[4,11],[5,9],[5,11],[6,7],[6,8],[6,10],[7,8],[7,10],[8,9],[10,11]
+                ]
+            }
+        };
+
+        // Platóni test particle háló animáció hullámok helyén
+        function setupPlatonicParticleNetwork() {
+            const container = document.querySelector('.waves-container');
+            container.innerHTML = '';
+            const canvas = document.createElement('canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.display = 'block';
+            container.appendChild(canvas);
+            const ctx = canvas.getContext('2d');
+            // Paraméterek
+            const POINT_COUNT = 80;
+            const PLATONIC_GROUPS = 6; // ennyi platóni test lesz
+            const solids = Object.values(platonicSolids);
+            const points = [];
+            const platonicEdges = [];
+            // Először generáljunk platóni testeket (pontok egy része)
+            for (let g = 0; g < PLATONIC_GROUPS; g++) {
+                const solid = solids[Math.floor(Math.random() * solids.length)];
+                const baseRadius = (Math.min(canvas.width, canvas.height) * (0.10 + Math.random()*0.08));
+                const centerX = Math.random() * (canvas.width * 0.8) + canvas.width * 0.1;
+                const centerY = Math.random() * (canvas.height * 0.8) + canvas.height * 0.1;
+                const rotY = Math.random()*Math.PI*2;
+                const rotX = Math.random()*Math.PI*2;
+                const rotSpeedY = 0.004 + Math.random() * 0.01;
+                const rotSpeedX = 0.002 + Math.random() * 0.008;
+                const phases = solid.vertices.map(() => Math.random() * Math.PI * 2);
+                const amps = solid.vertices.map(() => 0.06 + Math.random() * 0.10);
+                // Minden csúcsból pont lesz
+                solid.vertices.forEach((v, i) => {
+                    points.push({
+                        type: 'platonic',
+                        group: g,
+                        v: v.slice(),
+                        baseRadius, centerX, centerY,
+                        rotY, rotX, rotSpeedY, rotSpeedX,
+                        phase: phases[i], amp: amps[i],
+                        idx: i, solid
+                    });
+                });
+                // Élek
+                solid.edges.forEach(([a, b]) => {
+                    platonicEdges.push({group: g, a: points.length - solid.vertices.length + a, b: points.length - solid.vertices.length + b});
+                });
+            }
+            // A maradék pontok véletlenszerűek
+            while (points.length < POINT_COUNT) {
+                points.push({
+                    type: 'random',
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3
+                });
+            }
+            function project([x, y, z], baseRadius, centerX, centerY) {
+                const scale = 1.2 / (z * 0.5 + 2.5);
+                return [centerX + x * baseRadius * scale, centerY + y * baseRadius * scale];
+            }
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const t = performance.now() / 1000;
+                // Frissítjük a pontok pozícióját
+                points.forEach(p => {
+                    if (p.type === 'platonic') {
+                        // Forgás
+                        p.rotY += p.rotSpeedY;
+                        p.rotX += p.rotSpeedX;
+                        let [x, y, z] = p.v;
+                        const offset = Math.sin(t * 1.2 + p.phase) * p.amp;
+                        x += offset;
+                        y += Math.cos(t * 1.1 + p.phase) * p.amp;
+                        // Y forgatás
+                        let x1 = x * Math.cos(p.rotY) - z * Math.sin(p.rotY);
+                        let z1 = x * Math.sin(p.rotY) + z * Math.cos(p.rotY);
+                        // X forgatás
+                        let y1 = y * Math.cos(p.rotX) - z1 * Math.sin(p.rotX);
+                        let z2 = y * Math.sin(p.rotX) + z1 * Math.cos(p.rotX);
+                        [p.x, p.y] = project([x1, y1, z2], p.baseRadius, p.centerX, p.centerY);
+                    } else {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    }
+                });
+                // Platóni testek élei
+                ctx.save();
+                ctx.strokeStyle = 'rgba(78,204,163,0.38)';
+                ctx.lineWidth = 2.2;
+                platonicEdges.forEach(edge => {
+                    const a = points[edge.a], b = points[edge.b];
+                    ctx.beginPath();
+                    ctx.moveTo(a.x, a.y);
+                    ctx.lineTo(b.x, b.y);
+                    ctx.stroke();
+                });
+                ctx.restore();
+                // Hálózatszerű összekötés: minden közeli pont között vékony vonal
+                ctx.save();
+                ctx.strokeStyle = 'rgba(200,210,230,0.16)';
+                ctx.lineWidth = 1.1;
+                for (let i = 0; i < points.length; i++) {
+                    for (let j = i + 1; j < points.length; j++) {
+                        const a = points[i], b = points[j];
+                        const dx = a.x - b.x, dy = a.y - b.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 110) {
+                            ctx.globalAlpha = 0.16 + 0.18 * (1 - dist / 110);
+                            ctx.beginPath();
+                            ctx.moveTo(a.x, a.y);
+                            ctx.lineTo(b.x, b.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                ctx.restore();
+                // Pontok
+                ctx.save();
+                points.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.type === 'platonic' ? 5.5 : 3.5, 0, 2 * Math.PI);
+                    ctx.fillStyle = p.type === 'platonic' ? '#3a86ff' : 'rgba(180,200,220,0.7)';
+                    ctx.globalAlpha = p.type === 'platonic' ? 0.9 : 0.7;
+                    ctx.fill();
+                });
+                ctx.restore();
+                requestAnimationFrame(draw);
+            }
+            draw();
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+        
+        // Matematikai szimbólumok eső
+        function setupMathRain() {
+            const container = document.getElementById('math-rain-container');
+            const symbols = ['∑', '∫', '∂', '∇', '∞', '≈', '≠', '≤', '≥', 'π', 'α', 'β', 'γ', 'δ', 'ε', 'λ', 'ω', '√', '∛', '∜', '∏', '∀', '∃', '∴', '∵', '∼', '∽', '∝', '∠', '⊥', '⊕', '⊗', '⊂', '⊃', '⊆', '⊇', '⊄', '⊅', '⊈', '⊉'];
+            
+            // Létrehozzuk a szimbólumokat
+            for (let i = 0; i < 100; i++) {
+                const symbol = document.createElement('div');
+                symbol.className = 'math-symbol';
+                symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                
+                // Véletlenszerű pozíció és késleltetés
+                const left = Math.random() * 100;
+                const delay = Math.random() * 20;
+                const duration = 15 + Math.random() * 30;
+                const size = 10 + Math.random() * 20;
+                
+                symbol.style.left = `${left}%`;
+                symbol.style.animationDelay = `${delay}s`;
+                symbol.style.animationDuration = `${duration}s`;
+                symbol.style.fontSize = `${size}px`;
+                
+                container.appendChild(symbol);
+            }
+        }
+        
+        // 3D Grid létrehozása
+        function setupGrid() {
+            const grid = document.getElementById('grid');
+            const gridSize = 20;
+            const spacing = 30;
+            
+            // Vízszintes vonalak
+            for (let i = 0; i <= gridSize; i++) {
+                const line = document.createElement('div');
+                line.className = 'grid-line horizontal-line';
+                line.style.top = `${i * spacing}px`;
+                grid.appendChild(line);
+            }
+            
+            // Függőleges vonalak
+            for (let i = 0; i <= gridSize; i++) {
+                const line = document.createElement('div');
+                line.className = 'grid-line vertical-line';
+                line.style.left = `${i * spacing}px`;
+                grid.appendChild(line);
+            }
+            
+            // Grid animálása
+            let angle = 0;
+            function animateGrid() {
+                angle += 0.05;
+                grid.style.transform = `translate(-50%, -50%) rotateX(60deg) rotateZ(${45 + Math.sin(angle) * 5}deg)`;
+                requestAnimationFrame(animateGrid);
+            }
+            
+            animateGrid();
+        }
+        
+        // Szabálytalan formák létrehozása
+        function setupShapes() {
+            const container = document.getElementById('shapes-container');
+            const numShapes = 6;
+            
+            for (let i = 0; i < numShapes; i++) {
+                const shape = document.createElement('div');
+                shape.className = 'shape';
+                
+                // Véletlenszerű méret és pozíció
+                const size = 100 + Math.random() * 300;
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const animationDelay = Math.random() * 10;
+                
+                shape.style.width = `${size}px`;
+                shape.style.height = `${size}px`;
+                shape.style.left = `${left}%`;
+                shape.style.top = `${top}%`;
+                shape.style.animationDelay = `${animationDelay}s`;
+                
+                container.appendChild(shape);
+            }
+        }
+        
+        // Effekt váltás
+        function switchEffect(effectName) {
+            // Minden konténer elrejtése
+            document.querySelectorAll('.waves-container, .math-rain-container, .grid-container, .shapes-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            
+            // Részecskék konténer elhalványítása
+            const particlesContainer = document.getElementById('particles-js');
+            if (particlesContainer) {
+                particlesContainer.style.opacity = effectName === 'particles' ? 1 : 0;
+            }
+            
+            // Aktív effekt megjelenítése
+            if (effectName !== 'particles') {
+                document.querySelector(`.${effectName}-container`).classList.add('active');
+            }
+            
+            // Ha grid effektre váltunk, biztosítsuk, hogy a fluid particles megjelenjenek
+            if (effectName === 'grid') {
+                setupFluidParticles();
+            }
+            
+            // Gombok aktiválása
+            document.querySelectorAll('.effect-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.effect-btn[data-effect="${effectName}"]`).classList.add('active');
+        }
+        
+        // Eseménykezelők beállítása
+        // Minden függvény inicializálása
+        function initializeAllEffects() {
+            setupMathRain();
+            setupPlatonicParticleNetwork();
+            setupFluidParticles(); // Az új fluid particle design
+            setupShapes();
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializáljuk az összes effektet
+            initializeAllEffects();
+            
+            // Effekt váltó gombok eseménykezelője
+            document.querySelectorAll('.effect-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const effectName = this.getAttribute('data-effect');
+                    switchEffect(effectName);
+                });
+            });
+        });
+
+        function setupDynamicPlatonicParticles() {
+            const container = document.querySelector('.waves-container');
+            container.innerHTML = '';
+            const canvas = document.createElement('canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.display = 'block';
+            container.appendChild(canvas);
+            const ctx = canvas.getContext('2d');
+
+            const PARTICLE_COUNT = 80;
+            const LINK_DIST = 120;
+            const particles = [];
+            const platonicSolids = [
+                platonicSolids.tetrahedron,
+                platonicSolids.cube,
+                platonicSolids.octahedron,
+                platonicSolids.dodecahedron,
+                platonicSolids.icosahedron
+            ];
+
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    r: 2.5 + Math.random() * 1.5,
+                    group: null // Csoportosítás platóni idomhoz
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Hálózatszerű vonalak
+                ctx.save();
+                ctx.strokeStyle = 'rgba(200,210,230,0.18)';
+                ctx.lineWidth = 1.1;
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    for (let j = i + 1; j < PARTICLE_COUNT; j++) {
+                        const a = particles[i], b = particles[j];
+                        const dx = a.x - b.x, dy = a.y - b.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < LINK_DIST) {
+                            ctx.globalAlpha = 0.18 + 0.22 * (1 - dist / LINK_DIST);
+                            ctx.beginPath();
+                            ctx.moveTo(a.x, a.y);
+                            ctx.lineTo(b.x, b.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                ctx.restore();
+
+                // Pontok kirajzolása
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    const p = particles[i];
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+                    ctx.fillStyle = 'rgba(180,200,220,0.7)';
+                    ctx.fill();
+                }
+
+                // Mozgatás és platóni idomokba rendeződés
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    // Lassú, sima mozgás, visszapattanás
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                    // Ellenőrzés: pontsűrűsödés
+                    let neighbors = 0;
+                    for (let j = 0; j < PARTICLE_COUNT; j++) {
+                        if (i === j) continue;
+                        const q = particles[j];
+                        const dx = p.x - q.x, dy = p.y - q.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < LINK_DIST * 0.6) neighbors++;
+                    }
+
+                    // Ha elég szomszéd van, platóni idomot alkot
+                    if (neighbors > 5 && !p.group) {
+                        const solid = platonicSolids[Math.floor(Math.random() * platonicSolids.length)];
+                        const centerX = p.x;
+                        const centerY = p.y;
+                        const scale = 40;
+                        solid.vertices.forEach(([vx, vy, vz], idx) => {
+                            if (idx < PARTICLE_COUNT) {
+                                particles[idx].x = centerX + vx * scale;
+                                particles[idx].y = centerY + vy * scale;
+                                particles[idx].group = solid;
+                            }
+                        });
+                    }
+                }
+
+                requestAnimationFrame(draw);
+            }
+
+            draw();
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // Modern fluid particles animáció a 3D grid helyén
+        function setupFluidParticles() {
+            const container = document.querySelector('.grid-container');
+            // Töröljük a régi tartalmat
+            container.innerHTML = '';
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.display = 'block';
+            container.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Paraméterek
+            const PARTICLE_COUNT = 200;
+            const FLOW_FIELD_RESOLUTION = 25;
+            const PARTICLE_MAX_SIZE = 4;
+            const FLOW_INTENSITY = 0.02;
+            const FLOW_COMPLEXITY = 0.0008;
+            const FLOW_TIME_SPEED = 0.0005;
+            const FLOW_SPEED = 1.2;
+            const COLORS = ['#4ecca3', '#3a86ff', '#ff9f1c', '#ff4d6d', '#8338ec'];
+            
+            // 3D minták definíciója
+            const SHAPES_3D = {
+                cube: {
+                    vertices: [
+                        [-1,-1,-1], [1,-1,-1], [1,1,-1], [-1,1,-1],
+                        [-1,-1,1], [1,-1,1], [1,1,1], [-1,1,1]
+                    ],
+                    edges: [
+                        [0,1], [1,2], [2,3], [3,0],
+                        [4,5], [5,6], [6,7], [7,4],
+                        [0,4], [1,5], [2,6], [3,7]
+                    ]
+                },
+                tetrahedron: {
+                    vertices: [
+                        [0,0,1], [0.943,0,-0.333], [-0.471,0.816,-0.333], [-0.471,-0.816,-0.333]
+                    ],
+                    edges: [
+                        [0,1], [0,2], [0,3], [1,2], [1,3], [2,3]
+                    ]
+                },
+                octahedron: {
+                    vertices: [
+                        [1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]
+                    ],
+                    edges: [
+                        [0,2], [0,3], [0,4], [0,5], [1,2], [1,3], [1,4], [1,5],
+                        [2,4], [2,5], [3,4], [3,5]
+                    ]
+                }
+            };
+            
+            const particles = [];
+            let flowFieldTime = 0;
+            let formationActive = false;
+            let formationProgress = 0;
+            let formationShape = null;
+            let formationTime = 0;
+            let formationRotation = { x: 0, y: 0, z: 0 };
+            let formationCenter = { x: 0, y: 0 };
+            let formationScale = 0;
+            let formationParticles = [];
+            
+            // Részecskék létrehozása
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: 0.5 + Math.random() * PARTICLE_MAX_SIZE,
+                    speedMult: 0.3 + Math.random() * 1.5,
+                    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                    alpha: 0.1 + Math.random() * 0.7,
+                    historyX: [],
+                    historyY: [],
+                    historySize: Math.floor(2 + Math.random() * 15), // Farok mérete
+                    inFormation: false,
+                    targetX: 0,
+                    targetY: 0,
+                    targetSize: 0,
+                    formationIndex: -1
+                });
+            }
+            
+            // Perlin zaj függvény (egyszerűsített)
+            function noise(x, y, z) {
+                // Egyszerű matematikai zaj-közelítés
+                return Math.sin(x * FLOW_COMPLEXITY) * Math.cos(y * FLOW_COMPLEXITY) * 
+                       Math.sin(z * FLOW_COMPLEXITY + x * 0.1) * 
+                       Math.cos(x * 0.15 + z * 0.1) * 
+                       Math.sin(y * 0.1 + z * 0.2);
+            }
+            
+            // Pontok 3D vetítése 2D-re (perspektíva)
+            function project3Dto2D(x, y, z, rotX, rotY, rotZ) {
+                // Forgatások
+                // X tengely körüli forgatás
+                let y1 = y * Math.cos(rotX) - z * Math.sin(rotX);
+                let z1 = y * Math.sin(rotX) + z * Math.cos(rotX);
+                
+                // Y tengely körüli forgatás
+                let x2 = x * Math.cos(rotY) + z1 * Math.sin(rotY);
+                let z2 = -x * Math.sin(rotY) + z1 * Math.cos(rotY);
+                
+                // Z tengely körüli forgatás
+                let x3 = x2 * Math.cos(rotZ) - y1 * Math.sin(rotZ);
+                let y3 = x2 * Math.sin(rotZ) + y1 * Math.cos(rotZ);
+                
+                // Perspektív vetítés (egyszerű skálázás)
+                const perspective = 400;
+                const scale = perspective / (perspective + z2);
+                
+                return {
+                    x: x3 * scale,
+                    y: y3 * scale,
+                    z: z2,
+                    scale: scale
+                };
+            }
+            
+            // Új formáció indítása
+            function startNewFormation() {
+                // Véletlen alakzat kiválasztása
+                const shapeKeys = Object.keys(SHAPES_3D);
+                const shapeKey = shapeKeys[Math.floor(Math.random() * shapeKeys.length)];
+                formationShape = SHAPES_3D[shapeKey];
+                
+                // Formáció közepének kiválasztása
+                formationCenter = {
+                    x: Math.random() * (canvas.width * 0.6) + canvas.width * 0.2,
+                    y: Math.random() * (canvas.height * 0.6) + canvas.height * 0.2
+                };
+                
+                // Méretezés
+                formationScale = Math.min(canvas.width, canvas.height) * 0.12;
+                
+                // Forgatás inicializálása
+                formationRotation = { 
+                    x: Math.random() * Math.PI * 2,
+                    y: Math.random() * Math.PI * 2,
+                    z: Math.random() * Math.PI * 2
+                };
+                
+                // Részecskék kiválasztása a formációhoz
+                formationParticles = [];
+                const vertexCount = formationShape.vertices.length;
+                
+                // Részecskék kiválasztása a közelből (és távolság szerint rendezés)
+                const potentialParticles = particles
+                    .map((p, idx) => ({ 
+                        particle: p, 
+                        index: idx,
+                        dist: Math.sqrt(
+                            Math.pow(p.x - formationCenter.x, 2) + 
+                            Math.pow(p.y - formationCenter.y, 2)
+                        )
+                    }))
+                    .sort((a, b) => a.dist - b.dist)
+                    .slice(0, vertexCount);
+                
+                // Részecskék hozzárendelése a formáció csúcspontjaihoz
+                formationParticles = potentialParticles.map((pp, i) => {
+                    const p = pp.particle;
+                    const vertexIdx = i % vertexCount;
+                    const vertex = formationShape.vertices[vertexIdx];
+                    
+                    // Vetítés
+                    const projected = project3Dto2D(
+                        vertex[0] * formationScale,
+                        vertex[1] * formationScale,
+                        vertex[2] * formationScale,
+                        formationRotation.x,
+                        formationRotation.y,
+                        formationRotation.z
+                    );
+                    
+                    p.inFormation = true;
+                    p.targetX = formationCenter.x + projected.x;
+                    p.targetY = formationCenter.y + projected.y;
+                    p.targetSize = 3 + 2 * projected.scale;
+                    p.formationIndex = vertexIdx;
+                    
+                    return { 
+                        particle: p, 
+                        vertexIndex: vertexIdx,
+                        originalX: p.x,
+                        originalY: p.y,
+                        originalSize: p.size
+                    };
+                });
+                
+                formationActive = true;
+                formationProgress = 0;
+                formationTime = 0;
+            }
+            
+            // Formáció frissítése
+            function updateFormation() {
+                formationTime += 0.016; // kb. 60 FPS
+                
+                // Formáció fejlődése (0->1->0) - fel- és lebomlás
+                if (formationTime < 2) {
+                    formationProgress = Math.min(formationTime / 1, 1); // 1 másodperc alatt felépül
+                } else if (formationTime < 6) {
+                    formationProgress = 1; // 4 másodpercig marad
+                    
+                    // Lassan forog
+                    formationRotation.x += 0.005;
+                    formationRotation.y += 0.007;
+                    formationRotation.z += 0.003;
+                    
+                    // Csúcspontok új pozícióinak kiszámítása a forgatás alapján
+                    formationParticles.forEach(fp => {
+                        const vertex = formationShape.vertices[fp.vertexIndex];
+                        
+                        // Vetítés
+                        const projected = project3Dto2D(
+                            vertex[0] * formationScale,
+                            vertex[1] * formationScale,
+                            vertex[2] * formationScale,
+                            formationRotation.x,
+                            formationRotation.y,
+                            formationRotation.z
+                        );
+                        
+                        fp.particle.targetX = formationCenter.x + projected.x;
+                        fp.particle.targetY = formationCenter.y + projected.y;
+                        fp.particle.targetSize = 3 + 2 * projected.scale;
+                    });
+                } else if (formationTime < 8) {
+                    formationProgress = Math.max(1 - (formationTime - 6) / 2, 0); // 2 másodperc alatt lebomlik
+                } else {
+                    // Formáció lezárása
+                    formationParticles.forEach(fp => {
+                        fp.particle.inFormation = false;
+                    });
+                    formationActive = false;
+                    formationParticles = [];
+                }
+            }
+            
+            // Animáció
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                flowFieldTime += FLOW_TIME_SPEED;
+                
+                // Véletlen időközönként új formáció
+                if (!formationActive && Math.random() < 0.002) {
+                    startNewFormation();
+                }
+                
+                // Aktív formáció frissítése
+                if (formationActive) {
+                    updateFormation();
+                }
+                
+                // Minden részecske mozgatása
+                particles.forEach(p => {
+                    if (p.inFormation) {
+                        // Formációban lévő részecske fokozatos mozgatása a cél felé
+                        p.x += (p.targetX - p.x) * 0.05 * formationProgress;
+                        p.y += (p.targetY - p.y) * 0.05 * formationProgress;
+                        p.size += (p.targetSize - p.size) * 0.05;
+                    } else {
+                        // Flow field alapú mozgás
+                        const xPos = Math.floor(p.x / FLOW_FIELD_RESOLUTION);
+                        const yPos = Math.floor(p.y / FLOW_FIELD_RESOLUTION);
+                        
+                        const angle = noise(xPos, yPos, flowFieldTime) * Math.PI * 2 * FLOW_INTENSITY;
+                        
+                        p.x += Math.cos(angle) * FLOW_SPEED * p.speedMult;
+                        p.y += Math.sin(angle) * FLOW_SPEED * p.speedMult;
+                        
+                        // Határok ellenőrzése
+                        if (p.x < 0) p.x += canvas.width;
+                        if (p.x > canvas.width) p.x -= canvas.width;
+                        if (p.y < 0) p.y += canvas.height;
+                        if (p.y > canvas.height) p.y -= canvas.height;
+                    }
+                    
+                    // Előzmény kezelése (farok)
+                    p.historyX.push(p.x);
+                    p.historyY.push(p.y);
+                    
+                    if (p.historyX.length > p.historySize) {
+                        p.historyX.shift();
+                        p.historyY.shift();
+                    }
+                    
+                    // Farok kirajzolása (csak ha nem formációban van)
+                    if (!p.inFormation && p.historyX.length > 1) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.historyX[0], p.historyY[0]);
+                        
+                        for (let i = 1; i < p.historyX.length; i++) {
+                            ctx.lineTo(p.historyX[i], p.historyY[i]);
+                        }
+                        
+                        ctx.strokeStyle = p.color;
+                        ctx.globalAlpha = p.alpha;
+                        ctx.lineWidth = p.size * 0.7;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+                        ctx.stroke();
+                    }
+                    
+                    // Részecske kirajzolása
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.inFormation ? 0.9 : (p.alpha + 0.2);
+                    ctx.fill();
+                });
+                
+                // Formáció éleinek kirajzolása
+                if (formationActive && formationProgress > 0.4) {
+                    ctx.save();
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                    ctx.lineWidth = 1;
+                    ctx.globalAlpha = formationProgress * 0.5;
+                    
+                    formationShape.edges.forEach(edge => {
+                        const p1 = formationParticles.find(fp => fp.vertexIndex === edge[0]);
+                        const p2 = formationParticles.find(fp => fp.vertexIndex === edge[1]);
+                        
+                        if (p1 && p2) {
+                            ctx.beginPath();
+                            ctx.moveTo(p1.particle.x, p1.particle.y);
+                            ctx.lineTo(p2.particle.x, p2.particle.y);
+                            ctx.stroke();
+                        }
+                    });
+                    
+                    ctx.restore();
+                }
+                
+                // Matematikai formulák/alakzatok rajzolása néha
+                if (Math.random() < 0.003 && !formationActive) {
+                    drawMathShape(canvas.width * Math.random(), canvas.height * Math.random());
+                }
+                
+                requestAnimationFrame(draw);
+            }
+            
+            // Matematikai alakzatok véletlenszerű rajzolása
+            function drawMathShape(x, y) {
+                // ...existing code...
+            }
+            
+            // Indítás
+            draw();
+            
+            // Átméretezés kezelése
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+    </script>
+</body>
+</html>

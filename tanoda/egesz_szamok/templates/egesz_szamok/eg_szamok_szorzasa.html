@@ -1,0 +1,73 @@
+{% extends "evfolyamok/6/evf6.html" %}
+{% load static %}
+
+{% block extra_css %}
+{{ block.super }}
+
+<link rel="stylesheet" href="{% static 'css/szorzas_modul.css' %}">
+
+
+
+{% endblock %}
+
+{% block title %}Egész számok - 6. Évfolyam{% endblock %}
+
+{% block evf6_content %}
+<div class="container-fluid">
+    <div id="content-container" class="mt-4">
+        {% if aktiv_modul == 'szorzas' %}
+            {% block szorzas_gyakorlo %}
+            <!-- Ez a blokk lesz felülírva a szorzas_gyakorlo.html által -->
+            {% endblock %}
+            
+        {% elif aktiv_modul == 'szorzas_tobbjegyuvel' %}
+            {% block szorzas_tobbjegyuvel_content %}
+            <!-- Ez a blokk lesz felülírva a kordinata.html által -->
+            {% endblock %}
+
+        {% elif aktiv_modul == 'szorzasok' %}{% block szorzasok_content %}{% endblock %}
+            
+        {% elif aktiv_modul == 'kordinata' %}
+            {% block kordinata_content %}
+            <!-- Ez a blokk lesz felülírva a kordinata.html által -->
+            {% endblock %}
+
+        {% elif aktiv_modul == 'blockly' %}
+            {% block blockly_content %}
+            <!-- Ez a blokk lesz felülírva a blockly.html által -->
+            {% endblock %}
+
+        {% elif aktiv_modul == '3d_blockly' %}
+            {% block 3d_blockly_content %}{% endblock %}
+            
+        {% elif aktiv_modul == 'blockly_threejs' %}
+            {% block blockly_threejs_content %}
+            <!-- Ez a blokk lesz felülírva a blockly_threejs.html által -->
+            {% endblock %}
+
+        {% elif aktiv_modul == 'szorzas_helyiertek_matrix' %}
+            {% block matrix_content %}{% endblock %}  {# Ez a blokk fog megjelenni #}
+
+        {% elif aktiv_modul == 'pythagoras' %}
+            {% block pythagoras_content %}{% endblock %}
+            
+        {% elif aktiv_modul == 'ciklusok' %}
+            {% block ciklusok_content %}
+            <!-- Ez a blokk lesz felülírva a ciklusok.html által -->
+            {% endblock %}
+
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+    {{ block.super }}
+
+    <!-- Plotly removed - using React/Recharts instead -->
+    <!-- See: static/js/bundles/szorzas_performance_chart.bundle.js -->
+{% endblock %}
+{% block module_specific_js %}{% endblock %}
+
+

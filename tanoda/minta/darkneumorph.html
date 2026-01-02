@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanoda - Sötét Neumorf Menü</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4ecca3;
+            --bg-color: #1a1d29;
+            --shadow-color-dark: #12141d;
+            --shadow-color-light: #222636;
+            --text-color: #e0e6ed;
+            --active-color: #4ecca3;
+            --accent-color: #2f89fc;
+            --hover-color: rgba(78, 204, 163, 0.2);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            min-height: 100vh;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+        
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: var(--bg-color);
+            padding: 2rem 1.5rem;
+            position: fixed;
+            transition: all 0.4s ease;
+            z-index: 100;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+            box-shadow: 5px 5px 10px var(--shadow-color-dark), 
+                       -5px -5px 10px var(--shadow-color-light);
+            background: linear-gradient(145deg, #1e2232, #181c27);
+        }
+        
+        .logo-icon {
+            font-size: 1.8rem;
+            color: var(--active-color);
+            text-shadow: 0 0 10px rgba(78, 204, 163, 0.5);
+        }
+        
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+        
+        .menu-items {
+            list-style: none;
+            margin-top: 1rem;
+        }
+        
+        .menu-item {
+            margin-bottom: 1.2rem;
+        }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.9rem 1.2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 5px 5px 10px var(--shadow-color-dark), 
+                       -5px -5px 10px var(--shadow-color-light);
+            background: linear-gradient(145deg, #1e2232, #181c27);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .menu-link::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background-color: var(--hover-color);
+            transition: all 0.5s ease;
+            z-index: 0;
+        }
+        
+        .menu-link:hover::before {
+            width: 100%;
+        }
+        
+        .menu-link-selected {
+            box-shadow: inset 3px 3px 6px var(--shadow-color-dark), 
+                        inset -3px -3px 6px var(--shadow-color-light);
+            background: linear-gradient(145deg, #181c27, #1e2232);
+            color: var(--active-color);
+        }
+        
+        .menu-link-icon {
+            margin-right: 1rem;
+            font-size: 1.3rem;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-link-selected .menu-link-icon {
+            color: var(--active-color);
+            text-shadow: 0 0 8px rgba(78, 204, 163, 0.5);
+        }
+        
+        .menu-link-text {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .menu-link:hover {
+            transform: translateY(-3px);
+        }
+        
+        .menu-link:hover .menu-link-icon {
+            color: var(--active-color);
+            transform: translateY(-2px);
+        }
+        
+        .menu-link-selected:hover {
+            transform: none;
+        }
+        
+        /* Math symbol animations */
+        .math-symbol {
+            position: absolute;
+            color: var(--active-color);
+            opacity: 0;
+            font-size: 0.6rem;
+            pointer-events: none;
+            transition: all 0.6s ease;
+            text-shadow: 0 0 5px rgba(78, 204, 163, 0.5);
+        }
+        
+        .menu-link:hover .math-symbol {
+            opacity: 0.7;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-10px) rotate(20deg);
+            }
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+        
+        .content-area {
+            margin-left: 260px;
+            padding: 2rem;
+            width: calc(100% - 260px);
+            transition: all 0.4s ease;
+        }
+        
+        .content-card {
+            background: linear-gradient(145deg, #1e2232, #181c27);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 8px 8px 16px var(--shadow-color-dark), 
+                      -8px -8px 16px var(--shadow-color-light);
+            margin-bottom: 2rem;
+        }
+        
+        h1, h2 {
+            margin-bottom: 1rem;
+            color: var(--active-color);
+        }
+        
+        p {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+                padding: 2rem 0.75rem;
+            }
+            
+            .logo-text {
+                display: none;
+            }
+            
+            .menu-link-text {
+                display: none;
+            }
+            
+            .menu-link {
+                justify-content: center;
+                padding: 0.9rem;
+            }
+            
+            .menu-link-icon {
+                margin-right: 0;
+            }
+            
+            .content-area {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+            
+            .logo {
+                margin-right: 0;
+            }
+        }
+        
+        /* Fényhatások és egyedi effektek */
+        .menu-link::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(78, 204, 163, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .menu-link:hover::after {
+            opacity: 1;
+        }
+        
+        .menu-link:active {
+            transform: scale(0.98);
+            box-shadow: 3px 3px 6px var(--shadow-color-dark), 
+                      -3px -3px 6px var(--shadow-color-light);
+        }
+        
+        /* Háttérmintázat */
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(78, 204, 163, 0.05) 2px, transparent 2px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-pattern"></div>
+    
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-square-root-variable logo-icon"></i>
+            </div>
+            <div class="logo-text">
+                <h1>Tanoda</h1>
+                <p>Matematika Tudásközpont</p>
+            </div>
+        </div>
+        
+        <ul class="menu-items">
+            <li class="menu-item">
+                <a href="#" class="menu-link menu-link-selected">
+                    <i class="fas fa-home menu-link-icon"></i>
+                    <span class="menu-link-text">Főoldal</span>
+                    <span class="math-symbol">∫</span>
+                    <span class="math-symbol" style="left: 85%; top: 20%">π</span>
+                    <span class="math-symbol" style="left: 60%; top: 70%">Σ</span>
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-plus menu-link-icon"></i>
+                    <span class="menu-link-text">Összeadás</span>
+                    <span class="math-symbol" style="left: 75%; top: 30%">+</span>
+                    <span class="math-symbol" style="left: 50%; top: 60%">-</span>
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-xmark menu-link-icon"></i>
+                    <span class="menu-link-text">Szorzás</span>
+                    <span class="math-symbol" style="left: 65%; top: 20%">×</span>
+                    <span class="math-symbol" style="left: 75%; top: 60%">÷</span>
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-square-root-variable menu-link-icon"></i>
+                    <span class="menu-link-text">Gyökvonás</span>
+                    <span class="math-symbol" style="left: 55%; top: 30%">√</span>
+                    <span class="math-symbol" style="left: 75%; top: 50%">∛</span>
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-chart-line menu-link-icon"></i>
+                    <span class="menu-link-text">Függvények</span>
+                    <span class="math-symbol" style="left: 65%; top: 40%">ƒ(x)</span>
+                    <span class="math-symbol" style="left: 80%; top: 60%">∂</span>
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-dice-d20 menu-link-icon"></i>
+                    <span class="menu-link-text">Geometria</span>
+                    <span class="math-symbol" style="left: 70%; top: 30%">△</span>
+                    <span class="math-symbol" style="left: 55%; top: 60%">○</span>
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-infinity menu-link-icon"></i>
+                    <span class="menu-link-text">Sorozatok</span>
+                    <span class="math-symbol" style="left: 65%; top: 25%">∞</span>
+                    <span class="math-symbol" style="left: 75%; top: 55%">...</span>
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-calculator menu-link-icon"></i>
+                    <span class="menu-link-text">Számológép</span>
+                    <span class="math-symbol" style="left: 60%; top: 30%">123</span>
+                    <span class="math-symbol" style="left: 75%; top: 60%">=</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    
+    <main class="content-area">
+        <div class="content-card">
+            <h1>Tanoda Matematikai Tananyag</h1>
+            <p>Üdvözöljük a Tanoda matematikai oktatófelületén! A bal oldali menüből válassza ki a tanulni kívánt tananyagot.</p>
+            <p>A sötét neumorf dizájn nemcsak esztétikus megjelenést biztosít, hanem optimalizált a hosszú tanulási időszakokra is, csökkentve a szemfáradtságot.</p>
+        </div>
+        
+        <div class="content-card">
+            <h2>Mai ajánlott tananyagok</h2>
+            <p>Ma a következő témák folytatását javasoljuk:</p>
+            <ul style="list-style-type: none; padding-left: 1rem;">
+                <li style="margin-bottom: 0.5rem; display: flex; align-items: center;">
+                    <i class="fas fa-arrow-right" style="color: var(--active-color); margin-right: 0.5rem;"></i>
+                    Másodfokú egyenletek megoldása
+                </li>
+                <li style="margin-bottom: 0.5rem; display: flex; align-items: center;">
+                    <i class="fas fa-arrow-right" style="color: var(--active-color); margin-right: 0.5rem;"></i>
+                    Trigonometrikus függvények
+                </li>
+                <li style="display: flex; align-items: center;">
+                    <i class="fas fa-arrow-right" style="color: var(--active-color); margin-right: 0.5rem;"></i>
+                    Differenciálszámítás alapjai
+                </li>
+            </ul>
+        </div>
+    </main>
+
+    <script>
+        // Menü interaktivitás
+        const menuLinks = document.querySelectorAll('.menu-link');
+        
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                // Előző kiválasztás törlése
+                document.querySelector('.menu-link-selected')?.classList.remove('menu-link-selected');
+                
+                // Új kiválasztás beállítása
+                link.classList.add('menu-link-selected');
+            });
+            
+            // Matematikai szimbólumok véletlenszerű elhelyezése
+            const symbols = link.querySelectorAll('.math-symbol');
+            symbols.forEach(symbol => {
+                const randomLeft = Math.floor(Math.random() * 80) + 10;
+                const randomTop = Math.floor(Math.random() * 70) + 10;
+                symbol.style.left = `${randomLeft}%`;
+                symbol.style.top = `${randomTop}%`;
+            });
+        });
+        
+        // Matematikai szimbólumok hozzáadása animációhoz
+        const addMoreSymbols = () => {
+            menuLinks.forEach(link => {
+                const commonSymbols = ['∫', '∑', 'π', '√', '∞', '∆', '∂', 'μ', 'λ', 'θ'];
+                
+                for (let i = 0; i < 3; i++) {
+                    const symbol = document.createElement('span');
+                    symbol.className = 'math-symbol';
+                    symbol.textContent = commonSymbols[Math.floor(Math.random() * commonSymbols.length)];
+                    
+                    const randomLeft = Math.floor(Math.random() * 80) + 10;
+                    const randomTop = Math.floor(Math.random() * 70) + 10;
+                    symbol.style.left = `${randomLeft}%`;
+                    symbol.style.top = `${randomTop}%`;
+                    
+                    link.appendChild(symbol);
+                }
+            });
+        };
+        
+        // Kezdeti szimbólumok hozzáadása
+        addMoreSymbols();
+        
+        // 3D hatás mozgás követéssel
+        document.addEventListener('mousemove', (e) => {
+            const menuItems = document.querySelectorAll('.menu-link:not(.menu-link-selected)');
+            
+            menuItems.forEach(item => {
+                // Az elem középpontjának és az egér pozíciójának különbsége
+                const rect = item.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                // Távolság alapján számolt hatás
+                const distance = Math.sqrt(x*x + y*y);
+                const maxDistance = Math.sqrt(Math.pow(window.innerWidth/2, 2) + Math.pow(window.innerHeight/2, 2));
+                
+                // Csak közeli elemeknél alkalmazunk hatást
+                if (distance < 300) {
+                    const intensity = 1 - distance / 300;
+                    const moveX = x * 0.05 * intensity;
+                    const moveY = y * 0.05 * intensity;
+                    
+                    item.style.transform = `translateY(-3px) perspective(500px) rotateX(${-moveY}deg) rotateY(${moveX}deg)`;
+                } else {
+                    item.style.transform = 'translateY(-3px)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

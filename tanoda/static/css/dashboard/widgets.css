@@ -1,0 +1,821 @@
+/* ==========================================================================
+   Widget Styles - Dashboard Cards and Components
+   ========================================================================== */
+
+/* ==========================================================================
+   Widget Header
+   ========================================================================== */
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.widget-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+.widget-header h3 i {
+    color: var(--neon-green);
+    font-size: 18px;
+}
+
+.widget-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-expand {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.btn-expand:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+/* Widget Body */
+.widget-body {
+    flex: 1;
+}
+
+/* ==========================================================================
+   Task Widget - Multiplication Practice
+   ========================================================================== */
+
+.task-widget {
+    text-align: center;
+}
+
+.task-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 32px 0;
+    flex-wrap: wrap;
+}
+
+.task-number {
+    font-size: 5rem;
+    font-weight: 900;
+    line-height: 1;
+    transition: all var(--transition-fast);
+}
+
+.task-number.pulse {
+    animation: numberPulse 0.3s ease-out;
+}
+
+@keyframes numberPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.task-operator {
+    font-size: 3.5rem;
+    color: var(--text-muted);
+    font-weight: 300;
+}
+
+.task-input {
+    width: 140px;
+    height: 90px;
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    border: 3px solid rgba(78, 204, 163, 0.4);
+    border-radius: 20px;
+    color: var(--text-primary);
+    outline: none;
+    transition: all var(--transition-normal);
+}
+
+.task-input:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 30px rgba(78, 204, 163, 0.4);
+}
+
+.task-input.correct {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 30px rgba(78, 204, 163, 0.6);
+    animation: correctPulse 0.5s ease-out;
+}
+
+.task-input.incorrect {
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 30px rgba(255, 107, 157, 0.6);
+    animation: shake 0.5s ease-out;
+}
+
+@keyframes correctPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+/* Task Actions */
+.task-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+
+.task-actions .btn-action {
+    min-width: 120px;
+}
+
+/* Result Message */
+.result-message {
+    margin-top: 20px;
+    padding: 16px 24px;
+    border-radius: var(--border-radius-md);
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease-out;
+}
+
+.result-message.success {
+    background: rgba(78, 204, 163, 0.15);
+    border: 1px solid rgba(78, 204, 163, 0.3);
+    color: var(--neon-green);
+}
+
+.result-message.error {
+    background: rgba(255, 107, 157, 0.15);
+    border: 1px solid rgba(255, 107, 157, 0.3);
+    color: var(--neon-pink);
+}
+
+/* Difficulty Stars */
+.difficulty-stars {
+    display: flex;
+    gap: 4px;
+}
+
+.difficulty-stars i {
+    font-size: 14px;
+    color: var(--neon-orange);
+}
+
+.difficulty-stars i.empty {
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   Stats Widget - Circular Progress Dial
+   ========================================================================== */
+
+.stat-dial-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.stat-dial {
+    position: relative;
+    width: 140px;
+    height: 140px;
+}
+
+.progress-ring {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+}
+
+.progress-ring-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 10;
+}
+
+.progress-ring-fill {
+    fill: none;
+    stroke: var(--neon-green);
+    stroke-width: 10;
+    stroke-linecap: round;
+    stroke-dasharray: 377;
+    stroke-dashoffset: 377;
+    transition: stroke-dashoffset 1s ease-out;
+}
+
+.dial-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.dial-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--neon-green);
+    line-height: 1;
+}
+
+.dial-unit {
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.dial-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+/* Stats Grid */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: block;
+}
+
+.stat-value.green { color: var(--neon-green); }
+.stat-value.cyan { color: var(--neon-cyan); }
+.stat-value.orange { color: var(--neon-orange); }
+.stat-value.pink { color: var(--neon-pink); }
+
+.stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    display: block;
+}
+
+/* ==========================================================================
+   Progress Widget - Bar Chart
+   ========================================================================== */
+
+.progress-chart {
+    padding: 16px 0;
+}
+
+.progress-chart-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+}
+
+.progress-chart-empty i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+.progress-chart-empty p {
+    font-size: 14px;
+}
+
+/* Bar Chart */
+.bar-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 180px;
+    padding: 0 10px;
+}
+
+.bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    max-width: 60px;
+}
+
+.bar {
+    width: 24px;
+    background: linear-gradient(to top, var(--neon-cyan), var(--neon-green));
+    border-radius: 4px 4px 0 0;
+    transition: height var(--transition-slow);
+    min-height: 4px;
+}
+
+.bar:hover {
+    opacity: 0.8;
+    box-shadow: 0 0 20px rgba(78, 204, 163, 0.5);
+}
+
+.bar-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 8px;
+}
+
+.bar-value {
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+/* Time Filter */
+.time-filter {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+/* ==========================================================================
+   Pythagorasz Widget - Multiplication Table
+   ========================================================================== */
+
+.pythagoras-widget {
+    overflow: hidden;
+}
+
+.pythagoras-widget .pitagorasz-tabla {
+    overflow: auto;
+    max-height: 300px;
+}
+
+.pythagoras-widget .pitagorasz-tabla.compact {
+    max-height: 200px;
+}
+
+.pythagoras-widget .pitagorasz-tabla.expanded {
+    max-height: none;
+}
+
+/* Table Grid */
+.pitagorasz-grid {
+    display: grid;
+    gap: 2px;
+    font-size: 12px;
+}
+
+.grid-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 4px;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    user-select: none;
+}
+
+.grid-cell:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+
+.grid-cell.header {
+    background: rgba(78, 204, 163, 0.2);
+    color: var(--neon-green);
+    font-weight: 600;
+}
+
+.grid-cell.highlighted-row,
+.grid-cell.highlighted-col {
+    background: rgba(0, 212, 255, 0.15);
+}
+
+.grid-cell.highlighted-row.highlighted-col {
+    background: rgba(0, 212, 255, 0.3);
+}
+
+.grid-cell.revealed {
+    background: linear-gradient(135deg, rgba(78, 204, 163, 0.3), rgba(0, 212, 255, 0.3));
+    color: var(--neon-green);
+}
+
+.grid-cell.correct {
+    background: rgba(78, 204, 163, 0.4);
+    color: #fff;
+    animation: correctFlash 0.3s ease-out;
+}
+
+.grid-cell.incorrect {
+    background: rgba(255, 107, 157, 0.4);
+    color: #fff;
+    animation: incorrectFlash 0.3s ease-out;
+}
+
+@keyframes correctFlash {
+    0% { background: rgba(78, 204, 163, 0.8); }
+    100% { background: rgba(78, 204, 163, 0.4); }
+}
+
+@keyframes incorrectFlash {
+    0% { background: rgba(255, 107, 157, 0.8); }
+    100% { background: rgba(255, 107, 157, 0.4); }
+}
+
+/* Heatmap Legend */
+.heatmap-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.legend-color.green {
+    background: rgba(78, 204, 163, 0.4);
+}
+
+.legend-color.red {
+    background: rgba(255, 107, 157, 0.4);
+}
+
+.legend-color.neutral {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Filter Controls */
+.table-filter {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.filter-btn.active {
+    background: rgba(78, 204, 163, 0.2);
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+}
+
+/* ==========================================================================
+   Leaderboard Widget
+   ========================================================================== */
+
+.leaderboard-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: 8px;
+    transition: all var(--transition-fast);
+}
+
+.leaderboard-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateX(4px);
+}
+
+.leaderboard-item:last-child {
+    margin-bottom: 0;
+}
+
+.leaderboard-rank {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 8px;
+    margin-right: 12px;
+}
+
+.leaderboard-rank.gold {
+    background: linear-gradient(135deg, #ffd700, #ffb800);
+    color: #000;
+}
+
+.leaderboard-rank.silver {
+    background: linear-gradient(135deg, #c0c0c0, #a0a0a0);
+    color: #000;
+}
+
+.leaderboard-rank.bronze {
+    background: linear-gradient(135deg, #cd7f32, #b8690e);
+    color: #fff;
+}
+
+.leaderboard-rank.default {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+}
+
+.leaderboard-user {
+    flex: 1;
+}
+
+.leaderboard-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.leaderboard-score {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--neon-green);
+}
+
+/* Empty State */
+.leaderboard-empty {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-muted);
+}
+
+.leaderboard-empty i {
+    font-size: 36px;
+    margin-bottom: 12px;
+    opacity: 0.3;
+}
+
+/* ==========================================================================
+   Challenge Widget
+   ========================================================================== */
+
+.challenge-widget {
+    text-align: center;
+}
+
+.challenge-timer {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--neon-cyan);
+    margin: 20px 0;
+}
+
+.challenge-timer.warning {
+    color: var(--neon-orange);
+    animation: timerPulse 1s infinite;
+}
+
+.challenge-timer.critical {
+    color: var(--neon-pink);
+    animation: timerPulse 0.5s infinite;
+}
+
+@keyframes timerPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.challenge-progress {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.challenge-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all var(--transition-fast);
+}
+
+.challenge-dot.completed {
+    background: var(--neon-green);
+    box-shadow: 0 0 10px rgba(78, 204, 163, 0.5);
+}
+
+.challenge-dot.current {
+    background: var(--neon-cyan);
+    animation: pulse 1s infinite;
+}
+
+/* ==========================================================================
+   Keyboard Shortcuts Widget
+   ========================================================================== */
+
+.shortcuts-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.shortcut-key {
+    padding: 4px 10px;
+    background: rgba(102, 126, 234, 0.2);
+    border-radius: 6px;
+    font-family: monospace;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   Tip Widget
+   ========================================================================== */
+
+.tip-content {
+    padding: 20px;
+    background: rgba(255, 140, 66, 0.1);
+    border-radius: var(--border-radius-md);
+    border-left: 4px solid var(--neon-orange);
+}
+
+.tip-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--neon-orange);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tip-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   Weak Points Widget
+   ========================================================================== */
+
+.weak-points-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.weak-point-tag {
+    padding: 6px 12px;
+    background: rgba(255, 107, 157, 0.15);
+    border: 1px solid rgba(255, 107, 157, 0.3);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--neon-pink);
+}
+
+/* ==========================================================================
+   Widget Expand/Modal State
+   ========================================================================== */
+
+.widget.expanded {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    max-width: 1000px;
+    max-height: 90vh;
+    z-index: 1000;
+    overflow: auto;
+}
+
+.widget-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+    display: none;
+}
+
+.widget-overlay.show {
+    display: block;
+}
+
+/* ==========================================================================
+   Gamification Notifications
+   ========================================================================== */
+
+#gamification-notifications {
+    position: fixed;
+    top: calc(var(--header-height) + 20px);
+    right: 20px;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.gamification-notification {
+    background: rgba(20, 20, 30, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-md);
+    padding: 16px 20px;
+    min-width: 280px;
+    animation: notificationSlide 0.3s ease-out;
+    pointer-events: auto;
+}
+
+@keyframes notificationSlide {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.notification-badge {
+    border-left: 4px solid var(--neon-orange);
+}
+
+.notification-streak {
+    border-left: 4px solid var(--neon-cyan);
+}
+
+.notification-levelup {
+    border-left: 4px solid var(--neon-purple);
+}

@@ -1,0 +1,132 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/szorzas/gyakorlo/pythagoras.css' %}">
+<!-- Pythagoras Test Widget (for visual testing only) -->
+<div class="widget-header">
+    <h3><i class="fas fa-th"></i> Pitagorasz Tábla — Teszt</h3>
+    <div class="widget-header-actions">
+        <select class="glass-select" id="pythagoras-test-filter" aria-label="Pythagoras szűrő">
+            <option value="all">Mind</option>
+            <option value="2">2-es</option>
+            <option value="5">5-ös</option>
+            <option value="10">10-es</option>
+        </select>
+        <button class="btn-expand" onclick="scrollToTableIfNeeded()" aria-label="Görgess a táblához"><i class="fas fa-expand"></i></button>
+    </div>
+</div>
+
+<div class="widget-body pythagoras-widget test-widget" id="pythagoras-test-widget">
+    <div class="pitagorasz-tabla-container">
+        <div id="pitagorasz-tabla-test" class="pitagorasz-tabla compact" role="grid" aria-label="Pitagorasz tábla teszt"></div>
+    </div>
+
+    <div class="heatmap-legend">
+        <span class="legend-item"><span class="legend-color green"></span> Helyes</span>
+        <span class="legend-item"><span class="legend-color red"></span> Hibás</span>
+        <span class="legend-item"><span class="legend-color neutral"></span> Nem próbált</span>
+    </div>
+
+    <div class="table-filter mt-3">
+        <button class="filter-btn active" onclick="setTableSizeTest(10, this)">10×10</button>
+        <button class="filter-btn" onclick="setTableSizeTest(12, this)">12×12</button>
+    </div>
+</div>
+
+<style>
+.pythagoras-widget.test-widget #pitagorasz-tabla-test {
+    display: grid;
+    gap: 2px;
+    font-size: 12px;
+    min-width: max-content;
+}
+.pythagoras-widget.test-widget #pitagorasz-tabla-test .grid-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+}
+.pythagoras-widget.test-widget #pitagorasz-tabla-test .grid-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+.pythagoras-widget.test-widget #pitagorasz-tabla-test .header-cell {
+    background: rgba(78, 204, 163, 0.2);
+    color: var(--neon-green);
+    font-weight: 600;
+}
+.pythagoras-widget.test-widget #pitagorasz-tabla-test .highlighted-row,
+.pythagoras-widget.test-widget #pitagorasz-tabla-test .highlighted-col {
+    background: rgba(0, 212, 255, 0.15);
+}
+.pythagoras-widget.test-widget #pitagorasz-tabla-test .highlighted-row.highlighted-col {
+    background: rgba(0, 212, 255, 0.3);
+}
+.pythagoras-widget.test-widget #pitagorasz-tabla-test .revealed {
+    background: rgba(78, 204, 163, 0.3);
+    color: var(--neon-green);
+}
+.pythagoras-widget.test-widget #pitagorasz-tabla-test .hibas {
+    background: rgba(255, 107, 157, 0.3);
+    color: var(--neon-pink);
+}
+</style>
+
+<script>
+function setTableSizeTest(size, btn) {
+    document.querySelectorAll('.table-filter .filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    // Temporary id swap to reuse existing global builder (if it expects #pitagorasz-tabla)
+    const target = document.getElementById('pitagorasz-tabla-test');
+    if (!target) return;
+
+    const originalId = target.id;
+    try {
+        // If global function exists, reuse it
+        if (typeof buildPitagoraszTable === 'function') {
+            target.id = 'pitagorasz-tabla';
+            buildPitagoraszTable(size);
+            // Some builders may replace the element; ensure we keep reference
+            const newEl = document.getElementById('pitagorasz-tabla');
+            if (newEl) newEl.id = originalId;
+        } else {
+            // Fallback: render a lightweight mock table
+            renderMockTable(target, size);
+        }
+    } catch (e) {
+        console.error('Pythagoras test build failed', e);
+        renderMockTable(target, size);
+    } finally {
+        // Restore id if still present
+        const el = document.getElementById(originalId);
+        if (!el) {
+            const created = document.getElementById('pitagorasz-tabla');
+            if (created) created.id = originalId;
+        }
+    }
+}
+
+function renderMockTable(container, size) {
+    container.innerHTML = '';
+    container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+    for (let r = 1; r <= size; r++) {
+        for (let c = 1; c <= size; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-item';
+            cell.setAttribute('data-row', r);
+            cell.setAttribute('data-col', c);
+            cell.textContent = r * c;
+            container.appendChild(cell);
+        }
+    }
+}
+
+// Initialize small default
+document.addEventListener('DOMContentLoaded', () => setTableSizeTest(10, document.querySelector('.table-filter .filter-btn')));
+</script>

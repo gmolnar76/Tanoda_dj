@@ -1,0 +1,681 @@
+/* Színváltozók definiálása a neumorfikus dizájnhoz */
+:root {
+    --primary-bg: #0f1320;
+    --secondary-bg: #161b22;
+    --tertiary-bg: #1b1f2b;
+    --primary-text: #e0e6ed;
+    --accent-color: #3a7bd5;
+    --highlight-color: #6e40c9;
+    --error-color: #da3633;
+    --success-color: #238636;
+    --warning-color: #d29922;
+    --neumorphic-light: rgba(255, 255, 255, 0.1);
+    --neumorphic-dark: rgba(0, 0, 0, 0.3);
+}
+  
+/* Alap stílusok */
+body {
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+    font-family: 'Poppins', sans-serif;
+}
+  
+.container {
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border-radius: 20px;
+    padding: 25px;
+    margin-top: 25px;
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+}
+
+/* Feladat konténer */
+.feladat-container {
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.feladat-container:hover {
+    box-shadow: 0px 0px 20px var(--neumorphic-dark), 
+                0px 0px 20px var(--neumorphic-light);
+    transform: translateY(-5px);
+}
+
+/* Kártya stílusok */
+.card {
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border: none;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+}
+  
+.card-body {
+    padding: 25px;
+}
+
+/* Gombok */
+.btn-primary {
+    background: linear-gradient(145deg, var(--accent-color), #2a5ea1);
+    border: none;
+    color: var(--primary-text);
+    border-radius: 20px;
+    padding: 12px 20px;
+    box-shadow: 0px 0px 10px var(--neumorphic-dark), 
+                0px 0px 10px var(--neumorphic-light);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(145deg, #2a5ea1, var(--accent-color));
+    box-shadow: 0px 0px 15px var(--neumorphic-dark);
+    transform: translateY(-3px);
+}
+
+/* Szorzás modul specifikus stílusok */
+#szorzo, #szorzando, #valasz-2d, #valasz-3d {
+    color: var(--highlight-color);
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(110, 64, 201, 0.3);
+}
+
+/* Szám elemek (szorzó és szorzandó) */
+.feladat-container .szam {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: var(--accent-color);
+    text-shadow: 0 0 10px rgba(58, 123, 213, 0.5);
+    transition: all 0.3s ease;
+}
+
+.feladat-container .szam:hover {
+    color: var(--highlight-color);
+    transform: scale(1.1);
+}
+
+/* Input mező */
+.feladat-container input[type="text"],
+input[type="text"] {
+    background: linear-gradient(145deg, var(--primary-bg), var(--secondary-bg));
+    border: none;
+    color: var(--primary-text);
+    padding: 12px 15px;
+    border-radius: 15px;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+    box-shadow: inset 0px 0px 10px var(--neumorphic-dark), 
+                inset 0px 0px 10px var(--neumorphic-light);
+}
+
+.feladat-container input[type="text"]:focus,
+input[type="text"]:focus {
+    outline: none;
+    box-shadow: inset 0px 0px 12px var(--neumorphic-dark), 
+                inset 0px 0px 12px var(--neumorphic-light);
+}
+
+/* Ellenőrzés gomb */
+.feladat-container .btn-primary {
+    background: linear-gradient(145deg, var(--accent-color), #2a5ea1);
+    border: none;
+    padding: 12px 20px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.feladat-container .btn-primary:hover {
+    background: linear-gradient(145deg, #2a5ea1, var(--accent-color));
+    transform: translateY(-3px);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Eredmény overlay */
+.eredmeny-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    z-index: 10;
+    padding: 25px;
+    border-radius: 20px;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    transform: translateY(-10px);
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+}
+
+.eredmeny-overlay.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Alert stílusok */
+.alert-success {
+    background: linear-gradient(145deg, var(--success-color), #1a472a);
+    color: #a7f3d0;
+    border: none;
+    box-shadow: inset 0px 0px 8px rgba(0, 0, 0, 0.4), 
+                inset 0px 0px 8px rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+  
+.alert-danger {
+    background: linear-gradient(145deg, var(--error-color), #7a252d);
+    color: #f8d7da;
+    border: none;
+    box-shadow: inset 0px 0px 8px rgba(0, 0, 0, 0.4), 
+                inset 0px 0px 8px rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+
+.alert-warning {
+    background: linear-gradient(145deg, var(--warning-color), #8a6a07);
+    color: #ffeeba;
+    border: none;
+    box-shadow: inset 0px 0px 8px rgba(0, 0, 0, 0.4), 
+                inset 0px 0px 8px rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+
+.alert-info {
+    background: linear-gradient(145deg, var(--accent-color), #163a8a);
+    color: #d0e7ff;
+    border: none;
+    box-shadow: inset 0px 0px 8px rgba(0, 0, 0, 0.4), 
+                inset 0px 0px 8px rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+  
+/* Haladásjelző stílusok */
+.progress {
+    background: linear-gradient(145deg, var(--primary-bg), var(--secondary-bg));
+    height: 25px;
+    border-radius: 15px;
+    box-shadow: inset 0px 0px 10px var(--neumorphic-dark), 
+                inset 0px 0px 10px var(--neumorphic-light);
+}
+  
+.progress-bar {
+    background: linear-gradient(145deg, var(--accent-color), var(--highlight-color));
+    color: var(--primary-text);
+    font-weight: bold;
+    border-radius: 15px;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Számok stílusa */
+.szam {
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--accent-color);
+    text-shadow: 0 0 10px rgba(58, 123, 213, 0.5);
+}
+
+/* Jelvény stílusok */
+.jelveny-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+  
+.jelveny-tooltip {
+    position: relative;
+    display: inline-block;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border-radius: 50%;
+    padding: 15px;
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+    transition: all 0.3s ease;
+}
+  
+.jelveny-tooltip i {
+    transition: transform 0.3s ease;
+    color: var(--highlight-color);
+}
+  
+.jelveny-tooltip:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 20px var(--neumorphic-dark), 
+                0px 0px 20px var(--neumorphic-light);
+}
+
+.jelveny-tooltip:hover i {
+    transform: scale(1.2);
+    color: var(--accent-color);
+}
+  
+.jelveny-tooltip .jelveny-tooltip-text {
+    visibility: hidden;
+    width: 150px;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    color: var(--primary-text);
+    text-align: center;
+    border-radius: 15px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -75px;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    transform: translateY(10px);
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+}
+  
+.jelveny-tooltip:hover .jelveny-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Removed Pitagorasz table styles that are now in gyakorlo.css */
+
+/* Reszponzív dizájn */
+@media (max-width: 768px) {
+    .szorzas-pitagorasz-tabla {
+        font-size: 0.7em;
+    }
+  
+    .grid-item {
+        padding: 3px;
+    }
+}
+
+/* Címsorok */
+h1, h2, h3, h4, h5, h6, .card-title {
+    color: var(--accent-color);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Szorzás többjegyűvel */
+.szorzas-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    margin-top: 25px;
+}
+
+.helyiertek-valaszto {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+}
+
+.helyiertek-valaszto input[type="checkbox"] {
+    margin-right: 8px;
+    accent-color: var(--accent-color);
+}
+
+.helyiertek-valaszto label {
+    color: var(--primary-text);
+    margin-right: 15px;
+}
+
+.szorzas-tabla {
+    border-collapse: separate;
+    border-spacing: 3px;
+    margin-bottom: 25px;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+}
+
+.szorzas-tabla td {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 24px;
+    color: var(--primary-text);
+    border-radius: 10px;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    box-shadow: 0px 0px 6px var(--neumorphic-dark), 
+                0px 0px 6px var(--neumorphic-light);
+    margin: 3px;
+}
+
+.szam-cella {
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.muvelet-jel {
+    font-weight: bold;
+    color: var(--highlight-color);
+}
+
+.vastag-vonal {
+    border-bottom: 3px solid var(--highlight-color);
+}
+
+.vonal {
+    border-bottom: 1px solid var(--accent-color);
+}
+
+.ures-cella {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 40px;
+    min-height: 40px;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(145deg, var(--primary-bg), var(--secondary-bg));
+    box-shadow: inset 0px 0px 6px var(--neumorphic-dark), 
+                inset 0px 0px 6px var(--neumorphic-light);
+}
+
+.ures-cella.filled {
+    background: linear-gradient(145deg, var(--accent-color), #2a5ea1);
+    box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.4), 
+                inset 0px 0px 6px rgba(255, 255, 255, 0.1);
+}
+
+.szam-paletta .row {
+    width: 100%;
+    justify-content: center;
+}
+
+.drag-szam {
+    width: 60px;
+    height: 60px;
+    margin: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: move;
+    transition: all 0.3s ease;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border-radius: 15px;
+    box-shadow: 0px 0px 10px var(--neumorphic-dark), 
+                0px 0px 10px var(--neumorphic-light);
+}
+
+.drag-szam img {
+    pointer-events: none;
+}
+
+.szam-ikon {
+    width: 40px;
+    height: 40px;
+    transition: all 0.3s ease;
+    filter: brightness(1.5) contrast(0.8);
+}
+
+.drag-szam:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+}
+
+#szam-paletta {
+    max-width: 240px;
+    margin: 0 auto 25px;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+}
+
+.szorzas-racs {
+    max-width: 100%;
+    overflow-x: auto;
+    margin: 0 auto 25px;
+}
+
+.hibas {
+    background: linear-gradient(145deg, var(--error-color), #7a252d) !important;
+    color: #f8d7da !important;
+    box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.4), 
+                inset 0px 0px 6px rgba(255, 255, 255, 0.1) !important;
+}
+
+@media (max-width: 991px) {
+    .szam-paletta {
+        margin-top: 25px;
+    }
+}
+
+.maradek-buborek {
+    position: absolute;
+    top: -20px;
+    right: -10px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--accent-color), #2a5ea1);
+    color: var(--primary-text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    cursor: move;
+    box-shadow: 0px 0px 4px var(--neumorphic-dark), 
+                0px 0px 4px var(--neumorphic-light);
+}
+
+.ures-cella.helyes {
+    background: linear-gradient(145deg, var(--success-color), #1a472a);
+    color: #a7f3d0;
+    box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.4), 
+                inset 0px 0px 6px rgba(255, 255, 255, 0.1);
+}
+
+.ures-cella.hibas {
+    background: linear-gradient(145deg, var(--error-color), #7a252d);
+    color: #f8d7da;
+    box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.4), 
+                inset 0px 0px 6px rgba(255, 255, 255, 0.1);
+}
+
+/* Összegzés megjelenítése */
+.reszeredmenyek-lista {
+    margin-top: 15px;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+}
+
+.reszeredmeny-sor {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    padding: 10px;
+    background: linear-gradient(145deg, var(--primary-bg), var(--secondary-bg));
+    border-radius: 10px;
+    box-shadow: inset 0px 0px 6px var(--neumorphic-dark), 
+                inset 0px 0px 6px var(--neumorphic-light);
+}
+
+.reszeredmeny-sorszam {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.reszeredmeny-ertek {
+    font-weight: bold;
+    color: var(--highlight-color);
+}
+
+.vegeredmeny-box {
+    margin-top: 20px;
+    padding: 15px;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+}
+
+.vegeredmeny-cimke {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.vegeredmeny-ertek {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--highlight-color);
+}
+
+/* Maradék kitevő stílusok */
+.ures-cella {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cella-ertek {
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+    font-size: 1.2em;
+    color: var(--primary-text);
+}
+
+.maradek-kitevo {
+    position: absolute;
+    top: 0;
+    right: -8px;
+    font-size: 0.7em;
+    color: var(--accent-color);
+    transform: translateY(-50%);
+    text-shadow: 0 0 5px rgba(58, 123, 213, 0.5);
+}
+
+/* Animáció a maradék eltűnéséhez */
+.maradek-kitevo.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+/* Hőtérkép jelmagyarázat */
+.hoterkep-jelmagyarazat {
+    margin-top: 20px;
+    padding: 15px;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+    width: 250px;
+}
+
+.hoterkep-jelmagyarazat h5 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    text-align: center;
+    color: var(--highlight-color);
+}
+
+.hoterkep-skala {
+    display: flex;
+    height: 25px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0px 0px 6px var(--neumorphic-dark), 
+                inset 0px 0px 6px var(--neumorphic-light);
+}
+
+.skala-elem {
+    flex-grow: 1;
+    height: 100%;
+}
+
+.skala-cimkek {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-weight: bold;
+}
+
+/* Hiba panel */
+.hiba-info-panel {
+    position: absolute;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border: none;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 0px 15px var(--neumorphic-dark), 
+                0px 0px 15px var(--neumorphic-light);
+    z-index: 1000;
+    max-width: 350px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--primary-text);
+    box-shadow: 0px 0px 6px var(--neumorphic-dark), 
+                0px 0px 6px var(--neumorphic-light);
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background: linear-gradient(145deg, var(--error-color), #7a252d);
+    transform: translateY(-2px);
+    box-shadow: 0px 0px 10px var(--neumorphic-dark), 
+                0px 0px 10px var(--neumorphic-light);
+}
+
+.hiba-info-panel h4 {
+    color: var(--highlight-color);
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.hiba-info-panel p {
+    color: var(--primary-text);
+    margin-bottom: 10px;
+}
+
+.hiba-info-panel ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
+.hiba-info-panel li {
+    margin-bottom: 5px;
+}

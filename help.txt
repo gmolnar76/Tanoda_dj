@@ -1,0 +1,201 @@
+pip freeze > requirement.txt
+
+pip install -r requirements.txt
+
+pipreqs --help
+
+
+787965
+py - venv .venv
+
+PS F:\WEB\TanodaDj> djvenv\Scripts\activate ------------------------- aktiválás
+(djvenv) PS F:\WEB\TanodaDj> deactivate
+PS F:\WEB\TanodaDj> 
+
+PS F:\WEB\Tanoda_Dj> c
+(.venv) PS F:\WEB\Tanoda_Dj> 
+
+
+py -m pip install django
+
+python.exe -m pip install --upgrade pip
+
+py -m pip install -U pip
+
+Django install ellenőrzés:
+
+py
+
+>>> import django 
+>>> print(django.get_version())
+
+quit()
+
+projekt létrehozása:
+
+django-admin startproject tanproject
+
+App létrehozása
+
+py manage.py startapp ....
+
+
+
+
+SZERVER:
+(.venv) PS F:\WEB\Tanoda_Dj> cd .\tanproject\
+(.venv) PS F:\WEB\Tanoda_Dj\tanproject> py manage.py runserver -------------------------
+py manage.py runserver
+
+ctr c: stop szerver 
+
+
+SUPERUSER
+
+PY manage.py createsuperuser
+
+sqlite lekérdezés:
+(.venv) PS F:\WEB\Tanoda_Dj> cd .\tanoda\
+(.venv) PS F:\WEB\Tanoda_Dj\tanoda> python manage.py dbshell
+.tables - Lists all tables.
+.schema <table_name> - Shows the structure (CREATE statement) of a specific table.
+SELECT * FROM <table_name> LIMIT 10; - Shows the first 10 rows from a table.
+.quit - Exits the shell.
+
+
+
+
+ACCOUNT APP:
+F:\WEB\Tanoda_Dj\tanoda> python manage.py makemigrations account
+PS F:\WEB\Tanoda_Dj\tanoda> python manage.py migrate
+
+
+echo %PYTHONPATH%
+
+set PYTHONPATH=.venv\Lib\site-packages
+
+Felhasználók
+tanulo1@tanoda.com
+a123123123
+
+
+SVG animations are not supported by the Animations tool. Consider using CSS animations instead for better performance.
+
+A szorzótábla egyelőre 22x22 mezőre van maximálva. A max eredménynek ezen belűl kell maradni.
+
+Finomított nehézségi szintek:
+
+Bővítsük a nehézségi szinteket 1-10 közötti skálára.
+Minden szinthez rendeljünk konkrét számtartományokat és speciális szabályokat.
+1-es szint 2-től 5-ig (pozitív egész számok)
+2-es szint Szorzótábla 2-től 10-ig (pozitív egész számok)
+3-es szint Számtartomány: 1-20 (szorzandó) x 10, 100 (szorzó)
+4-es szint Számtartomány: Vegyes műveletek 2-től 12-ig (pozitív egész számok) Néha nullával való szorzás (5% esély)
+5-es szint Pozitív számok szorzása negatív számokkal Számtartomány: -12 - +12, a pitagorasz táblázatba a negatív számokat pozitívként is meg lehet jeleníteni.
+6-es szint Kétjegyű számok szorzása egyjegyűvel Számtartomány: 10-99 x 2-9 Max. 484 lehet az összege!
+7-es szint Negatív számok szorzása negatív számokkal,Vegyes előjelű szorzások,Számtartomány: -20 - +20
+8-es szint Kétjegyű számok szorzása,Számtartomány: 10-99 x 10-99
+9-es szint Háromjegyű számok szorzása kétjegyű számokkal max 484-ig
+10-es szint Négyzetszámok és gyökeik. A pitagorasz tábla új színnel jelölje a négyzet területeit. és annak gyökét is.
+
+
+
+Adaptív nehézség:
+A feladatok 80%-át meg kell oldani szintekként ahhoz, hogy a következő nehézségi szint is beinduljon.
+
+
+Szorzótábla fókusz:
+A Pitagorasz-tábla alapján azonosítsuk a felhasználó gyenge pontjait, és generáljunk több feladatot ezekből a tartományokból.
+Progresszív nehezítés:
+Ahelyett, hogy azonnal a maximális nehézségre ugranánk, fokozatosan növeljük a számok tartományát és a műveletek komplexitását.
+Negatív számok kezelése:
+Csökkentsük a negatív számokkal, nullával, 2-vel való szorzások számát.
+
+Hibaanalízis: Figyeljük, hogy mely típusú feladatoknál hibáznak gyakrabban a felhasználók, és ezekből generáljunk több gyakorló feladatot. A hibás feledatokat legalább
+3x meg kell ismételni! A pitagorasz táblán a hibás piros jelölés átvált kékre ha legalább 3x jó eredményt adtunk meg.
+
+Minden szinthez alkalmazni kell a vonatkozó szorzás szabélyait és a megoldás módszereit.
+
+A szuperpozícióban levő emberi elme, szív univerzumteremtő ereje !
+Terjeszd ki rá a figyelmed, hassd át a legmagasabb fokú szeretettel, tedd megtörténnté a képet.
+Teremtsd meg a saját univerzumod!
+Jó jenne ha így lenne! 
+Ha igaz, és valószínű, hogy az, akkor is ez a teremtő képesség jelen életterünkben 8 milliárdod részre van bontva .
+A bolygónk kollektív sorsát az uralja, aki a legtöbb tudatot képes egy ügy vagy lelki indittatás köré 
+szervezni és azzal egy irányba haladni ! 
+Ehhez elvileg elég lenne a népesség négyzetgyöke, azaz 90 ezer ember tudatos fókuszált állapota!
+Hajrá!
+
+
+
+
+Havi gyakorlási aktivitás
+Teljesítményed az osztályátlaghoz képest
+Adaptív nehézségi szint és teljesítmény
+Szorzótábla sikerességi hőtérkép
+Szorzótábla teljesítmény hőtérkép
+Válaszidő teljesítmény kategóriák
+Heti fejlődésed
+
+Nem megfelelő az admin és a user dashboard ! 
+Át kell tervezni. Sorold fel a tervezési lépéseket, kezdve a jelenleg
+aktív dashboard lebontásával. 
+Tervezzünk egy új admin dashboardot ilyenre mint a csatolt képen. 
+LEgyen a keretrendszere teljesoldalas html szülő sablon. 
+Az eddigi admin sablont viszont meg kellene szüntetni. 
+A chartokat természetesen meghagyjuk és ha kell felhasználjuk.
+
+Még ne kódolj csak sorold fel a lépéseket.
+
+# Ötletek a Tanoda Háttéreffektjeihez - Matematikai Vizualizációk
+
+A meglévő oldalad már rendkívül látványos matematikai háttéreffektekkel rendelkezik, de még tovább fejleszthető. Íme néhány izgalmas ötlet, amelyek jól illeszkednek a tanoda matematikai jellegéhez:
+
+## 1. Interaktív Fraktál Megjelenítők
+- **Mandelbrot és Julia halmazok**: Fokozatos nagyítás lehetőségével, színátmenetekkel
+- **Sierpinski háromszög/szőnyeg**: Rekurzív mintázatok, amelyek életre kelnek
+- **Koch-hópehely**: Dinamikusan növekvő fraktálok, amelyek a matematikaórákon is tanulhatók
+
+## 2. Dinamikus Függvényábrázolás
+- **Grafikonok hullámzása**: Szinusz, koszinusz és más trigonometrikus függvények hullámzó animációi
+- **3D függvényfelületek**: z = f(x,y) formájú függvények forgatható 3D megjelenítése
+- **Parametrikus görbék**: Lissajous-görbék, spirálok, amelyek rajzolódnak a háttérben
+
+## 3. Folyadékszimuláció és Részecskefizika
+- **Folyadékdinamika-szimuláció**: Matematikailag modellezett folyadékmozgás
+- **Részecskés áramlás**: Vektortereket követő részecskék mozgása
+- **Gravitációs szimulációk**: Bolygók és égitestek mozgása, pályák vizualizációja
+
+## 4. Matematikai Játékok Vizualizációja
+- **Conway's Game of Life**: A híres sejtautomata különböző mintázatokkal
+- **Voronoi-diagram**: Dinamikusan változó cellás szerkezet
+- **Gráfelméleti vizualizációk**: Hálózati struktúrák fokozatos felépülése
+
+## 5. Matematikai Transzformációk
+- **Geometriai transzformációk**: Forgatások, tükrözések, nyújtások valós időben
+- **Mátrix transzformációk**: 3D objektumok transzformációjának vizualizációja
+- **Topológiai deformációk**: Objektumok "gumilapszerű" deformálása
+
+## 6. Adatvizualizációs Effektek
+- **Dinamikus hőtérképek**: Színátmenetes felületek
+- **Vektormezők**: Nyilak vagy részecskék által reprezentált irányok, erők
+- **Harmonikus oszcillátorok rendszere**: Egymást befolyásoló oszcilláló objektumok
+
+## 7. Komplex Hálózati Struktúrák
+- **Neurális hálózat szimuláció**: Neuronok aktiválódása és kapcsolódása
+- **Véletlen gráfok növekedése**: Hálózati csomópontok és kapcsolatok megjelenése
+- **Adatstruktúra vizualizáció**: Fák, gráfok, listák vizuális reprezentációja
+
+## 8. Matematikai Játékosság
+- **Matematikai rejtvények animációi**: Vizuálisan megjelenő problémák és megoldások
+- **Zenei-matematikai kapcsolatok**: Hanghullámok és matematikai összefüggések vizualizációja
+- **Optikai illúziók**: Matematikailag generált illúziók, amelyek mozognak vagy átalakulnak
+
+Ezek az effektek nemcsak látványosak, hanem oktatási szempontból is értékesek lehetnek, jól illeszkedve a tanoda koncepciójához. A meglévő kódszerkezetedbe könnyen beilleszthetőek új effektek új gombok hozzáadásával az effect-switcher panelhez.
+
+Bármelyik irány érdekel részletesebben? Szívesen bővítem bármelyik koncepciót konkrét megvalósítási javaslatokkal.
+
+a digitális gyökök sorozatára állíts össze egy kérdőívet, 
+amit a tanulónak ki kell tölteni. Releváns kérdésekkel és 
+checkboxxal kiválasztható válaszokkal.Hozz létre egy ilyen 
+minta kérdőívet a pythagoras.html-ben a táblázat alatt.

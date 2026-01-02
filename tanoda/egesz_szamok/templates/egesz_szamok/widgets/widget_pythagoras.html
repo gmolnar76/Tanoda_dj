@@ -1,0 +1,157 @@
+{% load static %}
+<!-- Pythagorasz Table Widget -->
+<div class="widget-header">
+    <h3><i class="fas fa-th"></i> Pitagorasz Tábla</h3>
+    <div class="widget-header-actions">
+        <!-- Filter Dropdown -->
+        <select class="glass-select" id="pythagoras-filter" onchange="filterPythagorasTable(this.value)">
+            <option value="all">Mind</option>
+            <option value="2">2-es tábla</option>
+            <option value="3">3-as tábla</option>
+            <option value="4">4-es tábla</option>
+            <option value="5">5-ös tábla</option>
+            <option value="6">6-os tábla</option>
+            <option value="7">7-es tábla</option>
+            <option value="8">8-as tábla</option>
+            <option value="9">9-es tábla</option>
+            <option value="10">10-es tábla</option>
+        </select>
+
+        <!-- Expand Button -->
+        <button class="btn-expand" onclick="expandWidget(this)" title="Nagyítás">
+            <i class="fas fa-expand"></i>
+        </button>
+    </div>
+</div>
+
+<div class="widget-body pythagoras-widget" id="pythagoras-widget">
+    <!-- Pythagorasz Table Container -->
+    <div class="pitagorasz-tabla-container">
+        <div id="pitagorasz-tabla" class="pitagorasz-tabla compact"></div>
+    </div>
+
+    <!-- Heatmap Legend -->
+    <div class="heatmap-legend">
+        <span class="legend-item">
+            <span class="legend-color green"></span>
+            Helyes
+        </span>
+        <span class="legend-item">
+            <span class="legend-color red"></span>
+            Hibás
+        </span>
+        <span class="legend-item">
+            <span class="legend-color neutral"></span>
+            Nem próbált
+        </span>
+    </div>
+
+    <!-- Quick Filter Buttons -->
+    <div class="table-filter mt-3">
+        <button class="filter-btn active" onclick="setTableSize(10, this)">10×10</button>
+        <button class="filter-btn" onclick="setTableSize(12, this)">12×12</button>
+        <button class="filter-btn" onclick="setTableSize(15, this)">15×15</button>
+        <button class="filter-btn" onclick="setTableSize(20, this)">20×20</button>
+    </div>
+</div>
+
+<style>
+    /* Grid Layout for Pythagoras */
+    #pitagorasz-tabla {
+        display: grid;
+        gap: 2px;
+        font-size: 12px;
+        min-width: max-content;
+    }
+
+    #pitagorasz-tabla .grid-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 32px;
+        min-height: 32px;
+        padding: 4px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    #pitagorasz-tabla .grid-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: scale(1.05);
+    }
+
+    #pitagorasz-tabla .header-cell {
+        background: rgba(78, 204, 163, 0.2);
+        color: var(--neon-green);
+        font-weight: 600;
+    }
+
+    #pitagorasz-tabla .highlighted-row,
+    #pitagorasz-tabla .highlighted-col {
+        background: rgba(0, 212, 255, 0.15);
+    }
+
+    #pitagorasz-tabla .highlighted-row.highlighted-col {
+        background: rgba(0, 212, 255, 0.3);
+    }
+
+    #pitagorasz-tabla .revealed {
+        background: rgba(78, 204, 163, 0.3);
+        color: var(--neon-green);
+    }
+
+    #pitagorasz-tabla .hibas {
+        background: rgba(255, 107, 157, 0.3);
+        color: var(--neon-pink);
+    }
+</style>
+
+<script>
+    // Filter Pythagoras table by multiplier
+    function filterPythagorasTable(value) {
+        const table = document.getElementById('pitagorasz-tabla');
+        if (!table) return;
+
+        const cells = table.querySelectorAll('.grid-item:not(.header-cell)');
+
+        if (value === 'all') {
+            cells.forEach(cell => cell.style.opacity = '1');
+        } else {
+            const multiplier = parseInt(value);
+            cells.forEach(cell => {
+                const row = parseInt(cell.dataset.row);
+                const col = parseInt(cell.dataset.col);
+                if (row === multiplier || col === multiplier) {
+                    cell.style.opacity = '1';
+                    cell.style.background = 'rgba(78, 204, 163, 0.2)';
+                } else {
+                    cell.style.opacity = '0.3';
+                    cell.style.background = '';
+                }
+            });
+        }
+    }
+
+    // Set table size
+    function setTableSize(size, btn) {
+        // Update active button
+        document.querySelectorAll('.table-filter .filter-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        // Rebuild table with new size
+        if (typeof buildPitagoraszTable === 'function') {
+            buildPitagoraszTable(size);
+        }
+    }
+
+    // Scroll widget into view when expanded
+    function scrollToTableIfNeeded() {
+        const widget = document.getElementById('pythagoras-widget');
+        if (widget) {
+            widget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+</script>

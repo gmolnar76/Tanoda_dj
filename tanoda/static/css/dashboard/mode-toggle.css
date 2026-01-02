@@ -1,0 +1,238 @@
+/* ==========================================================================
+   Mode Toggle Styles - Practice / Scoring / Duel Modes
+   ========================================================================== */
+
+/* Mode Toggle Container */
+.mode-toggle {
+    display: inline-flex;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px;
+    border-radius: 20px;
+    margin-right: 12px;
+}
+
+/* Mode Button Base */
+.mode-btn {
+    padding: 6px 12px;
+    border-radius: 16px;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+    white-space: nowrap;
+}
+
+.mode-btn i {
+    font-size: 14px;
+}
+
+.mode-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Hover State */
+.mode-btn:not(:disabled):hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Active State - Mode Specific Colors */
+.mode-btn.active {
+    color: #000;
+    font-weight: 700;
+}
+
+.mode-btn[data-mode="practice"].active {
+    background: #4ecca3;
+    box-shadow: 0 0 15px rgba(78, 204, 163, 0.6);
+}
+
+.mode-btn[data-mode="scoring"].active {
+    background: #00d4ff;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
+}
+
+.mode-btn[data-mode="challenge"] {
+    background: rgba(255, 193, 7, 0.1);
+    color: rgba(255, 193, 7, 0.8);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.mode-btn[data-mode="challenge"]:hover {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.4);
+}
+
+/* Challenge button doesn't have "active" state - it's an action button */
+.mode-btn[data-mode="challenge"].active {
+    background: rgba(255, 193, 7, 0.1);
+    color: rgba(255, 193, 7, 0.8);
+}
+
+/* Subtle Glow on Hover for Active Button */
+.mode-btn.active:hover {
+    filter: brightness(1.1);
+}
+
+/* Responsive - Mobile */
+@media (max-width: 576px) {
+    .mode-btn span {
+        display: none;
+    }
+
+    .mode-btn {
+        padding: 6px 10px;
+    }
+
+    .mode-btn i {
+        font-size: 16px;
+    }
+}
+
+/* ==========================================================================
+   Confirmation Dialog for Practice Mode
+   ========================================================================== */
+
+.confirm-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.confirm-dialog {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.confirm-dialog p {
+    font-size: 18px;
+    color: var(--text-primary);
+    margin: 0 0 15px 0;
+    text-align: center;
+}
+
+.confirm-dialog p strong {
+    color: #ff6b9d;
+    font-size: 24px;
+}
+
+.confirm-dialog .hint {
+    background: rgba(255, 140, 66, 0.1);
+    border-left: 4px solid #ff8c42;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.dialog-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.dialog-actions button {
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-confirm {
+    background: linear-gradient(135deg, #4ecca3, #00d4ff);
+    color: #000;
+}
+
+.btn-confirm:hover {
+    box-shadow: 0 0 20px rgba(78, 204, 163, 0.6);
+    transform: translateY(-2px);
+}
+
+.btn-change {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-change:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* ==========================================================================
+   Mode Indicator Badge
+   ========================================================================== */
+
+.mode-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 10;
+}
+
+.mode-indicator.practice {
+    background: rgba(78, 204, 163, 0.2);
+    color: #4ecca3;
+    border: 1px solid rgba(78, 204, 163, 0.3);
+}
+
+.mode-indicator.scoring {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.mode-indicator.duel {
+    background: rgba(255, 107, 157, 0.2);
+    color: #ff6b9d;
+    border: 1px solid rgba(255, 107, 157, 0.3);
+}

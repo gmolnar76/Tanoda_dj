@@ -1,0 +1,125 @@
+/* Theme Toggle Button */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 24px;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.8);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Light Theme Overrides */
+body.light-theme {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+body.light-theme .card {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    color: #333;
+    box-shadow: 0 8px 16px rgba(168, 237, 234, 0.4);
+}
+
+body.light-theme .card:hover {
+    box-shadow: 0 12px 24px rgba(168, 237, 234, 0.6);
+}
+
+body.light-theme .card-body {
+    color: #333;
+}
+
+body.light-theme #valasz {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    color: #333;
+    border-color: #667eea;
+}
+
+body.light-theme #valasz:focus {
+    background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+    border-color: #667eea;
+}
+
+body.light-theme .szorzat-szam {
+    background: linear-gradient(45deg, #667eea, #764ba2, #a8edea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.light-theme .pitagorasz-tabla .grid-item {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(200, 200, 200, 0.7);
+    color: #333;
+}
+
+body.light-theme .pitagorasz-tabla .header-cell {
+    background-color: rgba(102, 126, 234, 0.8);
+    color: #fff;
+}
+
+body.light-theme .pitagorasz-tabla .revealed {
+    background: linear-gradient(135deg, #00cc00 0%, #00ff44 100%);
+    color: #fff;
+}
+
+body.light-theme .pitagorasz-tabla .hibas {
+    background: linear-gradient(135deg, #ff3333 0%, #ff6666 100%);
+    color: #fff;
+}
+
+body.light-theme .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+body.light-theme .alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+body.light-theme .alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: #ffeeba;
+}
+
+body.light-theme .progress {
+    background-color: #e0e0e0;
+}
+
+body.light-theme .progress-bar {
+    background: linear-gradient(to right, #667eea, #764ba2);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .theme-toggle {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+        top: 15px;
+        right: 15px;
+    }
+}

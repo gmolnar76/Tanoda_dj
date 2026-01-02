@@ -1,0 +1,28 @@
+body {
+    background-color: #f8f9fa; /* Light gray background */
+}
+
+.card {
+    border: none; /* Remove default card border */
+}
+
+.card-header {
+    border-bottom: none; /* Remove border below header */
+}
+
+#result {
+    background-color: #e9ecef; /* Slightly darker background for result */
+}
+
+/* Style for potential future elements like step-by-step solutions */
+.solution-step {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.solution-step:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}

@@ -1,0 +1,286 @@
+Létrehoztál egy szorzások bemutató projektet, ezt fejleszd tovább a szorzasok.html,
+bemutato.css és js alapján. 
+A számítás menete során a szorzó  egyes helyiértékével végezzük el a szorzást
+     és megyünk végig a szorzandó
+         egyes, 
+         tizes, 
+         százas, 
+         ezres helyiértékű elemein.. 
+A részeredményeket a bal oldalra a szorzandó alá csoportosítsd. 
+    Egyest az egyes alá és a további számítást balra toljuk. 
+Implementálj egy szöveges magyarázatot minden művelet mellé. 
+    pl: az szorzó egyes helyiértékén szereplő számot megszorozzuk a szorzandó egyes helyiértékén szereplő számával. 
+Ha a szorzat 10-nél több , akkor a tizes helyiértéket maradéknak vesszük és a kitevőben megjelenítjük. 
+    pl 8x3=24, leírjuk a 4-et, maradék a 2, a kettőt felvisszük a kitevőbe. 
+A részeredmények összeadásánál a maradékokat szintén a kitevő helyén jelenítsd meg.
+
+Növeld a maradékok (kitevők) láthatóságát. Az utolsó  részeredmény sorában  alkalmazz összeadásjelet a bal oldalon. 
+    Az eredményt más az oldal színvilágához illő színnel emeld ki. A táblázat vékony letisztult rácsszerkezetű legyen.
+
+
+
+    A beirt vagy behúzott szám azonnal jelezze az indexében a maradékot. 
+    Hozz létre a egy 3x3-as telefonbillentyűzetre hasonlító drag and drop szám panelt ás tedd lehetővé hogy a táblázatunkba csak a művelet szigorúan kilye
+
+    A szorzandó és a szorzó legyen random generálva.
+
+
+    
+A BASE_COL (6) pozíció lesz a referenciapont ! 
+Azzal egészítsük ki, hogy a referenciáját mindíg a szorzandó egyes helyiértékének a rács kordijátája szerint kell kiszámolni, 
+ami ebből következően a következő sor ugyanazon oszlopának mezőjeében, a szorzandó egyes helyiértéke alatt helyezkedik el. 
+
+Ez világos? Err is kell egy függvény.
+
+
+A feladatod ez lesz hogy generálj egy 15x15-ös helyiérték kordinátarendszert.
+A kordinátarendszer célja több számjegyű szorzás vagy osztás műveletek megjelenítése és levezetése.
+A középső oszlop 7. semleges azaz 0, tőle balra elhelyezkedő oszlopok egyes, tizes, százas, ezres, tízezres, százezres helyiérétkeknek adnak helyet.
+A nullától jobbra elhelyezkedő oszlopok tízezres,ezres,százas,tizes,egyes helyiértékkel haladjanak jobbra.
+A vízszintes sorok legyenek számokkal jelölve. 
+Hozz létre egy html sablont, "szorz_hely_martix.html" néven, ami kezeli ezt a helyiérték mátrix táblázatot.
+A javascripteket a szorz_hely_martix.js-ben, a css. fájlokat a szorz_hely_martix.css-ben tároljuk
+Hozd létre az urls.py és a views.py bejegyzéseket az egesz_szamok appban és a projekt mappa vonatkozó python fájljaiban
+
+A táblázat legyen szabályos aránytartó négyzetalalapú. 
+
+A táblázatban random generálj 3 és négyjegyű szorzásokat.
+értelem szerint a szorzandó a bal oldali helyiérék területen, a 
+szorzó pedig a jobb oldali helyiérték területen generálódjon. A szorzásjel a középső oszlopban helyezkedjen el.
+A helyiértékek mezők azonosítóit a tesztelés alatt jelenítsd meg.
+
+A művelet úgy indul, hogy a felhasználó a jobb oldali szorzó egyes helyiértékével megszorozza a szorzandó egyes helyiértékén
+levő számot, majd az egyesek részeredményeként abban a helyiérték sávban alá rendezzük szorzatot, mint részeredményt.
+És így haladünk balra a többi helyiérétken levő számok szorzásával. 
+
+Részeredmény mezők és maradék megjelenítés.
+A műveletben résztvevő számok alapján dinamikusan hozd létre a részeredmények helyét, és kezeld a maradékait cellán belül egy felső indexben.
+A részeredmény utolsó azaz balszélső számának már nem kell kiítni a maradékot mert az egybe leírjuk az elötte levő rész szorzat
+maradékával , ha lesz.
+
+Ellenőrzés:
+Hozz létre egy függvényt, ami ellenőrzi a beírt szorzat helyességét. Ha helyes, akkor kizöldül a cella és automatikusan 
+a következő baloldali cellára lép.
+Ha helytelen, akkor nem ír be számot és marad ugyanabba a cellába.Esetleg megjelenít egy egyszerű üzenetpanelt, hogy próbáld újra.
+
+Ha a részeredmények megvannak, helyiértékek szerint dolgozd ki a végeredménymezőt.
+A részeredmények alatt hozd létre a végeredménymezőt helyiérték szerint.
+A részeredmények összeadásából a végeredmény megfelelő helyi értékere írjuk az összeget.
+Ha tíz vagy annál több, akkor a maradékot itt is meg kell jeleníteni és továbbvinni a következő helyiértékre.
+
+Még mielött bármit létrehoznál tegyél jobbító javaslatot a különböző részeknél. 
+JElenítsd meg a táblzatot ascii artban.
+
+Ha valami nem egyértelmű, akkor kérdezz.
+
+
+
+
+A bemutato.js és css tartalmát ellenőrizzük
+Többször módosítottuk már és fejlesztettük a kódot de még hiányosel.
+A végeredmény mező ellenőrzés folyamatát kell fejleszteni. Jelenleg nincs visszajelszés ebből a mezőből.
+A lényeg a funkcionalitás. Természetesen az eddigi formázást megtartjuk.
+
+Egyelőre ne írj javítókódot csak sorold fel mit találtás és mik a javaslatok.
+
+
+
+Mindíg egy kicsit változtassunk, ami működik és tesztelhető. A táblázatban ehelyezett szorzásművelet részben működik.
+Kis lépésekben finomítsuk a működését.
+
+A célunk az eredmény mező helyes definiálása! 
+Állapítsd meg azt a sort a gridben, ameddig az utolsó részeredmény helyet foglal.
+Az ez alatti sorba kel létrehozni a végeredmény celláit értelem szerint úgy, hogy a felette helyiérték szerint elhelyezkedő 
+részeredmények értékeit logikuslan rendezetten meg tudjuk jeleníteni helyiérték szerint
+Ne hozz létre elválasztó vonalakat csak a cellák elhejezésére fókuszálj .
+
+Viszont a végeredményterület beviteli mezőit is valósítsd meg a gridben és ne az oszlopokban!
+
+kódot tudjam tesztelni, tehát a régi ne omoljon össze az új integrációja után. 
+ocument.addEventListener
+
+Az oszlopok az utolsó részeredmény alatti sorig terjednek. Az oszlopok utolsócellái jelölik ki a részeredmények végeredményeit.
+A végeredmény számára szükség lesz egy saját függvényre. 
+
+Új függvény a végeredmény sor létrehozására
+A részeredmény cellák összekötése a megfelelő helyiérték oszlopokkal
+Részeredmények összegzése oszloponként
+
+A végeredmény mezőkbe hozz létre beviteli mezőket, amelyek a részeredmények összegeit kell hogy fogadják.
+Ha hibás számot írunk be akkor a mező háttere változzon pirosra.
+
+Az új kis léptékű módosítás a részeredmények helyi érték oszlopait és a részeredmény cellákba bevitt részeredmények
+végső összegeit beirányítsuk egy eredmény mezőbe! 
+
+Erősíts meghogy behatároltade a végeredmény cellák helyét és működését!
+
+
+Szeretném szemléletessé tenni a tervezést ezért hasznosnak vélem, hogy jelöljük a végeredmény 
+
+
+
+A javasolt módosítások és továbbfejlesztés logikusnak tűnik. Elemezzük a tervezett változtatásokat:
+
+Helyiérték oszlopok jelölése:
+
+
+Az átláthatóságot nagyban növeli ha vizuálisan jelöljük az e,t,s,e,tz,sz oszlopokat (kész)
+Ez segíti a felhasználót és a fejlesztést is a helyes pozicionálásban
+Az áttetszőség jó vizuális visszajelzés, de nem zavarhatja a számok olvashatóságát
+
+
+Végeredmény mező bevezetése:
+
+
+A monitorozott helyiérték oszlopok már azonosítják a releváns pozíciókat
+Ezek alapján tudjuk pozicionálni a végeredmény sort
+A végeredmény cellák közvetlenül az utolsó részeredmény sor alatt jelennek meg
+Minden helyiérték oszlopba egy végeredmény cella kerül
+
+
+Implementációs stratégia:
+a) Először bevezetjük a helyiérték jelöléseket:
+
+
+Új CSS osztályok az oszlopok jelöléséhez
+A monitorValueColumns függvény kiegészítése a jelölésekkel
+Az oszlopok vizuális stílusainak finomhangolása
+
+b) Majd a végeredmény sor kezelését:
+
+Új függvény a végeredmény sor létrehozására
+Cellák összekötése a megfelelő helyiérték oszlopokkal
+Részeredmények összegzése oszloponként
+
+Javaslom, hogy először a helyiérték jelölésekkel kezdjük, mivel ez egy kisebb, jól tesztelhető módosítás. Ha ez működik, utána térjünk rá a végeredmény sorra.
+Kezdhetem a kód módosítását a helyiérték jelölésekkel?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+alatti sor meghatározásáról szól.
+Ezt az utolsó sort fogjuk arra használni, hogy a felette
+
+A megvalósítás lépései:
+
+Az utolsó részeredménysor felismerése:
+
+A szorzó hosszából tudjuk hány részeredménysor van
+Az utolsó sor indexe: BASE_ROW + szorzó_hossz
+
+
+A helyiérték oszlopok definiálása:
+
+A szorzandó egyes helyiértéke adja az alap oszlopot
+Ettől balra helyezkednek el a többi helyiérték oszlopai
+A maximális oszlopszám a szorzandó és szorzó hosszából számolható
+
+
+Az elválasztóvonal kialakítása:
+
+Az utolsó részeredménysor celláinak alsó szegélyét módosítjuk
+CSS tulajdonság: border-bottom: 3px solid #ffd700
+A szegély a teljes cellaszélességben fut
+
+
+Végeredménymező kialakítása:
+
+Az elválasztóvonal alatti sor: BASE_ROW + szorzó_hossz + 1
+Input mezők a helyiérték oszlopokhoz igazítva
+Balról-jobbra haladva töltendő ki
+Minden cella ugyanazokba az oszlopokba kerül mint felette a részeredmények
+
+
+Input mezők logikája:
+
+Csak egy számjegy megadása lehetséges
+Az egyes helyiértéktől indulva lehet kitölteni
+Automatikus fókusz a következő cellára helyes válasz esetén
+
+
+Ellenőrzés:
+
+A megadott számjegyek összehasonlítása a helyes eredménnyel
+Helyiértékenként történő validálás
+Vizuális visszajelzés a helyes/helytelen válaszokról
+
+
+
+Ezt a logikát követve alakul ki egy következetes, helyiérték alapú szorzási gyakorló felület.
+
+
+G
+
+Megtörténtek a felesleges részek inaktiválásai. Most koncentráljunk a részeredmények ellenőrzésére. 
+Mivel az egyesektől haladunk felfelé a magasabb helyiértékek felé, 
+amit a szorz_hely_matrix.js-ben található initializeFirstCell és a PlaceValueManager kordinál.  
+Adj ötletett arra, hogyan lenne logikus az egyesekel való szorzás részeredményeinek kiszámítása, 
+amit a szorz_hely_matrix_resz.js-ben valósítanánk meg.
+
+
+A fejlesztési javaslataidhoz egy /-jel után írom a véleményemet Fejlesztési javaslatok:
+
+Számjegyenkénti validáció:
+
+Minden beírt számjegy azonnali ellenőrzése / NEM KELL, A SORvalidáció egyszerűbb. Csak az egyben leírt részfeladatot kell ellenőrizni.
+
+Vizuális visszajelzés a cella hátterének színezésével / NEM KELL
+
+Átvitel megjelenítése kis felső indexben / OK
+
+Sorvalidáció:
+
+Teljes részeredmény ellenőrzése a sor kitöltése után / OK
+
+Animált visszajelzés jobbról balra / NEM
+
+Hibás esetben a hibás számjegyek kiemelése /NEM
+
+Segítő funkciók:
+
+Tooltip az aktuális részműveletről / OK
+
+Részeredmény kiszámításának lépésenkénti bemutatása / NEM
+
+Átvitelek követésének vizuális segítése / OK.                                                                UI Elemek:
+
+Aktív cella zöld keret helyett pulzáló kék keret / OK
+
+Helyes számjegy után zöld felvillanás animáció / NEM
+
+Hibás számjegy esetén piros háttér és rezgő animáció / NEM
+
+Átvitel esetén felső sarokban megjelenő kis számjegy / OK   Tooltip Rendszer:
+
+Aktuális részművelet megjelenítése / OK
+
+Következő elvárt lépés jelzése / NEM
+
+Hibák esetén magyarázat / OK, 
+
+
+A szuperpozícióban levő emberi elme, szív univerzumteremtő ereje !
+Terjeszd ki rá a figyelmed, hassd át a legmagasabb fokú szeretettel, tedd megtörténnté a képet.
+Teremtsd meg a saját univerzumod!
+
+Jó jenne ha így lenne! 
+Ha igaz, és valószínű, hogy az, akkor is ez a teremtő képesség jelen életterünkben 8 milliárdod részre van bontva .
+A bolygónk kollektív sorsát az uralja, aki a legtöbb tudatot képes egy ügy vagy lelki indittatás köré 
+szervezni és azzal egy irányba haladni ! 
+Ehhez elvileg elég lenne a népesség négyzetgyöke, azaz 90 ezer ember tudatos fókuszált állapota!
+Hajrá!

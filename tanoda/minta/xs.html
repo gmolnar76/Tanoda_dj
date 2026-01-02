@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Háttér effektus teszt</title>
+    <style>
+        /* Itt jön a CSS kód */
+        #waveCanvas {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: -1;
+          opacity: 0.8;
+        }
+        /* További CSS */
+    </style>
+</head>
+<body>
+    <!-- HTML rész -->
+    <canvas id="waveCanvas"></canvas>
+    
+    <!-- Ha THREE.js-re van szükség (3D effektushoz) -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> -->
+    
+    <script>
+        // JavaScript kód
+        const canvas = document.getElementById('waveCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // A többi JavaScript kód...
+    </script>
+</body>
+</html>

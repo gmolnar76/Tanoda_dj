@@ -1,0 +1,22 @@
+szorzas_gyakorlo.html (child template)
+
+[ProblemWidget] ---> [FeedbackPanel]
+   (#szorzo, #szorzando, #valasz)     (#eredmeny, #kihivas-eredmeny)
+
+[ProblemWidget] ---> [StatsWidget]
+                      (#osszes-pont, grafikon)
+
+[ProblemWidget] ---> [real_time_scoring.js]
+   (emits: points-earned -> handles level/badge/streak)
+
+[LeaderboardWidget] (currently inline fetch) ---> #leaderboard
+   -> Recommend move to `leaderboard.js` with response.ok check
+
+[PitagoraszTable] (#pitagorasz-tabla) - heavy; lazy-load recommended
+
+[ThemeToggle] (.theme-toggle) - currently inline onclick; replace with event listener
+
+Legend:
+- Arrow: interaction or data flow
+- Boxes: widgets/modules
+- Notes: recommended refactors (leaderboard, theme toggle, lazy-load)

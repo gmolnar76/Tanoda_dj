@@ -1,0 +1,118 @@
+{% extends "plotly/kordinata/kordinata_1.html" %}
+{% load static %}
+
+
+{% endblock %}
+
+
+<div class="tab-pane fade show active" id="coord" role="tabpanel" aria-labelledby="coord-tab">
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Síkban</h3>
+            <div id="plotly-2d-graph" class="plot-container"></div>
+            
+            <div class="mt-3">
+                <h4></h4>
+                <p>Mennyi <span id="szorzo-2d"></span> * <span id="szorzando-2d"></span>?</p>
+                <input type="number" id="valasz-2d" class="form-control mb-2">
+                <button id="ellenorzes-2d" class="btn btn-primary">Ellenőrzés</button>
+                <div id="eredmeny-2d" class="alert mt-2" style="display: none;"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h3>Térben</h3>
+            <div id="plotly-3d-graph" class="plot-container"></div>
+            <div class="mt-3">
+                <h4></h4>
+                <p>Mennyi <span id="szorzo-3d-1"></span> * <span id="szorzo-3d-2"></span> * <span id="szorzo-3d-3"></span>?</p>
+                <input type="number" id="valasz-3d" class="form-control mb-2">
+                <button id="ellenorzes-3d" class="btn btn-primary">Ellenőrzés</button>
+                <div id="eredmeny-3d" class="alert mt-2" style="display: none;"></div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <h3>Szorzás Kvíz</h3>
+            <form id="szorzas-quiz">
+              <div class="mb-3">
+                <p>1. Melyik állítás igaz a koordináta-rendszerben történő szorzásra? (Válassz ki minden helyeset!)</p>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="quiz1-1">
+                  <label class="form-check-label" for="quiz1-1">
+                    A szorzat előjele pozitív, ha mindkét tényező azonos előjelű.
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="quiz1-2">
+                  <label class="form-check-label" for="quiz1-2">
+                    A szorzat abszolút értéke mindig nagyobb, mint a tényezők abszolút értéke.
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="quiz1-3">
+                  <label class="form-check-label" for="quiz1-3">
+                    Két negatív szám szorzata mindig pozitív.
+                  </label>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <p>2. Ha egy pont koordinátái (3, -4), akkor melyik kvadránsban található?</p>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="quiz2" id="quiz2-1">
+                  <label class="form-check-label" for="quiz2-1">
+                    I. kvadráns
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="quiz2" id="quiz2-2">
+                  <label class="form-check-label" for="quiz2-2">
+                    II. kvadráns
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="quiz2" id="quiz2-3">
+                  <label class="form-check-label" for="quiz2-3">
+                    III. kvadráns
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="quiz2" id="quiz2-4">
+                  <label class="form-check-label" for="quiz2-4">
+                    IV. kvadráns
+                  </label>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <p>3. Melyik állítás igaz a 3D koordináta-rendszerben történő szorzásra? (Válassz ki minden helyeset!)</p>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="quiz3-1">
+                  <label class="form-check-label" for="quiz3-1">
+                    Három szám szorzata a koordináta-rendszerben egy téglatest térfogatát adja meg.
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="quiz3-2">
+                  <label class="form-check-label" for="quiz3-2">
+                    A szorzat mindig pozitív, ha páros számú negatív tényező van.
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="quiz3-3">
+                  <label class="form-check-label" for="quiz3-3">
+                    A koordináták sorrendje nem befolyásolja a szorzat értékét.
+                  </label>
+                </div>
+              </div>
+              
+              <button type="button" class="btn btn-primary" onclick="checkQuiz()">Ellenőrzés</button>
+            </form>
+            <div id="quiz-result" class="mt-3"></div>
+          </div>
+
+    </div>
+</div>
+
+
+
+{% endblock %}

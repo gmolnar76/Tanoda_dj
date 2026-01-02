@@ -1,0 +1,108 @@
+/* Geometriai alakzatok Blockly stílusai */
+
+/* Alap konténer stílusok */
+.geometry-container {
+    margin: 10px 0;
+    padding: 15px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Platóni test színek */
+.platonic-tetrahedron {
+    color: #FF5252;
+}
+
+.platonic-cube {
+    color: #4CAF50;
+}
+
+.platonic-octahedron {
+    color: #448AFF;
+}
+
+.platonic-dodecahedron {
+    color: #FFC107;
+}
+
+.platonic-icosahedron {
+    color: #9C27B0;
+}
+
+/* Flower of Life stílusok */
+.flower-of-life-container {
+    margin-top: 15px;
+    text-align: center;
+}
+
+/* Példa gombok */
+.example-button-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.example-geometry-button {
+    background-color: #3700b3;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.example-geometry-button:hover {
+    background-color: #6200ee;
+    transform: translateY(-2px);
+}
+
+/* Geometriai tulajdonságok panel */
+.geometry-properties {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #2d2d2d;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.geometry-properties h4 {
+    color: #03dac6;
+    margin-top: 0;
+}
+
+.geometry-properties ul {
+    list-style-type: none;
+    padding-left: 10px;
+}
+
+.geometry-properties li {
+    margin-bottom: 5px;
+}
+
+/* Infó ikon stílus */
+.info-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-color: #03dac6;
+    color: #121212;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 16px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 5px;
+    cursor: help;
+}
+
+/* Eszköztár ikonok */
+.blockly-icon {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 5px;
+}

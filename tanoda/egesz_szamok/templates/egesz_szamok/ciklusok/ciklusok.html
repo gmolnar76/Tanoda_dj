@@ -1,0 +1,917 @@
+{% extends "egesz_szamok/eg_szamok_szorzasa.html" %}
+{% load static %}
+
+{% block title %}Ciklusok - 3D Programozás{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+    /* Blockly munkaterület és eszköztár stílusok */
+    .blocklyToolboxDiv {
+        background-color: #2d2d2d !important;
+        color: #e0e0e0 !important;
+    }
+    .blocklyMainBackground {
+        fill: #1e1e1e !important;
+    }
+    .blocklyTreeLabel {
+        color: #e0e0e0 !important;
+    }
+    .blocklyFlyoutBackground {
+        fill: #333 !important;
+    }
+    .blocklyTreeRow:not(.blocklyTreeSelected):hover {
+        background-color: #444 !important;
+    }
+    .blocklyTreeSelected {
+        background-color: #3700b3 !important;
+    }
+    .blocklyTreeSelected .blocklyTreeLabel {
+        color: #ffffff !important;
+    }
+    
+    /* Játékos elemek stílusai */
+    .ciklusok-container {
+        display: flex;
+        flex-direction: column;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    
+    .workspace-container {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        margin-top: 20px;
+    }
+    
+    #blocklyDiv {
+        width: 55%;
+        height: 480px;
+        border: 3px solid #5b80a5;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    #threeJsRenderer {
+        width: 45%;
+        height: 480px;
+        border: 3px solid #5b80a5;
+        border-radius: 10px;
+        overflow: hidden;
+        background-color: #1f2937;
+    }
+    
+    .controls-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    
+    .control-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .code-output {
+        margin-top: 20px;
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        border: 1px solid #444;
+        border-radius: 8px;
+        padding: 15px;
+        font-family: 'Consolas', 'Courier New', monospace;
+        height: 150px;
+        overflow-y: auto;
+    }
+    
+    .examples-section {
+        margin-top: 20px;
+    }
+    
+    .examples-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .example-button {
+        background-color: #3700b3;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .example-button:hover {
+        background-color: #6200ee;
+    }
+    
+    h3 {
+        color: #5b80a5;
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block ciklusok_content %}
+<div class="ciklusok-container">
+    <h2>Ciklusok gyakorlása - Blockly és Three.js</h2>
+    <p class="lead">Készíts 3D programokat vizuális programozással! Tanuld meg a ciklusok (for, while) használatát látványos példákon keresztül.</p>
+    
+    <div class="workspace-container">
+        <div id="blocklyDiv"></div>
+        <div id="threeJsRenderer"></div>
+    </div>
+    
+    <div class="controls-container">
+        <div class="control-buttons">
+            <button id="runButton" class="btn btn-primary">Kód futtatása</button>
+            <button id="resetButton" class="btn btn-secondary">Alaphelyzet</button>
+            <button id="showCodeButton" class="btn btn-info">Kód megtekintése</button>
+        </div>
+        <div class="level-selector">
+            <select id="levelSelect" class="form-select" style="width: auto">
+                <option value="1">1. szint - Egyszerű ciklusok</option>
+                <option value="2">2. szint - Egymásba ágyazott ciklusok</option>
+                <option value="3">3. szint - While ciklusok</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="code-output">
+        <pre id="codeOutput">// Itt jelenik meg a generált JavaScript kód...</pre>
+    </div>
+    
+    <div class="examples-section">
+        <h3>Példaprogramok</h3>
+        <p>Az alábbi gombok segítségével előre összeállított példaprogramokat tölthetsz be:</p>
+        <div class="examples-buttons">
+            <button id="example1" class="example-button">Egyszerű for ciklus</button>
+            <button id="example2" class="example-button">Spirál animáció</button>
+            <button id="example3" class="example-button">Kocka forgatás</button>
+            <button id="example4" class="example-button">3D alakzatok</button>
+        </div>
+    </div>
+</div>
+
+<!-- Blockly toolbox definíció -->
+<xml id="toolbox" style="display: none">
+    <category name="Ciklusok" colour="#5CA699">
+        <block type="controls_repeat_ext">
+            <value name="TIMES">
+                <shadow type="math_number">
+                    <field name="NUM">10</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="controls_for">
+            <value name="FROM">
+                <shadow type="math_number">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+            <value name="TO">
+                <shadow type="math_number">
+                    <field name="NUM">10</field>
+                </shadow>
+            </value>
+            <value name="BY">
+                <shadow type="math_number">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="controls_whileUntil">
+            <field name="MODE">WHILE</field>
+        </block>
+    </category>
+    <category name="3D Objektumok" colour="#5C81A6">
+        <block type="create_cube">
+            <value name="SIZE">
+                <shadow type="math_number">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+            <value name="X">
+                <shadow type="math_number">
+                    <field name="NUM">0</field>
+                </shadow>
+            </value>
+            <value name="Y">
+                <shadow type="math_number">
+                    <field name="NUM">0</field>
+                </shadow>
+            </value>
+            <value name="Z">
+                <shadow type="math_number">
+                    <field name="NUM">0</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="create_sphere">
+            <value name="RADIUS">
+                <shadow type="math_number">
+                    <field name="NUM">0.5</field>
+                </shadow>
+            </value>
+            <value name="X">
+                <shadow type="math_number">
+                    <field name="NUM">0</field>
+                </shadow>
+            </value>
+            <value name="Y">
+                <shadow type="math_number">
+                    <field name="NUM">0</field>
+                </shadow>
+            </value>
+            <value name="Z">
+                <shadow type="math_number">
+                    <field name="NUM">0</field>
+                </shadow>
+            </value>
+        </block>
+    </category>
+    <category name="Transzformációk" colour="#5C68A6">
+        <block type="rotate_object">
+            <value name="X_ROT">
+                <shadow type="math_number">
+                    <field name="NUM">0</field>
+                </shadow>
+            </value>
+            <value name="Y_ROT">
+                <shadow type="math_number">
+                    <field name="NUM">0.1</field>
+                </shadow>
+            </value>
+            <value name="Z_ROT">
+                <shadow type="math_number">
+                    <field name="NUM">0</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="set_object_color">
+        </block>
+    </category>
+    <category name="Logika" colour="#5C68A6">
+        <block type="controls_if"></block>
+        <block type="logic_compare"></block>
+        <block type="logic_operation"></block>
+    </category>
+    <category name="Matematika" colour="#A6745C">
+        <block type="math_number"></block>
+        <block type="math_arithmetic"></block>
+        <block type="math_single"></block>
+        <block type="math_trig"></block>
+    </category>
+    <category name="Változók" colour="#A65CA4" custom="VARIABLE"></category>
+</xml>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="https://unpkg.com/blockly@9.3.3/blockly_compressed.js"></script>
+<script src="https://unpkg.com/blockly@9.3.3/blocks_compressed.js"></script>
+<script src="https://unpkg.com/blockly@9.3.3/javascript_compressed.js"></script>
+<script src="https://unpkg.com/blockly@9.3.3/msg/hu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+
+<script>
+    // Globális változók
+    let scene, camera, renderer, controls;
+    let workspace;
+    let objects = {};
+    let animationId = null;
+    let currentLevel = 1;
+
+    // Oldal betöltésekor
+    document.addEventListener('DOMContentLoaded', function() {
+        initBlockly();
+        initThreeJS();
+        setupEventListeners();
+    });
+
+    // Blockly inicializálása
+    function initBlockly() {
+        // Blockly munkaterület létrehozása
+        workspace = Blockly.inject('blocklyDiv', {
+            toolbox: document.getElementById('toolbox'),
+            scrollbars: true,
+            sounds: true,
+            trashcan: true,
+            zoom: {
+                controls: true,
+                wheel: true,
+                startScale: 1.0,
+                maxScale: 3,
+                minScale: 0.3,
+                scaleSpeed: 1.2
+            },
+            grid: {
+                spacing: 20,
+                length: 3,
+                colour: '#ccc',
+                snap: true
+            }
+        });
+
+        // Blockly blokkok definiálása
+        defineBlocklyBlocks();
+    }
+
+    // Three.js inicializálása
+    function initThreeJS() {
+        // Színtér létrehozása
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1f2937);
+
+        // Kamera beállítása
+        camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+        camera.position.set(3, 3, 3);
+        camera.lookAt(0, 0, 0);
+
+        // Renderer létrehozása
+        const rendererContainer = document.getElementById('threeJsRenderer');
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(rendererContainer.clientWidth, rendererContainer.clientHeight);
+        rendererContainer.appendChild(renderer.domElement);
+
+        // OrbitControls hozzáadása
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        // Fények hozzáadása
+        const ambientLight = new THREE.AmbientLight(0x404040, 1);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(1, 1, 1).normalize();
+        scene.add(directionalLight);
+
+        // Segédháló hozzáadása
+        const gridHelper = new THREE.GridHelper(10, 10, 0x444444, 0x222222);
+        scene.add(gridHelper);
+
+        // Tengelyek hozzáadása
+        const axesHelper = new THREE.AxesHelper(5);
+        scene.add(axesHelper);
+
+        // Animáció indítása
+        animate();
+    }
+
+    // Blockly blokkok definiálása
+    function defineBlocklyBlocks() {
+        // Kocka létrehozása blokk
+        Blockly.Blocks['create_cube'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Kocka létrehozása");
+                this.appendValueInput("SIZE")
+                    .setCheck("Number")
+                    .appendField("méret");
+                this.appendValueInput("X")
+                    .setCheck("Number")
+                    .appendField("X pozíció");
+                this.appendValueInput("Y")
+                    .setCheck("Number")
+                    .appendField("Y pozíció");
+                this.appendValueInput("Z")
+                    .setCheck("Number")
+                    .appendField("Z pozíció");
+                this.appendDummyInput()
+                    .appendField("név")
+                    .appendField(new Blockly.FieldTextInput("kocka1"), "NAME");
+                this.setInputsInline(false);
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour('#5CA699');
+                this.setTooltip("Kocka létrehozása a megadott mérettel és pozícióval");
+            }
+        };
+        
+        Blockly.JavaScript['create_cube'] = function(block) {
+            const size = Blockly.JavaScript.valueToCode(block, 'SIZE', Blockly.JavaScript.ORDER_ATOMIC) || '1';
+            const x = Blockly.JavaScript.valueToCode(block, 'X', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            const y = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            const z = Blockly.JavaScript.valueToCode(block, 'Z', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            const name = block.getFieldValue('NAME');
+            
+            return `
+            // Kocka létrehozása
+            const geometry_${name} = new THREE.BoxGeometry(${size}, ${size}, ${size});
+            const material_${name} = new THREE.MeshStandardMaterial({ color: 0x4ecca3 });
+            const ${name} = new THREE.Mesh(geometry_${name}, material_${name});
+            ${name}.position.set(${x}, ${y}, ${z});
+            scene.add(${name});
+            objects["${name}"] = ${name};
+            `;
+        };
+
+        // Gömb létrehozása blokk
+        Blockly.Blocks['create_sphere'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Gömb létrehozása");
+                this.appendValueInput("RADIUS")
+                    .setCheck("Number")
+                    .appendField("sugár");
+                this.appendValueInput("X")
+                    .setCheck("Number")
+                    .appendField("X pozíció");
+                this.appendValueInput("Y")
+                    .setCheck("Number")
+                    .appendField("Y pozíció");
+                this.appendValueInput("Z")
+                    .setCheck("Number")
+                    .appendField("Z pozíció");
+                this.appendDummyInput()
+                    .appendField("név")
+                    .appendField(new Blockly.FieldTextInput("gomb1"), "NAME");
+                this.setInputsInline(false);
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour('#5CA699');
+                this.setTooltip("Gömb létrehozása a megadott sugárral és pozícióval");
+            }
+        };
+        
+        Blockly.JavaScript['create_sphere'] = function(block) {
+            const radius = Blockly.JavaScript.valueToCode(block, 'RADIUS', Blockly.JavaScript.ORDER_ATOMIC) || '0.5';
+            const x = Blockly.JavaScript.valueToCode(block, 'X', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            const y = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            const z = Blockly.JavaScript.valueToCode(block, 'Z', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            const name = block.getFieldValue('NAME');
+            
+            return `
+            // Gömb létrehozása
+            const geometry_${name} = new THREE.SphereGeometry(${radius}, 32, 16);
+            const material_${name} = new THREE.MeshStandardMaterial({ color: 0x3498db });
+            const ${name} = new THREE.Mesh(geometry_${name}, material_${name});
+            ${name}.position.set(${x}, ${y}, ${z});
+            scene.add(${name});
+            objects["${name}"] = ${name};
+            `;
+        };
+
+        // Objektum forgatása blokk
+        Blockly.Blocks['rotate_object'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Forgatás")
+                    .appendField(new Blockly.FieldTextInput("kocka1"), "OBJECT_NAME");
+                this.appendValueInput("X_ROT")
+                    .setCheck("Number")
+                    .appendField("X tengely körül");
+                this.appendValueInput("Y_ROT")
+                    .setCheck("Number")
+                    .appendField("Y tengely körül");
+                this.appendValueInput("Z_ROT")
+                    .setCheck("Number")
+                    .appendField("Z tengely körül");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour('#5C68A6');
+                this.setTooltip("Objektum forgatása a megadott szögekkel (radián)");
+            }
+        };
+        
+        Blockly.JavaScript['rotate_object'] = function(block) {
+            const objectName = block.getFieldValue('OBJECT_NAME');
+            const xRot = Blockly.JavaScript.valueToCode(block, 'X_ROT', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            const yRot = Blockly.JavaScript.valueToCode(block, 'Y_ROT', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            const zRot = Blockly.JavaScript.valueToCode(block, 'Z_ROT', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+            
+            return `
+            // Objektum forgatása
+            if (objects["${objectName}"]) {
+                objects["${objectName}"].rotation.x += ${xRot};
+                objects["${objectName}"].rotation.y += ${yRot};
+                objects["${objectName}"].rotation.z += ${zRot};
+            }
+            `;
+        };
+
+        // Objektum színének beállítása
+        Blockly.Blocks['set_object_color'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Szín beállítása")
+                    .appendField(new Blockly.FieldTextInput("kocka1"), "OBJECT_NAME")
+                    .appendField("objektumhoz")
+                    .appendField(new Blockly.FieldColour('#ff0000'), "COLOR");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour('#A65C8B');
+                this.setTooltip("Objektum színének beállítása");
+            }
+        };
+        
+        Blockly.JavaScript['set_object_color'] = function(block) {
+            const objectName = block.getFieldValue('OBJECT_NAME');
+            const color = block.getFieldValue('COLOR');
+            const hexColor = color.replace('#', '0x');
+            
+            return `
+            // Szín beállítása
+            if (objects["${objectName}"]) {
+                objects["${objectName}"].material.color.setHex(${hexColor});
+            }
+            `;
+        };
+    }
+
+    // Eseménykezelők beállítása
+    function setupEventListeners() {
+        document.getElementById('runButton').addEventListener('click', runCode);
+        document.getElementById('resetButton').addEventListener('click', resetScene);
+        document.getElementById('showCodeButton').addEventListener('click', showCode);
+        document.getElementById('levelSelect').addEventListener('change', loadLevel);
+        
+        // Példa gombok eseménykezelői
+        document.getElementById('example1').addEventListener('click', loadExample1);
+        document.getElementById('example2').addEventListener('click', loadExample2);
+        document.getElementById('example3').addEventListener('click', loadExample3);
+        document.getElementById('example4').addEventListener('click', loadExample4);
+    }
+
+    // Animáció
+    function animate() {
+        animationId = requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    // Kód futtatása
+    function runCode() {
+        resetScene();
+        
+        const code = Blockly.JavaScript.workspaceToCode(workspace);
+        document.getElementById('codeOutput').textContent = code;
+        
+        try {
+            eval(code);
+        } catch (error) {
+            console.error(error);
+            document.getElementById('codeOutput').textContent = '// Hiba: ' + error.message;
+        }
+    }
+
+    // Színtér alaphelyzetbe állítása
+    function resetScene() {
+        // Törölni minden 3D objektumot a színtérből (kivéve a segédhálót és tengelyeket)
+        for (const name in objects) {
+            scene.remove(objects[name]);
+        }
+        objects = {};
+        
+        // Kamera helyzetének visszaállítása
+        camera.position.set(3, 3, 3);
+        camera.lookAt(0, 0, 0);
+        controls.update();
+    }
+
+    // Kód megjelenítése
+    function showCode() {
+        const code = Blockly.JavaScript.workspaceToCode(workspace);
+        document.getElementById('codeOutput').textContent = code;
+    }
+
+    // Szint betöltése
+    function loadLevel() {
+        currentLevel = parseInt(document.getElementById('levelSelect').value);
+        resetScene();
+        workspace.clear();
+        
+        switch (currentLevel) {
+            case 1:
+                loadExample1();
+                break;
+            case 2:
+                loadExample2();
+                break;
+            case 3:
+                loadExample3();
+                break;
+            default:
+                loadExample1();
+        }
+    }
+
+    // Példa 1: Egyszerű for ciklus
+    function loadExample1() {
+        workspace.clear();
+        
+        // Példa blokkok létrehozása
+        const forBlock = workspace.newBlock('controls_for');
+        forBlock.setFieldValue('i', 'VAR');
+        
+        const fromBlock = workspace.newBlock('math_number');
+        fromBlock.setFieldValue('1', 'NUM');
+        
+        const toBlock = workspace.newBlock('math_number');
+        toBlock.setFieldValue('5', 'NUM');
+        
+        const stepBlock = workspace.newBlock('math_number');
+        stepBlock.setFieldValue('1', 'NUM');
+        
+        const cubeBlock = workspace.newBlock('create_cube');
+        cubeBlock.setFieldValue('kocka', 'NAME');
+        
+        const sizeBlock = workspace.newBlock('math_number');
+        sizeBlock.setFieldValue('0.5', 'NUM');
+        
+        const xPosBlock = workspace.newBlock('variables_get');
+        xPosBlock.setFieldValue('i', 'VAR');
+        
+        const yBlock = workspace.newBlock('math_number');
+        yBlock.setFieldValue('0', 'NUM');
+        
+        const zBlock = workspace.newBlock('math_number');
+        zBlock.setFieldValue('0', 'NUM');
+        
+        // Blokkok összekapcsolása
+        forBlock.inputList[0].connection.connect(fromBlock.outputConnection);
+        forBlock.inputList[1].connection.connect(toBlock.outputConnection);
+        forBlock.inputList[2].connection.connect(stepBlock.outputConnection);
+        forBlock.inputList[3].connection.connect(cubeBlock.previousConnection);
+        
+        cubeBlock.inputList[0].connection.connect(sizeBlock.outputConnection);
+        cubeBlock.inputList[1].connection.connect(xPosBlock.outputConnection);
+        cubeBlock.inputList[2].connection.connect(yBlock.outputConnection);
+        cubeBlock.inputList[3].connection.connect(zBlock.outputConnection);
+        
+        // Blokkok megjelenítése
+        forBlock.initSvg();
+        forBlock.render();
+        fromBlock.initSvg();
+        fromBlock.render();
+        toBlock.initSvg();
+        toBlock.render();
+        stepBlock.initSvg();
+        stepBlock.render();
+        cubeBlock.initSvg();
+        cubeBlock.render();
+        sizeBlock.initSvg();
+        sizeBlock.render();
+        xPosBlock.initSvg();
+        xPosBlock.render();
+        yBlock.initSvg();
+        yBlock.render();
+        zBlock.initSvg();
+        zBlock.render();
+        
+        // Elhelyezés
+        forBlock.moveBy(50, 50);
+    }
+
+    // Példa 2: Spirál animáció
+    function loadExample2() {
+        workspace.clear();
+        
+        const xml = `
+            <xml xmlns="https://developers.google.com/blockly/xml">
+                <block type="controls_for" x="50" y="50">
+                    <field name="VAR">i</field>
+                    <value name="FROM">
+                        <shadow type="math_number">
+                            <field name="NUM">1</field>
+                        </shadow>
+                    </value>
+                    <value name="TO">
+                        <shadow type="math_number">
+                            <field name="NUM">10</field>
+                        </shadow>
+                    </value>
+                    <value name="BY">
+                        <shadow type="math_number">
+                            <field name="NUM">1</field>
+                        </shadow>
+                    </value>
+                    <statement name="DO">
+                        <block type="create_sphere">
+                            <field name="NAME">gomb</field>
+                            <value name="RADIUS">
+                                <shadow type="math_number">
+                                    <field name="NUM">0.2</field>
+                                </shadow>
+                            </value>
+                            <value name="X">
+                                <block type="math_arithmetic">
+                                    <field name="OP">MULTIPLY</field>
+                                    <value name="A">
+                                        <block type="math_trig">
+                                            <field name="OP">COS</field>
+                                            <value name="NUM">
+                                                <block type="variables_get">
+                                                    <field name="VAR">i</field>
+                                                </block>
+                                            </value>
+                                        </block>
+                                    </value>
+                                    <value name="B">
+                                        <shadow type="math_number">
+                                            <field name="NUM">2</field>
+                                        </shadow>
+                                    </value>
+                                </block>
+                            </value>
+                            <value name="Y">
+                                <block type="math_arithmetic">
+                                    <field name="OP">DIVIDE</field>
+                                    <value name="A">
+                                        <block type="variables_get">
+                                            <field name="VAR">i</field>
+                                        </block>
+                                    </value>
+                                    <value name="B">
+                                        <shadow type="math_number">
+                                            <field name="NUM">5</field>
+                                        </shadow>
+                                    </value>
+                                </block>
+                            </value>
+                            <value name="Z">
+                                <block type="math_arithmetic">
+                                    <field name="OP">MULTIPLY</field>
+                                    <value name="A">
+                                        <block type="math_trig">
+                                            <field name="OP">SIN</field>
+                                            <value name="NUM">
+                                                <block type="variables_get">
+                                                    <field name="VAR">i</field>
+                                                </block>
+                                            </value>
+                                        </block>
+                                    </value>
+                                    <value name="B">
+                                        <shadow type="math_number">
+                                            <field name="NUM">2</field>
+                                        </shadow>
+                                    </value>
+                                </block>
+                            </value>
+                        </block>
+                    </statement>
+                </block>
+            </xml>
+        `;
+        
+        const dom = Blockly.Xml.textToDom(xml);
+        Blockly.Xml.domToWorkspace(dom, workspace);
+    }
+
+    // Példa 3: Kocka forgatás
+    function loadExample3() {
+        workspace.clear();
+        
+        const xml = `
+            <xml xmlns="https://developers.google.com/blockly/xml">
+                <block type="create_cube" x="50" y="50">
+                    <field name="NAME">kocka1</field>
+                    <value name="SIZE">
+                        <shadow type="math_number">
+                            <field name="NUM">1</field>
+                        </shadow>
+                    </value>
+                    <value name="X">
+                        <shadow type="math_number">
+                            <field name="NUM">0</field>
+                        </shadow>
+                    </value>
+                    <value name="Y">
+                        <shadow type="math_number">
+                            <field name="NUM">0</field>
+                        </shadow>
+                    </value>
+                    <value name="Z">
+                        <shadow type="math_number">
+                            <field name="NUM">0</field>
+                        </shadow>
+                    </value>
+                    <next>
+                        <block type="controls_whileUntil">
+                            <field name="MODE">WHILE</field>
+                            <value name="BOOL">
+                                <block type="logic_boolean">
+                                    <field name="BOOL">TRUE</field>
+                                </block>
+                            </value>
+                            <statement name="DO">
+                                <block type="rotate_object">
+                                    <field name="OBJECT_NAME">kocka1</field>
+                                    <value name="X_ROT">
+                                        <shadow type="math_number">
+                                            <field name="NUM">0.01</field>
+                                        </shadow>
+                                    </value>
+                                    <value name="Y_ROT">
+                                        <shadow type="math_number">
+                                            <field name="NUM">0.02</field>
+                                        </shadow>
+                                    </value>
+                                    <value name="Z_ROT">
+                                        <shadow type="math_number">
+                                            <field name="NUM">0</field>
+                                        </shadow>
+                                    </value>
+                                </block>
+                            </statement>
+                        </block>
+                    </next>
+                </block>
+            </xml>
+        `;
+        
+        const dom = Blockly.Xml.textToDom(xml);
+        Blockly.Xml.domToWorkspace(dom, workspace);
+    }
+
+    // Példa 4: 3D alakzatok
+    function loadExample4() {
+        workspace.clear();
+        
+        const xml = `
+            <xml xmlns="https://developers.google.com/blockly/xml">
+                <block type="controls_for" x="50" y="50">
+                    <field name="VAR">i</field>
+                    <value name="FROM">
+                        <shadow type="math_number">
+                            <field name="NUM">0</field>
+                        </shadow>
+                    </value>
+                    <value name="TO">
+                        <shadow type="math_number">
+                            <field name="NUM">5</field>
+                        </shadow>
+                    </value>
+                    <value name="BY">
+                        <shadow type="math_number">
+                            <field name="NUM">1</field>
+                        </shadow>
+                    </value>
+                    <statement name="DO">
+                        <block type="controls_for">
+                            <field name="VAR">j</field>
+                            <value name="FROM">
+                                <shadow type="math_number">
+                                    <field name="NUM">0</field>
+                                </shadow>
+                            </value>
+                            <value name="TO">
+                                <shadow type="math_number">
+                                    <field name="NUM">5</field>
+                                </shadow>
+                            </value>
+                            <value name="BY">
+                                <shadow type="math_number">
+                                    <field name="NUM">1</field>
+                                </shadow>
+                            </value>
+                            <statement name="DO">
+                                <block type="create_sphere">
+                                    <field name="NAME">gomb</field>
+                                    <value name="RADIUS">
+                                        <shadow type="math_number">
+                                            <field name="NUM">0.2</field>
+                                        </shadow>
+                                    </value>
+                                    <value name="X">
+                                        <block type="variables_get">
+                                            <field name="VAR">i</field>
+                                        </block>
+                                    </value>
+                                    <value name="Y">
+                                        <shadow type="math_number">
+                                            <field name="NUM">0</field>
+                                        </shadow>
+                                    </value>
+                                    <value name="Z">
+                                        <block type="variables_get">
+                                            <field name="VAR">j</field>
+                                        </block>
+                                    </value>
+                                    <next>
+                                        <block type="set_object_color">
+                                            <field name="OBJECT_NAME">gomb</field>
+                                            <field name="COLOR">#3498db</field>
+                                        </block>
+                                    </next>
+                                </block>
+                            </statement>
+                        </block>
+                    </statement>
+                </block>
+            </xml>
+        `;
+        
+        const dom = Blockly.Xml.textToDom(xml);
+        Blockly.Xml.domToWorkspace(dom, workspace);
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Pythagoras Widget Tesztkörnyezet</title>
+    <link rel="stylesheet" href="{% static 'testwidget/pythagoras_test.css' %}">
+    <style>
+        /* Extra debugging/QA panel styles */
+        #qa-panel { background: #181c1f; color: #fff; padding: 1em; border-radius: 8px; margin-bottom: 1em; }
+        #qa-panel h4 { margin-top: 0; }
+        #qa-panel button { margin-right: 0.5em; }
+    </style>
+</head>
+<body>
+{% if user.is_staff %}
+    <div id="qa-panel">
+        <h4>QA & Debug Panel</h4>
+        <button onclick="location.reload()">Újratöltés</button>
+        <button onclick="toggleBorders()">Rács keretek</button>
+        <button onclick="showGridData()">Grid adatok</button>
+        <span id="qa-output" style="margin-left:1em;"></span>
+    </div>
+    {% block content %}{% endblock %}
+    <script>
+        function toggleBorders() {
+            document.getElementById('pitagorasz-tabla').classList.toggle('debug-borders');
+        }
+        function showGridData() {
+            const cells = document.querySelectorAll('#pitagorasz-tabla .grid-item');
+            let out = Array.from(cells).map(c => c.textContent).join(', ');
+            document.getElementById('qa-output').textContent = out.slice(0, 200) + (out.length > 200 ? ' ...' : '');
+        }
+    </script>
+    <style>
+        #pitagorasz-tabla.debug-borders .grid-item { outline: 1px solid #0ff !important; }
+    </style>
+{% else %}
+    <div style="color:red; font-weight:bold;">Csak adminisztrátorok férhetnek hozzá a tesztkörnyezethez.</div>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,80 @@
+SQLite version 3.44.3 2024-03-24 21:15:01 (UTF-16 console I/O)
+Enter ".help" for usage hints.
+sqlite> .tables
+account_customuser
+account_customuser_groups
+account_customuser_user_permissions
+auth_group
+auth_group_permissions
+auth_permission
+django_admin_log
+django_content_type
+django_migrations
+django_session
+egesz_szamok_helyesvalasz
+egesz_szamok_hibastatisztika
+egesz_szamok_hibasvalasz
+egesz_szamok_megoldasimodszer
+egesz_szamok_szintstatisztika
+egesz_szamok_szorzasgyakorlatsession
+egesz_szamok_szorzasgyakorlatsession_helyes_valaszok
+egesz_szamok_szorzasiszabaly
+egesz_szamok_userprofile
+pont_kihivas
+pont_osszesitettpontszam
+pont_pontszam
+sqlite> .schema
+CREATE TABLE IF NOT EXISTS "django_migrations" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "app" varchar(255) NOT NULL, "name" varchar(255) NOT NULL, "applied" datetime NOT NULL);
+CREATE TABLE sqlite_sequence(name,seq);
+CREATE TABLE IF NOT EXISTS "django_content_type" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "app_label" varchar(100) NOT NULL, "model" varchar(100) NOT NULL);
+CREATE UNIQUE INDEX "django_content_type_app_label_model_76bd3d3b_uniq" ON "django_content_type" ("app_label", "model");
+CREATE TABLE IF NOT EXISTS "auth_group_permissions" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "group_id" integer NOT NULL REFERENCES "auth_group" ("id") DEFERRABLE INITIALLY DEFERRED, "permission_id" integer NOT NULL REFERENCES "auth_permission" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE UNIQUE INDEX "auth_group_permissions_group_id_permission_id_0cd325b0_uniq" ON "auth_group_permissions" ("group_id", "permission_id");
+CREATE INDEX "auth_group_permissions_group_id_b120cbf9" ON "auth_group_permissions" ("group_id");
+CREATE INDEX "auth_group_permissions_permission_id_84c5c92e" ON "auth_group_permissions" ("permission_id");
+CREATE TABLE IF NOT EXISTS "auth_permission" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "content_type_id" integer NOT NULL REFERENCES "django_content_type" ("id") DEFERRABLE INITIALLY DEFERRED, "codename" varchar(100) NOT NULL, "name" varchar(255) NOT NULL);
+CREATE UNIQUE INDEX "auth_permission_content_type_id_codename_01ab375a_uniq" ON "auth_permission" ("content_type_id", "codename");
+CREATE INDEX "auth_permission_content_type_id_2f476e4b" ON "auth_permission" ("content_type_id");
+CREATE TABLE IF NOT EXISTS "auth_group" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(150) NOT NULL UNIQUE);  
+CREATE TABLE IF NOT EXISTS "account_customuser_groups" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "customuser_id" bigint NOT NULL REFERENCES "account_customuser" ("id") DEFERRABLE INITIALLY DEFERRED, "group_id" integer NOT NULL REFERENCES "auth_group" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE IF NOT EXISTS "account_customuser_user_permissions" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "customuser_id" bigint NOT NULL REFERENCES "account_customuser" ("id") DEFERRABLE INITIALLY DEFERRED, "permission_id" integer NOT NULL REFERENCES "auth_permission" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE UNIQUE INDEX "account_customuser_groups_customuser_id_group_id_7e51db7b_uniq" ON "account_customuser_groups" ("customuser_id", "group_id");
+CREATE INDEX "account_customuser_groups_customuser_id_b6c60904" ON "account_customuser_groups" ("customuser_id");
+CREATE INDEX "account_customuser_groups_group_id_2be9f6d7" ON "account_customuser_groups" ("group_id");
+CREATE UNIQUE INDEX "account_customuser_user_permissions_customuser_id_permission_id_650e378f_uniq" ON "account_customuser_user_permissions" ("customuser_id", "permission_id");
+CREATE INDEX "account_customuser_user_permissions_customuser_id_03bcc114" ON "account_customuser_user_permissions" ("customuser_id");
+CREATE INDEX "account_customuser_user_permissions_permission_id_f4aec423" ON "account_customuser_user_permissions" ("permission_id");
+CREATE TABLE IF NOT EXISTS "django_admin_log" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "object_id" text NULL, "object_repr" varchar(200) NOT NULL, "action_flag" smallint unsigned NOT NULL CHECK ("action_flag" >= 0), "change_message" text NOT NULL, "content_type_id" integer NULL REFERENCES "django_content_type" ("id") DEFERRABLE INITIALLY DEFERRED, "user_id" bigint NOT NULL REFERENCES "account_customuser" ("id") DEFERRABLE INITIALLY DEFERRED, "action_time" datetime NOT NULL);
+CREATE INDEX "django_admin_log_content_type_id_c4bce8eb" ON "django_admin_log" ("content_type_id");
+CREATE INDEX "django_admin_log_user_id_c564eba6" ON "django_admin_log" ("user_id");
+CREATE TABLE IF NOT EXISTS "egesz_szamok_szorzasgyakorlatsession_helyes_valaszok" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "szorzasgyakorlatsession_id" bigint NOT NULL REFERENCES "egesz_szamok_szorzasgyakorlatsession" ("id") DEFERRABLE INITIALLY DEFERRED, "helyesvalasz_id" bigint NOT NULL REFERENCES "egesz_szamok_helyesvalasz" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE UNIQUE INDEX "egesz_szamok_szorzasgyakorlatsession_helyes_valaszok_szorzasgyakorlatsession_id_helyesvalasz_id_3bfedb94_uniq" ON "egesz_szamok_szorzasgyakorlatsession_helyes_valaszok" ("szorzasgyakorlatsession_id", "helyesvalasz_id");
+CREATE INDEX "egesz_szamok_szorzasgyakorlatsession_helyes_valaszok_szorzasgyakorlatsession_id_458ac354" ON "egesz_szamok_szorzasgyakorlatsession_helyes_valaszok" ("szorzasgyakorlatsession_id");
+CREATE INDEX "egesz_szamok_szorzasgyakorlatsession_helyes_valaszok_helyesvalasz_id_0bedf160" ON "egesz_szamok_szorzasgyakorlatsession_helyes_valaszok" ("helyesvalasz_id");
+CREATE TABLE IF NOT EXISTS "pont_osszesitettpontszam" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "osszes_pont" integer NOT NULL, "atlag_hatekonysag" real NOT NULL, "utolso_frissites" datetime NOT NULL, "user_id" bigint NOT NULL UNIQUE REFERENCES "account_customuser" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE IF NOT EXISTS "pont_pontszam" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "tevekenyseg" varchar(100) NOT NULL, "pontszam" integer NOT NULL, "max_pontszam" integer NOT NULL, "datum" datetime NOT NULL, "user_id" bigint NOT NULL REFERENCES "account_customuser" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE INDEX "pont_pontszam_user_id_fe2b1957" ON "pont_pontszam" ("user_id");
+CREATE TABLE IF NOT EXISTS "pont_kihivas" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "tevekenyseg" varchar(100) NOT NULL, 
+"pontszam" integer NOT NULL, "max_pontszam" integer NOT NULL, "datum" datetime NOT NULL, "user_id" bigint NOT NULL REFERENCES "account_customuser" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE INDEX "pont_kihivas_user_id_6c535410" ON "pont_kihivas" ("user_id");
+CREATE TABLE IF NOT EXISTS "django_session" ("session_key" varchar(40) NOT NULL PRIMARY KEY, "session_data" text NOT NULL, "expire_date" datetime NOT NULL);
+CREATE INDEX "django_session_expire_date_a5c62663" ON "django_session" ("expire_date");
+CREATE TABLE IF NOT EXISTS "egesz_szamok_helyesvalasz" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "szorzo" integer NOT NULL, "szorzando" integer NOT NULL, "eredmeny" integer NOT NULL, "alkalmazott_szabaly_id" bigint NULL REFERENCES "egesz_szamok_szorzasiszabaly" ("id") DEFERRABLE INITIALLY DEFERRED, "nehezsegi_szint" integer NOT NULL);
+CREATE UNIQUE INDEX "egesz_szamok_helyesvalasz_szorzo_szorzando_26452d83_uniq" ON "egesz_szamok_helyesvalasz" ("szorzo", "szorzando");
+CREATE INDEX "egesz_szamok_helyesvalasz_alkalmazott_szabaly_id_12989e23" ON "egesz_szamok_helyesvalasz" ("alkalmazott_szabaly_id");
+CREATE TABLE IF NOT EXISTS "egesz_szamok_hibasvalasz" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "szorzo" integer NOT NULL, "szorzando" integer NOT NULL, "hibas_eredmeny" integer NOT NULL, "helyes_eredmeny" integer NOT NULL, "datum" datetime NOT NULL, "javitva" bool NOT NULL, "user_id" bigint NOT NULL REFERENCES "account_customuser" ("id") DEFERRABLE INITIALLY DEFERRED, "javitasok_szama" integer NOT NULL, "nehezsegi_szint" integer NOT NULL);
+CREATE INDEX "egesz_szamok_hibasvalasz_user_id_70f2f371" ON "egesz_szamok_hibasvalasz" ("user_id");
+CREATE TABLE IF NOT EXISTS "egesz_szamok_megoldasimodszer" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "leiras" varchar(255) NOT NULL, "alkalmazas" text NOT NULL, "nehezsegi_szint" integer NOT NULL);
+CREATE TABLE IF NOT EXISTS "egesz_szamok_szorzasiszabaly" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "leiras" varchar(255) NOT NULL, "magyarazat" text NOT NULL, "nehezsegi_szint" integer NOT NULL);
+CREATE TABLE IF NOT EXISTS "egesz_szamok_hibastatisztika" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "szorzo" integer NOT 
+NULL, "szorzando" integer NOT NULL, "hibak_szama" integer NOT NULL, "utolso_hiba_datum" datetime NOT NULL, "user_id" bigint NOT NULL REFERENCES "account_customuser" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE IF NOT EXISTS "egesz_szamok_szintstatisztika" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "nehezsegi_szint" integer NOT NULL, "helyes_valaszok_szama" integer NOT NULL, "osszes_valasz_szama" integer NOT NULL, "teljesitesi_arany" real NOT NULL, "user_id" bigint NOT NULL REFERENCES "account_customuser" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE UNIQUE INDEX "egesz_szamok_hibastatisztika_user_id_szorzo_szorzando_a9eb5e81_uniq" ON "egesz_szamok_hibastatisztika" ("user_id", "szorzo", "szorzando");
+CREATE INDEX "egesz_szamok_hibastatisztika_user_id_7d3a7643" ON "egesz_szamok_hibastatisztika" ("user_id");
+CREATE UNIQUE INDEX "egesz_szamok_szintstatisztika_user_id_nehezsegi_szint_4c7ddc09_uniq" ON "egesz_szamok_szintstatisztika" ("user_id", "nehezsegi_szint");
+CREATE INDEX "egesz_szamok_szintstatisztika_user_id_fe97d34f" ON "egesz_szamok_szintstatisztika" ("user_id");
+CREATE TABLE IF NOT EXISTS "egesz_szamok_szorzasgyakorlatsession" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "utolso_frissites" datetime NOT NULL, "user_id" bigint NOT NULL UNIQUE REFERENCES "account_customuser" ("id") DEFERRABLE INITIALLY DEFERRED, "aktualis_nehezsegi_szint" integer NOT NULL, "gyenge_pontok" text NOT NULL CHECK ((JSON_VALID("gyenge_pontok") OR "gyenge_pontok" 
+IS NULL)), "megoldott_feladatok" text NOT NULL CHECK ((JSON_VALID("megoldott_feladatok") OR "megoldott_feladatok" IS NULL)));    
+CREATE TABLE IF NOT EXISTS "egesz_szamok_userprofile" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "points" integer NOT NULL, "badges" text NOT NULL CHECK ((JSON_VALID("badges") OR "badges" IS NULL)), "user_id" bigint NOT NULL UNIQUE REFERENCES "account_customuser" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE IF NOT EXISTS "account_customuser" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "password" varchar(128) NOT NULL, "last_login" datetime NULL, "is_superuser" bool NOT NULL, "email" varchar(254) NOT NULL UNIQUE, "first_name" varchar(150) NOT 
+NULL, "is_active" bool NOT NULL, "is_staff" bool NOT NULL, "date_joined" datetime NOT NULL, "osztaly" varchar(10) NULL, "last_name" varchar(150) NOT NULL);
