@@ -1,4 +1,4 @@
-name: Tanoda CI
+name: tanoda CI
 
 on:
   push:
