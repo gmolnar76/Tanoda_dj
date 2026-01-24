@@ -14,8 +14,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'egesz_szamok:szorzas' %}active{% endif %}" href="{% url 'egesz_szamok:szorzas' %}">
-                            Egész számok szorzása
+                        <a class="nav-link submenu-item {% if request.resolver_match.url_name == 'szorzas_vnext' %}active{% endif %}" href="{% url 'egesz_szamok:szorzas_vnext' %}">
+                            Egész számok szorzása <span class="badge bg-primary">ÚJ</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link submenu-item text-muted" href="{% url 'egesz_szamok:szorzas' %}" style="font-size: 0.9em;">
+                            <small>↳ Régi verzió</small>
                         </a>
                     </li>
                     {% comment %}

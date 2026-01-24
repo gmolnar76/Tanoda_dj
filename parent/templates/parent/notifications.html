@@ -1,0 +1,7 @@
+{% extends "parent/parent_base.html" %}
+{% block title %}Szülői értesítések{% endblock %}
+{% block content %}
+    <h2>Szülői értesítések</h2>
+    <div id="parent-notifications-root"
+         data-notifications='{{ notifications_data|safe }}'></div>
+{% endblock %}

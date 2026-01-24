@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Tanoda Parent Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard/dashboard-base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard/dark.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="parent-dashboard dark">
+    <header>
+        <nav>
+            <a href="{% url 'parent:dashboard' %}">Főoldal</a>
+            <a href="{% url 'parent:notifications' %}">Értesítések</a>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    {% block extra_scripts %}
+      {% if load_user_dashboard %}
+        <script defer src="{% static 'js/react/user_dashboard/index.js' %}"></script>
+      {% endif %}
+      {% if load_monetization_dashboard %}
+        <script defer src="{% static 'js/react/monetization_dashboard/index.js' %}"></script>
+      {% endif %}
+    {% endblock %}
+</body>
+</html>

@@ -14,6 +14,42 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'evfolyamok' %}">Évfolyamok</a>
                 </li>
+
+                <!-- Learning Modules Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="learningModulesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        📚 Tanulás
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="learningModulesDropdown">
+                        <li>
+                            <a class="dropdown-item"
+                               href="{% url 'egesz_szamok:szorzas_vnext' %}"
+                               data-react-module="multiplication">
+                                ✖️ Szorzás
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               href="{% url 'egesz_szamok:szorzas_vnext' %}"
+                               data-react-module="division">
+                                ➗ Osztás <span class="badge bg-secondary">Hamarosan</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               href="{% url 'egesz_szamok:szorzas_vnext' %}"
+                               data-react-module="fractions">
+                                ½ Törtek <span class="badge bg-secondary">Hamarosan</span>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'egesz_szamok:szorzas' %}">
+                                🔙 Régi szorzás
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 {% endif %}
 
                 {% if user.is_staff %}
@@ -50,6 +86,9 @@
                     <a class="nav-link" href="{% url 'statisztika:felhasznalo_statisztika' %}">
                         <span class="badge bg-success">User Dashboard</span>
                     </a>
+                </li>
+                <li class="nav-item">
+
                 </li>
                 {% endif %}
                 

@@ -1,0 +1,14 @@
+{% load static %}
+
+<div
+  id="react-{{ module_id }}-root"
+  data-react-mount="{{ module_id }}"
+  {% if initial_data %}
+    data-initial='{{ initial_data|safe }}'
+  {% endif %}
+>
+  <noscript>JavaScript szükséges a felület megjelenítéséhez.</noscript>
+  <div class="react-loading">Betöltés…</div>
+</div>
+
+<script src="{% static 'js/bundles/'|add:bundle_name|add:'.bundle.js' %}"></script>

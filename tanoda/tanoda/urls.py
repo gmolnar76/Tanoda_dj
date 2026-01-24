@@ -23,6 +23,12 @@ import egesz_szamok.views
 import plotly_chart.views
 import tanoda.views
 
+from .views import dashboard_view
+from .notification_api_views import (
+    ParentNotificationsView, ApprovalApproveView, ApprovalRejectView
+)
+
+
 
 urlpatterns = [
     # Adminisztrációs és alapvető útvonalak
@@ -51,6 +57,18 @@ urlpatterns = [
     path('blockly/', include('blockly.urls')),
     path('threejs_app/', include('threejs_app.urls')),
     path('tron_bit/', include('TRON_Bit.urls')),  # Hozzáadva TRON_Bit app
+    # Monetization API endpoints
+    path('api/', include('monetization.urls')),
+    path("dashboard/", dashboard_view, name="dashboard"),
+
+    # vNext Learning API endpoints
+    path('api/learning/', include('egesz_szamok.urls_vnext')),
+
+    # Notification API endpoints
+    path('api/parent/notifications/', ParentNotificationsView.as_view(), name='parent-notifications'),
+    path('api/parent/approval/<str:id>/approve', ApprovalApproveView.as_view(), name='approval-approve'),
+    path('api/parent/approval/<str:id>/reject', ApprovalRejectView.as_view(), name='approval-reject'),
+
 ]
 
 # Statikus és media fájlok kezelése fejlesztési környezetben

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'mathsolver',  # Add this line
     'kerdoiv',  # Add the new kerdoiv app here
     'threejs_app',  # Three.js alkalmazás
+    'monetization',  # Added for Monetization Engine
 ]
 
 MIDDLEWARE = [

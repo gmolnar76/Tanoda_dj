@@ -1,0 +1,157 @@
+Fájlszerkezet
+
+static/js/react/user_dashboard/
+├─ UserDashboard.jsx
+├─ components/
+│  ├─ WalletSummaryCards.jsx
+│  ├─ LedgerTimeline.jsx
+│  └─ api.js
+
+
+
+api.js – egységes fetch réteg
+
+export async function fetchDashboardSummary() {
+  const res = await fetch("/api/monetization/dashboard/summary/", {
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Summary fetch failed");
+  return res.json();
+}
+
+export async function fetchDashboardTimeline(limit = 20) {
+  const res = await fetch(
+    `/api/monetization/dashboard/timeline/?limit=${limit}`,
+    { credentials: "include" }
+  );
+  if (!res.ok) throw new Error("Timeline fetch failed");
+  return res.json();
+}
+
+
+WalletSummaryCards.jsx
+
+import React from "react";
+
+export default function WalletSummaryCards({ summary }) {
+  if (!summary) return null;
+
+  const cards = [
+    { title: "Elérhető pénz", value: summary.available, suffix: "Ft" },
+    { title: "Tanulás alatt", value: summary.locked, suffix: "Ft" },
+    { title: "Már kifizetve", value: summary.paid_out, suffix: "Ft" },
+    { title: "Finanszírozók száma", value: summary.sources_count, suffix: "forrás" },
+  ];
+
+  return (
+    <div className="grid grid-cols-4 gap-4">
+      {cards.map((c, i) => (
+        <div key={i} className="rounded-xl bg-slate-900 p-4">
+          <div className="text-sm text-slate-400">{c.title}</div>
+          <div className="text-2xl font-bold">
+            {c.value} {c.suffix}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
+
+LedgerTimeline.jsx
+
+import React from "react";
+
+export default function LedgerTimeline({ entries }) {
+  return (
+    <div className="mt-6 rounded-xl bg-slate-900 p-4">
+      <h3 className="mb-3 text-lg font-semibold">Pénzmozgások</h3>
+      <ul className="space-y-2">
+        {entries.map((e) => (
+          <li key={e.id} className="flex justify-between text-sm">
+            <span>{e.label}</span>
+            <span
+              className={
+                e.direction === "in"
+                  ? "text-green-400"
+                  : e.direction === "out"
+                  ? "text-red-400"
+                  : "text-slate-400"
+              }
+            >
+              {e.amount} Ft
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+UserDashboard.jsx
+import React, { useEffect, useState } from "react";
+import WalletSummaryCards from "./components/WalletSummaryCards";
+import LedgerTimeline from "./components/LedgerTimeline";
+import {
+  fetchDashboardSummary,
+  fetchDashboardTimeline,
+} from "./components/api";
+
+export default function UserDashboard() {
+  const [summary, setSummary] = useState(null);
+  const [timeline, setTimeline] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const s = await fetchDashboardSummary();
+        const t = await fetchDashboardTimeline();
+        setSummary(s);
+        setTimeline(t);
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+    load();
+  }, []);
+
+  if (error) {
+    return <div className="text-red-500">Hiba: {error}</div>;
+  }
+
+  return (
+    <div className="p-6 text-slate-100">
+      <h1 className="mb-4 text-2xl font-bold">Tanoda – Áttekintés</h1>
+      <WalletSummaryCards summary={summary} />
+      <LedgerTimeline entries={timeline} />
+    </div>
+  );
+}
+
+
+DJANGO TEMPLATE MOUNT
+A dashboard template-ben legyen:
+
+<div id="user-dashboard-root"></div>
+<script src="{% static 'js/bundles/user_dashboard.bundle.js' %}"></script>
+
+
+És a React entry point:
+import React from "react";
+import { createRoot } from "react-dom/client";
+import UserDashboard from "./UserDashboard";
+
+const el = document.getElementById("user-dashboard-root");
+if (el) {
+  createRoot(el).render(<UserDashboard />);
+}
+
+
+
+
+
+
+
+

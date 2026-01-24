@@ -19,6 +19,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function loadContent(url) {
+        fetch(url)
+        .then(r => r.text())
+        .then(html => {
+            content.innerHTML = html;
+
+            // 🔑 I T T
+            window.dispatchEvent(new Event('tanoda:content-ready'));
+        });
+    }
+
+
     window.addEventListener('resize', checkWidth);
     checkWidth();
 });

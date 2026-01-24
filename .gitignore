@@ -1,3 +1,6 @@
+nul
+# Ignore the plans directory
+plans/
 #######################################
 # Python / Django
 #######################################

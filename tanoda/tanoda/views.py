@@ -115,3 +115,8 @@ def evfolyam_6(request):
 
 def muveletek(request):
     return render(request, 'evfolyamok/6/muveletek.html')
+
+
+@login_required
+def dashboard_view(request):
+    return render(request, "dashboard.html")
