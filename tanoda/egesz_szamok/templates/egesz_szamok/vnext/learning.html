@@ -1,0 +1,65 @@
+{% extends "evfolyamok/6/evf6.html" %}
+
+{% load static %}
+
+{% block title %}Szorzás vNext - Tanoda{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Ensure the React app fills the container */
+    #learning-vnext-root {
+        min-height: calc(100vh - 60px);
+    }
+
+    /* Hide Django navigation when using React */
+    .learning-vnext-active .django-nav {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+
+
+{% block evf6_content %}
+    {% include "egesz_szamok/_react_mount.html" with module_id="learning-vnext" bundle_name="learning_vnext" %}
+{% endblock %}
+
+{% block extra_js %}
+
+
+<script>
+    // Module switching support (MASTER_SPEC v1.1)
+    // Intercept Django menu clicks and handle via React
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.add('learning-vnext-active');
+
+        // Intercept navigation clicks for module switching
+        document.querySelectorAll('[data-react-module]').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const module = this.getAttribute('data-react-module');
+
+                // Dispatch custom event for React to handle
+                window.dispatchEvent(new CustomEvent('tanoda-module-change', {
+                    detail: { module: module }
+                }));
+
+                // Update URL without reload (History API)
+                const newUrl = this.getAttribute('href');
+                if (newUrl) {
+                    history.pushState({ module: module }, '', newUrl);
+                }
+            });
+        });
+
+        // Handle browser back/forward
+        window.addEventListener('popstate', function(e) {
+            if (e.state && e.state.module) {
+                window.dispatchEvent(new CustomEvent('tanoda-module-change', {
+                    detail: { module: e.state.module }
+                }));
+            }
+        });
+    });
+</script>
+{% endblock %}

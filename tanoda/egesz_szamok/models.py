@@ -4,6 +4,19 @@ from django.conf import settings
 
 User = get_user_model()
 
+# Import vNext models for Django to discover them
+from .models_vnext import (
+    LearningSession,
+    LearningEvent,
+    Attempt,
+    UserLevelProgress,
+    GridCellState,
+    MasteryState,
+    LearningModule,
+    LearningMode,
+    CellState,
+)
+
 class SzorzasiSzabaly(models.Model):
     leiras = models.CharField(max_length=255)
     magyarazat = models.TextField()

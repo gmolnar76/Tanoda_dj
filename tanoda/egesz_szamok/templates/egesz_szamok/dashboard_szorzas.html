@@ -133,6 +133,7 @@
 
     // Update efficiency display (called from szorzas_gyakorlo.js)
     function updateDashboardStats(stats) {
+        console.log("Dashboard stats update received:", stats);
         if (stats.efficiency !== undefined) {
             updateEfficiencyRing(stats.efficiency);
         }

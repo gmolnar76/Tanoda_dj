@@ -5,6 +5,7 @@ import HeatmapChart from './HeatmapChart';
 import ProgressionChart from './ProgressionChart';
 import WeekdayActivityChart from './WeekdayActivityChart';
 import PitagoraszTableChart from './PitagoraszTableChart';
+import ParentNotificationsPollingPanel from "../ParentNotificationsPollingPanel";
 
 // Felhasználói Dashboard fő komponens
 const UserDashboard = ({ data }) => {
@@ -25,6 +26,7 @@ const UserDashboard = ({ data }) => {
   
   return (
     <div className="user-dashboard">
+      <ParentNotificationsPollingPanel />
       {/* Fejléc rész */}
       <div className="row mb-4">
         <div className="col-md-8">
@@ -246,7 +248,7 @@ const UserDashboard = ({ data }) => {
                     {' '}a hét {['hétfői', 'keddi', 'szerdai', 'csütörtöki', 'pénteki', 'szombati', 'vasárnapi'][data.aktivitas_hetnapok.indexOf(Math.max(...data.aktivitas_hetnapok))]} 
                     napján vagy a legaktívabb.
                   </>
-                ) : ' még nem teltél fel elég adatot az aktivitási mintád elemzéséhez.'}
+                ) : ' még nem teltél fel el elég adatot az aktivitási mintád elemzéséhez.'}
                 {' '}Próbálj meg rendszeresen, akár naponta 10-15 percet szánni a gyakorlásra!
               </p>
               <div className="alert alert-success">

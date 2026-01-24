@@ -1,0 +1,109 @@
+ # MONETIZATION ENGINE - ARCHITECTURE DESIGN
+
+  ## 1. DATA MODEL FINALIZATION
+
+  ### Wallet Model
+  ```python
+  class Wallet(models.Model):
+      user = models.OneToOneField(CustomUser, on_delete=PROTECT, primary_key=True)
+      balance_locked = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+      balance_available = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+      balance_paid_out = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+      updated_at = models.DateTimeField(auto_now=True)
+  Constraints: All balances >= 0. Index: user (PK).
+  Methods: recalculate_from_ledger(), verify_integrity().
+
+  LedgerEntry Model
+
+  class EntryType(models.TextChoices):
+      DEPOSIT = 'deposit'
+      REFUND = 'refund'
+      SYSTEM_FEE = 'system_fee'
+      LOSS = 'loss'
+      PAYOUT = 'payout'
+
+  class LedgerEntry(models.Model):
+      id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+      user = models.ForeignKey(CustomUser, on_delete=PROTECT)
+      entry_type = models.CharField(max_length=20, choices=EntryType.choices)
+      amount = models.DecimalField(max_digits=10, decimal_places=2)  # always positive
+      related_deposit = models.ForeignKey(ModuleDeposit, on_delete=PROTECT, null=True)
+      idempotency_key = models.CharField(max_length=64, unique=True)
+      created_at = models.DateTimeField(auto_now_add=True)
+  Append-only: No update/delete methods. Delete blocked at model level.
+  Index: (user, created_at), idempotency_key (unique).
+
+  ModuleDeposit Model
+
+  class DepositStatus(models.TextChoices):
+      ACTIVE = 'active'
+      SETTLED = 'settled'
+
+  class ModuleDeposit(models.Model):
+      user = models.ForeignKey(CustomUser, on_delete=PROTECT)
+      content_type = models.ForeignKey(ContentType, on_delete=PROTECT)
+      object_id = models.PositiveIntegerField()
+      learning_object = GenericForeignKey('content_type', 'object_id')
+      amount = models.DecimalField(max_digits=10, decimal_places=2)
+      status = models.CharField(max_length=10, choices=DepositStatus.choices, default='active')
+      settled_at = models.DateTimeField(null=True, blank=True)
+  State machine: active → settled (one-way, irreversible).
+
+  ---
+  2. SETTLEMENT ALGORITHM
+
+  Core Calculation
+
+  completion_ratio = earned_points / max_points  # ∈ [0, 1]
+  refund = amount × completion_ratio × 0.9
+  system_fee = amount × completion_ratio × 0.1
+  loss = amount - refund - system_fee
+
+  Edge Cases
+
+  | Case       | completion_ratio | refund | fee | loss |
+  |------------|------------------|--------|-----|------|
+  | Zero score | 0.0              | 0      | 0   | 100% |
+  | Perfect    | 1.0              | 90%    | 10% | 0    |
+  | 50%        | 0.5              | 45%    | 5%  | 50%  |
+
+  ---
+  3. TRANSACTION STRATEGY
+
+  Atomicity Requirements
+
+  with transaction.atomic():
+      select_for_update(deposit)  # Lock
+      create LedgerEntry(REFUND)
+      create LedgerEntry(SYSTEM_FEE)
+      create LedgerEntry(LOSS)
+      update Wallet balances
+      deposit.status = SETTLED
+  Rollback: Any exception → full rollback.
+  Idempotency: idempotency_key = f"{deposit.id}:{entry_type}" — unique constraint prevents duplicates.
+
+  ---
+  4. SECURITY CHECKPOINTS
+
+  - Balance validation: Before deposit creation, after settlement
+  - Double-spend prevention: select_for_update() + status check
+  - Audit: Ledger is append-only source of truth; Wallet must match SUM(ledger)
+
+  ---
+  5. INTEGRATION POINTS
+
+  - Trigger: Signal from Pontszam.save() when is_final=True
+  - Read-only: Monetization reads Pontszam, never writes
+  - Signal: post_save on score → settlement_service.process()
+
+  ---
+  Handoff ready for Sonnet implementation.
+
+  This design document provides:
+  - **Final model definitions** with Django field types
+  - **Settlement formulas** with edge case table
+  - **Atomic transaction flow** with idempotency mechanism
+  - **Security checkpoints** aligned with INVARIANTS from MASTER_SPEC
+  - **Integration strategy** via signals
+
+  Ready for model switch to Sonnet for detailed implementation.

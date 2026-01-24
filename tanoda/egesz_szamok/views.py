@@ -375,12 +375,48 @@ def kezeld_hibas_valaszt(request, szorzo, szorzando, felhasznalo_valasz, nehezse
 def szorzas_gyakorlo(request):
     if request.method == 'POST':
         try:
-            if request.content_type == 'application/json':
-                data = json.loads(request.body)
+            content_type = request.META.get('CONTENT_TYPE', '')
+            if 'application/json' in content_type:
+                try:
+                    data = json.loads(request.body)
+                except json.JSONDecodeError:
+                    data = request.POST
             else:
                 data = request.POST
 
             mod = data.get('mod', 'gyakorlo')
+            print(f"POST kérés - mod: {mod}, user: {request.user}")
+
+            # Handle special server-side reset request from widget
+            if mod == 'reset_pitagorasz':
+                print(f"Resetting Pitagorasz for user: {request.user}")
+                # Clear user-side practice state: remove wrong answers, solved tasks and reset stats
+                with transaction.atomic():
+                    # Clear session stored solved tasks and M2M relations
+                    session, _ = SzorzasGyakorlatSession.objects.get_or_create(user=request.user)
+                    session.megoldott_feladatok = []
+                    session.gyenge_pontok = {}
+                    session.aktualis_nehezsegi_szint = 1
+                    session.save()
+                    session.helyes_valaszok.clear()
+
+                    # Delete detailed wrong answers for this user
+                    deleted_hibas, _ = HibasValasz.objects.filter(user=request.user).delete()
+                    print(f"Deleted {deleted_hibas} HibasValasz records")
+
+                    # Delete aggregated error stats and per-level stats for a clean start
+                    deleted_hiba_stat, _ = HibaStatisztika.objects.filter(user=request.user).delete()
+                    print(f"Deleted {deleted_hiba_stat} HibaStatisztika records")
+                    
+                    deleted_szint_stat, _ = SzintStatisztika.objects.filter(user=request.user).delete()
+                    print(f"Deleted {deleted_szint_stat} SzintStatisztika records")
+
+                return JsonResponse({
+                    'status': 'ok', 
+                    'message': f'Pitagorasz adatbázis resetelve. Törölve: {deleted_hibas} hiba.',
+                    'deleted_count': deleted_hibas
+                })
+
             szorzo = int(data.get('szorzo', 0))
             szorzando = int(data.get('szorzando', 0))
             felhasznalo_valasz = int(data.get('valasz', 0))

@@ -1,110 +1,169 @@
 /* Időbélyeg10.10 18:22*/
 
 // Globális változók
+
+// Globális változók
 let currentHighlightedCell = null;
 let hibasValaszok = [];
-let hibaGyakorisagAdatok = {}; // Hibagyakoriság tárolására
-let felhasznaloEredmenyei = {}; // Felhasználó eredményeinek tárolására
-let hibaGyakorisagMap = {}; // Heatmap error frequency tracking: {"1-1": 0, "1-2": 3, ...}
+let hibaGyakorisagAdatok = {};
+let felhasznaloEredmenyei = [];
+let hibaGyakorisagMap = {};
+// Scoring mode: when false (default), practice mode is active and no points are awarded
+let scoringEnabled = false;
 
-// Update heatmap visualization based on error frequency
-function updateHeatmap(szorzo, szorzando, isCorrect) {
-    const key = `${szorzo}-${szorzando}`;
-
-    // Initialize error count if doesn't exist
-    if (!hibaGyakorisagMap[key]) {
-        hibaGyakorisagMap[key] = 0;
-    }
-
-    // Increment error count if answer was incorrect
-    if (!isCorrect) {
-        hibaGyakorisagMap[key]++;
-    }
-
-    // Apply heatmap class to cell
-    const cellId = `cell-${szorzo}-${szorzando}`;
-    const cell = document.getElementById(cellId);
-
-    if (cell) {
-        // Remove old heatmap classes
-        for (let i = 0; i <= 5; i++) {
-            cell.classList.remove(`heatmap-${i}`);
+// Dinamikus tábla generálás
+function createPitagoraszTable(size = 10) {
+    const tableContainer = document.getElementById('pythagoras-table');
+    if (!tableContainer) return;
+    tableContainer.innerHTML = '';
+    tableContainer.style.display = 'grid';
+    tableContainer.style.gridTemplateColumns = `repeat(${size+1}, 1fr)`;
+    tableContainer.style.gridTemplateRows = `repeat(${size+1}, 1fr)`;
+    for (let j = 0; j <= size; j++) {
+        const cell = document.createElement('div');
+        cell.className = 'pythagoras-grid-item';
+        if (j === 0) {
+            cell.textContent = 'X';
+            cell.className += ' pythagoras-header-cell';
+        } else {
+            cell.textContent = j;
+            cell.className += ' pythagoras-header-cell';
         }
-
-        // Add new heatmap class based on error count
-        const errorCount = hibaGyakorisagMap[key];
-        const heatmapLevel = Math.min(errorCount, 5);
-        cell.classList.add(`heatmap-${heatmapLevel}`);
+        tableContainer.appendChild(cell);
+    }
+    for (let i = 1; i <= size; i++) {
+        const headerCell = document.createElement('div');
+        headerCell.className = 'pythagoras-grid-item pythagoras-header-cell';
+        headerCell.textContent = i;
+        tableContainer.appendChild(headerCell);
+        for (let j = 1; j <= size; j++) {
+            const cell = document.createElement('div');
+            cell.className = 'pythagoras-grid-item';
+            const eredmeny = i * j;
+            cell.dataset.eredmeny = eredmeny;
+            cell.dataset.szorzo = i;
+            cell.dataset.szorzando = j;
+            cell.id = `pythagoras-cell-${i}-${j}`;
+            cell.title = `${i} × ${j} = ${eredmeny}`;
+            tableContainer.appendChild(cell);
+        }
     }
 }
 
-// Add badge to cell (correct or error badge)
-function addBadgeToCell(szorzo, szorzando, type) {
-    const cellId = `cell-${szorzo}-${szorzando}`;
-    const cell = document.getElementById(cellId);
+// Heatmap és badge helper függvények (minimal, működő implementáció)
+function updateHeatmap(szorzo, szorzando, isCorrect) {
+    const a = Math.abs(szorzo), b = Math.abs(szorzando);
+    const key = `${a}-${b}`;
+    if (typeof hibaGyakorisagMap !== 'object') hibaGyakorisagMap = {};
+    if (!Number.isFinite(hibaGyakorisagMap[key])) hibaGyakorisagMap[key] = 0;
 
+    // Növeljük a hibaszámot ha rossz, esetleg csökkentjük ha javítva
+    if (!isCorrect) {
+        hibaGyakorisagMap[key] += 1;
+    } else {
+        hibaGyakorisagMap[key] = Math.max(0, hibaGyakorisagMap[key] - 1);
+    }
+
+    const level = Math.min(5, Math.floor(hibaGyakorisagMap[key]));
+    const cell = document.getElementById(`pythagoras-cell-${a}-${b}`);
+    if (!cell) return;
+    for (let i = 0; i <= 5; i++) cell.classList.remove(`heatmap-${i}`);
+    cell.classList.add(`heatmap-${level}`);
+}
+
+function addBadgeToCell(szorzo, szorzando, type) {
+    const a = Math.abs(szorzo), b = Math.abs(szorzando);
+    const cell = document.getElementById(`pythagoras-cell-${a}-${b}`);
     if (!cell) return;
 
-    // Make cell position relative for absolute badges
-    cell.style.position = 'relative';
-
-    // Create badge container if doesn't exist
-    let badgeContainer = cell.querySelector('.cell-badge');
-    if (!badgeContainer) {
-        badgeContainer = document.createElement('div');
-        badgeContainer.className = 'cell-badge';
-        cell.appendChild(badgeContainer);
+    cell.style.position = cell.style.position || 'relative';
+    let container = cell.querySelector('.pythagoras-cell-badge');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'pythagoras-cell-badge';
+        container.style.position = 'absolute';
+        container.style.top = '4px';
+        container.style.right = '4px';
+        container.style.display = 'flex';
+        container.style.gap = '4px';
+        cell.appendChild(container);
     }
 
-    // Check if badge already exists - prevent duplicates
-    const existingBadge = badgeContainer.querySelector(`.badge-${type}`);
-    if (existingBadge) return; // Don't add duplicate badges
+    if (container.querySelectorAll('.pythagoras-badge-icon').length >= 3) return;
 
-    // Limit total badges to 3 to prevent overcrowding
-    const existingBadges = badgeContainer.querySelectorAll('.badge-icon');
-    if (existingBadges.length >= 3) {
-        // Remove oldest badge if at limit
-        existingBadges[0].remove();
-    }
-
-    // Add badge icon
     const badge = document.createElement('div');
-    badge.className = `badge-icon badge-${type}`;
-    badge.innerHTML = type === 'correct' ? '✓' : '✗';
-    badgeContainer.appendChild(badge);
+    badge.className = 'pythagoras-badge-icon pythagoras-badge-' + (type || 'info');
+    badge.textContent = type === 'correct' ? '✓' : (type === 'error' ? '✗' : '•');
+    badge.style.fontSize = '0.8em';
+    badge.style.padding = '0 4px';
+    badge.style.color = 'white';
+    badge.style.background = (type === 'correct' ? 'green' : (type === 'error' ? 'crimson' : 'gray'));
+    badge.style.borderRadius = '6px';
+    container.appendChild(badge);
+}
 
-    // Update error counter
-    if (type === 'error') {
-        let errorCounter = cell.querySelector('.error-counter');
-        if (!errorCounter) {
-            errorCounter = document.createElement('div');
-            errorCounter.className = 'error-counter';
-            errorCounter.textContent = '1';
-            cell.appendChild(errorCounter);
+function renderPitagoraszTable(userData, size) {
+    const tableContainer = document.getElementById('pythagoras-table');
+    if (!tableContainer) return;
+    tableContainer.style.display = 'grid';
+    tableContainer.style.gridTemplateColumns = `repeat(${size+1}, 1fr)`;
+    tableContainer.style.gridTemplateRows = `repeat(${size+1}, 1fr)`;
+    const { megoldottFeladatok, hibasValaszok } = userData;
+    for (let j = 0; j <= size; j++) {
+        const cell = document.createElement('div');
+        if (j === 0) {
+            cell.className = 'pythagoras-grid-item pythagoras-header-cell';
+            cell.textContent = 'X';
         } else {
-            const count = parseInt(errorCounter.textContent) + 1;
-            errorCounter.textContent = count.toString();
+            cell.className = 'pythagoras-grid-item pythagoras-header-cell';
+            cell.textContent = j;
+        }
+        tableContainer.appendChild(cell);
+    }
+    for (let i = 1; i <= size; i++) {
+        const headerCell = document.createElement('div');
+        headerCell.className = 'pythagoras-grid-item pythagoras-header-cell';
+        headerCell.textContent = i;
+        tableContainer.appendChild(headerCell);
+        for (let j = 1; j <= size; j++) {
+            const cell = document.createElement('div');
+            cell.className = 'pythagoras-grid-item';
+            const eredmeny = i * j;
+            cell.dataset.eredmeny = eredmeny;
+            cell.dataset.szorzo = i;
+            cell.dataset.szorzando = j;
+            cell.id = `pythagoras-cell-${i}-${j}`;
+            cell.title = `${i} × ${j} = ${eredmeny}`;
+            cell.addEventListener('click', () => cellClickHandler(i, j));
+            // Állapot szerinti színezés
+            let state = 'pythagoras-neutral';
+            if (megoldottFeladatok && Array.isArray(megoldottFeladatok)) {
+                const megoldva = megoldottFeladatok.some(
+                    f => (f.szorzo === i && f.szorzando === j) || (f.szorzo === j && f.szorzando === i)
+                );
+                if (megoldva) {
+                    cell.textContent = eredmeny;
+                    state = 'pythagoras-correct';
+                }
+            }
+            if (hibasValaszok && Array.isArray(hibasValaszok)) {
+                const hibas = hibasValaszok.some(
+                    f => (f.szorzo === i && f.szorzando === j) || (f.szorzo === j && f.szorzando === i)
+                );
+                if (hibas) {
+                    state = 'pythagoras-error';
+                }
+            }
+            cell.classList.add(state);
+            tableContainer.appendChild(cell);
         }
     }
+    // Hibás válaszok betöltése
+    if (hibasValaszok && Array.isArray(hibasValaszok) && hibasValaszok.length > 0) {
+        restoreHibasValaszok(hibasValaszok);
+    }
 }
-
-// A Pitagorasz-tábla létrehozása a felhasználó adataival
-function createPitagoraszTable() {
-    const tableContainer = document.getElementById('pitagorasz-tabla');
-    if (!tableContainer) return;
-    
-    tableContainer.innerHTML = '';  // Töröljük a meglévő tartalmat
-    
-    // Lekérjük a felhasználó adatait az adatbázisból
-    fetchUserData().then(userData => {
-        // Az adatok megérkezése után generáljuk a táblát
-        renderPitagoraszTable(userData);
-    }).catch(error => {
-        console.error('Hiba a felhasználói adatok lekérésekor:', error);
-        // Hiba esetén üres táblát jelenítünk meg
-        renderEmptyPitagoraszTable();
-    });
-}
+// --- DINAMIKUS TÁBLA MÉRET JAVÍTÁS VÉGE ---
 
 // Felhasználói adatok lekérése az adatbázisból
 function fetchUserData() {
@@ -139,16 +198,16 @@ function renderEmptyPitagoraszTable() {
     // Először létrehozzuk a fejléc sort (0-adik sor)
     for (let j = 0; j <= 22; j++) {
         const cell = document.createElement('div');
-        cell.className = 'grid-item';
+        cell.className = 'pythagoras-grid-item';
         
         if (j === 0) {
             // A bal felső sarok cella (fejléc)
             cell.textContent = 'X';
-            cell.className += ' header-cell';
+            cell.className += ' pythagoras-header-cell';
         } else {
             // Felső fejléc cellák (szorzók)
             cell.textContent = j;
-            cell.className += ' header-cell';
+            cell.className += ' pythagoras-header-cell';
         }
         
         tableContainer.appendChild(cell);
@@ -158,21 +217,21 @@ function renderEmptyPitagoraszTable() {
     for (let i = 1; i <= 22; i++) {
         // Először a bal oldali fejléc cellát (szorzandók)
         const headerCell = document.createElement('div');
-        headerCell.className = 'grid-item header-cell';
+        headerCell.className = 'pythagoras-grid-item pythagoras-header-cell';
         headerCell.textContent = i;
         tableContainer.appendChild(headerCell);
         
         // Majd a belső cellákat
         for (let j = 1; j <= 22; j++) {
             const cell = document.createElement('div');
-            cell.className = 'grid-item';
+            cell.className = 'pythagoras-grid-item';
             
             // Csak az eredmény alapértékét tároljuk a data attribútumban
             const eredmeny = i * j;
             cell.dataset.eredmeny = eredmeny;
             cell.dataset.szorzo = i;
             cell.dataset.szorzando = j;
-            cell.id = `cell-${i}-${j}`;
+            cell.id = `pythagoras-cell-${i}-${j}`;
             cell.title = `${i} × ${j} = ${eredmeny}`;
             
             tableContainer.appendChild(cell);
@@ -182,7 +241,7 @@ function renderEmptyPitagoraszTable() {
 
 // Pitagorasz-tábla renderelése a felhasználó adataival
 function renderPitagoraszTable(userData) {
-    const tableContainer = document.getElementById('pitagorasz-tabla');
+    const tableContainer = document.getElementById('pythagoras-table');
     if (!tableContainer) return;
     
     const { megoldottFeladatok, hibasValaszok } = userData;
@@ -193,11 +252,11 @@ function renderPitagoraszTable(userData) {
         
         if (j === 0) {
             // A bal felső sarok cella (fejléc)
-            cell.className = 'grid-item header-cell';
+            cell.className = 'pythagoras-grid-item pythagoras-header-cell';
             cell.textContent = 'X';
         } else {
             // Felső fejléc cellák (szorzók)
-            cell.className = 'grid-item header-cell';
+            cell.className = 'pythagoras-grid-item pythagoras-header-cell';
             cell.textContent = j;
         }
         
@@ -206,42 +265,44 @@ function renderPitagoraszTable(userData) {
     
     // Ezután létrehozzuk a többi sort
     for (let i = 1; i <= 22; i++) {
-        // Először a bal oldali fejléc cellát (szorzandók) - csak az első oszlop header-cell
+        // Bal oldali fejléc cella
         const headerCell = document.createElement('div');
-        headerCell.className = 'grid-item header-cell';
+        headerCell.className = 'pythagoras-grid-item pythagoras-header-cell';
         headerCell.textContent = i;
         tableContainer.appendChild(headerCell);
-        
-        // Majd a belső cellákat
+
+        // Belső cellák
         for (let j = 1; j <= 22; j++) {
             const cell = document.createElement('div');
-            cell.className = 'grid-item';
-            
+            cell.className = 'pythagoras-grid-item';
             const eredmeny = i * j;
             cell.dataset.eredmeny = eredmeny;
             cell.dataset.szorzo = i;
             cell.dataset.szorzando = j;
-            cell.id = `cell-${i}-${j}`;
-            
-            // Tooltip alapértelmezetten
+            cell.id = `pythagoras-cell-${i}-${j}`;
             cell.title = `${i} × ${j} = ${eredmeny}`;
-            
-            // Kattintás eseménykezelő - csak a belső cellákhoz
             cell.addEventListener('click', () => cellClickHandler(i, j));
-            
-            // Ellenőrizzük, hogy a felhasználó megoldotta-e már ezt a feladatot
+
+            // Állapot szerinti színezés
+            let state = 'pythagoras-neutral';
             if (megoldottFeladatok && Array.isArray(megoldottFeladatok)) {
                 const megoldva = megoldottFeladatok.some(
-                    f => (f.szorzo === i && f.szorzando === j) || 
-                         (f.szorzo === j && f.szorzando === i)
+                    f => (f.szorzo === i && f.szorzando === j) || (f.szorzo === j && f.szorzando === i)
                 );
-                
                 if (megoldva) {
                     cell.textContent = eredmeny;
-                    cell.classList.add('revealed');
+                    state = 'pythagoras-correct';
                 }
             }
-            
+            if (hibasValaszok && Array.isArray(hibasValaszok)) {
+                const hibas = hibasValaszok.some(
+                    f => (f.szorzo === i && f.szorzando === j) || (f.szorzo === j && f.szorzando === i)
+                );
+                if (hibas) {
+                    state = 'pythagoras-error';
+                }
+            }
+            cell.classList.add(state);
             tableContainer.appendChild(cell);
         }
     }
@@ -301,7 +362,7 @@ function generateExerciseForCell(szorzo, szorzando) {
 
 // Helyes válasz kiemelése
 function highlightCorrectAnswer(szorzo, szorzando, eredmeny) {
-    const cellId = `cell-${Math.abs(szorzo)}-${Math.abs(szorzando)}`;
+    const cellId = `pythagoras-cell-${Math.abs(szorzo)}-${Math.abs(szorzando)}`;
     const cell = document.getElementById(cellId);
     
     if (cell) {
@@ -329,7 +390,7 @@ function restoreHibasValaszok(hibasValaszokData) {
     hibasValaszok.forEach(valasz => {
         const szorzo = Math.abs(valasz.szorzo);
         const szorzando = Math.abs(valasz.szorzando);
-        const cellId = `cell-${szorzo}-${szorzando}`;
+        const cellId = `pythagoras-cell-${szorzo}-${szorzando}`;
         const cell = document.getElementById(cellId);
         
         if (cell) {
@@ -370,18 +431,118 @@ function updatePitagoraszTable(szorzo, szorzando, eredmeny) {
         }
     }
 
-    // Hozzáadjuk a felhasználó megoldott feladataihoz
-    if (!felhasznaloEredmenyei.some(f =>
-        (f.szorzo === szorzo && f.szorzando === szorzando) ||
-        (f.szorzo === szorzando && f.szorzando === szorzo)
-    )) {
-        felhasznaloEredmenyei.push({
-            szorzo: szorzo,
-            szorzando: szorzando,
-            eredmeny: eredmeny
-        });
+    // Hozzáadjuk a felhasználó megoldott feladataihoz (csak ha pontozás engedélyezve)
+    if (scoringEnabled) {
+        if (!felhasznaloEredmenyei.some(f =>
+            (f.szorzo === szorzo && f.szorzando === szorzando) ||
+            (f.szorzo === szorzando && f.szorzando === szorzo)
+        )) {
+            felhasznaloEredmenyei.push({
+                szorzo: szorzo,
+                szorzando: szorzando,
+                eredmeny: eredmeny
+            });
+        }
     }
 }
+
+// Reset practice session: clear user results, errors, heatmap and badges from table
+function resetPracticeSession(persist = true) {
+    const doClientReset = () => {
+        felhasznaloEredmenyei = [];
+        hibasValaszok = [];
+        hibaGyakorisagMap = {};
+        hibaGyakorisagAdatok = {};
+        currentHighlightedCell = null;
+
+        const cells = document.querySelectorAll('.pythagoras-grid-item');
+        cells.forEach(cell => {
+            // keep header cells as-is
+            if (cell.classList.contains('pythagoras-header-cell')) return;
+
+            // remove state classes
+            cell.classList.remove('pythagoras-correct', 'pythagoras-error', 'pythagoras-neutral', 'hibas', 'hibas-ertek', 'revealed', 'current-highlight');
+            for (let i = 0; i <= 5; i++) cell.classList.remove(`heatmap-${i}`);
+
+            // remove badges container if present
+            const badgeContainer = cell.querySelector('.pythagoras-cell-badge');
+            if (badgeContainer) badgeContainer.remove();
+
+            // clear displayed value (keep title/data attributes)
+            cell.textContent = '';
+        });
+    };
+
+    if (persist) {
+        fetch('/egesz_szamok/szorzas/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ mod: 'reset_pitagorasz' })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Reset request failed');
+            return response.json().catch(() => ({ status: 'ok' }));
+        })
+        .then(data => {
+            console.log('Szerver reset sikeres:', data);
+        })
+        .catch(error => {
+            console.error('Hiba a reset küldésekor:', error);
+        })
+        .finally(() => {
+            doClientReset();
+            
+            // Small delay to ensure DB consistency before fetching fresh stats
+            setTimeout(() => {
+                console.log('Friss statisztikák lekérése...');
+                // Add timestamp to avoid caching
+                fetch(`/egesz_szamok/szorzas/?t=${Date.now()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(resp => {
+                    if (!resp.ok) throw new Error('Network response was not ok');
+                    return resp.json();
+                })
+                .then(data => {
+                    console.log('Friss statisztikák megérkeztek:', data);
+                    const payload = {
+                        efficiency: data.hatekonysag || 0,
+                        correct: data.megoldott_feladatok || [],
+                        incorrect: data.hibas_valaszok || [],
+                        gyenge_pontok: data.gyenge_pontok || [],
+                        total_points: data.osszes_pont || 0
+                    };
+                    if (typeof window.updateDashboardStats === 'function') {
+                        window.updateDashboardStats(payload);
+                    }
+                })
+                .catch(err => {
+                    console.error('Hiba a statisztikák frissítésekor:', err);
+                    // Fallback: zero out counters manually if fetch fails
+                    const helyes = document.getElementById('helyes-szam');
+                    const helytelen = document.getElementById('helytelen-szam');
+                    if (helyes) helyes.textContent = '0';
+                    if (helytelen) helytelen.textContent = '0';
+                });
+            }, 300);
+        });
+    } else {
+        doClientReset();
+    }
+}
+
+// Enable or disable scoring (use false for practice mode)
+function setPitagorasScoring(enabled) {
+    scoringEnabled = !!enabled;
+}
+
+// Expose control helpers for templates/buttons
+window.resetPracticeSession = resetPracticeSession;
+window.setPitagorasScoring = setPitagorasScoring;
 
 // CSRF token lekérése
 function getCookie(name) {
@@ -407,6 +568,43 @@ if (typeof window.buildPitagoraszTable !== 'function') {
         }
         console.warn('buildPitagoraszTable shim called but createPitagoraszTable is not defined');
     };
+}
+
+// Dynamic grid size handling
+function setTableSize(size, btn) {
+    // Update active button
+    document.querySelectorAll('.table-filter .filter-btn').forEach(b =>
+        b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    // Update grid template dynamically
+    const table = document.getElementById('pythagoras-table');
+    if (table) {
+        table.style.gridTemplateColumns = `repeat(${size + 1}, 1fr)`;
+        table.style.gridTemplateRows = `repeat(${size + 1}, 1fr)`;
+    }
+
+    // Rebuild table with new size
+    if (typeof createPitagoraszTable === 'function') {
+        createPitagoraszTable(size);
+    }
+}
+
+// Aspect ratio fallback for older browsers
+if (!CSS.supports('aspect-ratio', '1/1')) {
+    console.log('Aspect ratio not supported, using JS fallback');
+
+    function enforceSquareCells() {
+        const cells = document.querySelectorAll('.pythagoras-grid-item');
+        cells.forEach(cell => {
+            const width = cell.offsetWidth;
+            cell.style.height = width + 'px';
+        });
+    }
+
+    // Run on load and resize
+    window.addEventListener('load', enforceSquareCells);
+    window.addEventListener('resize', enforceSquareCells);
 }
 
 // Inicializálás

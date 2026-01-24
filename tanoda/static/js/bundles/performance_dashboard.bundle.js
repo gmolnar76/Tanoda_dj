@@ -1,0 +1,1 @@
+console.log("performance_dashboard stub loaded");

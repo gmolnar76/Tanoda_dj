@@ -19,10 +19,15 @@
         └── 📁migrations
             └── 📁__pycache__
                 ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
                 ├── 0001_initial.cpython-312.pyc
+                ├── 0001_initial.cpython-313.pyc
                 ├── 0002_alter_customuser_date_joined.cpython-312.pyc
+                ├── 0002_alter_customuser_date_joined.cpython-313.pyc
                 ├── 0003_customuser_osztaly_alter_customuser_first_name_and_more.cpython-312.pyc
+                ├── 0003_customuser_osztaly_alter_customuser_first_name_and_more.cpython-313.pyc
                 ├── 0004_alter_customuser_first_name_alter_customuser_groups_and_more.cpython-312.pyc
+                ├── 0004_alter_customuser_first_name_alter_customuser_groups_and_more.cpython-313.pyc
             ├── __init__.py
             ├── 0001_initial.py
             ├── 0002_alter_customuser_date_joined.py
@@ -51,10 +56,13 @@
             ├── models.cpython-312.pyc
             ├── models.cpython-313.pyc
             ├── urls.cpython-312.pyc
+            ├── urls.cpython-313.pyc
             ├── views.cpython-312.pyc
+            ├── views.cpython-313.pyc
         └── 📁migrations
             └── 📁__pycache__
                 ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
             ├── __init__.py
         └── 📁templates
             └── 📁3d_blockly
@@ -108,10 +116,15 @@
                     ├── 0002_megoldasimodszer_szorzasiszabaly_and_more.py
                     ├── 0003_hibasvalasz.py
                 ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
                 ├── 0001_initial.cpython-312.pyc
+                ├── 0001_initial.cpython-313.pyc
                 ├── 0002_helyesvalasz_nehezsegi_szint_and_more.cpython-312.pyc
+                ├── 0002_helyesvalasz_nehezsegi_szint_and_more.cpython-313.pyc
                 ├── 0003_szorzasgyakorlatsession_megoldott_feladatok.cpython-312.pyc
+                ├── 0003_szorzasgyakorlatsession_megoldott_feladatok.cpython-313.pyc
                 ├── 0004_userprofile.cpython-312.pyc
+                ├── 0004_userprofile.cpython-313.pyc
             ├── __init__.py
             ├── 0001_initial.py
             ├── 0002_helyesvalasz_nehezsegi_szint_and_more.py
@@ -122,14 +135,12 @@
                 └── 📁ciklusok
                     ├── ciklusok.html
                 └── 📁szorzas
-                    ├── front.jpg
-                    ├── GUI pithagoras.jpg
                     ├── GUI_.jpg
                     ├── GUI.jpg
                     ├── GUI.png
-                    ├── hiba.jpg
-                    ├── login.jpg
+                    ├── PYTHAGORAS_DASHBOARD_FUNKCIONALITAS.md
                     ├── pythagoras.html
+                    ├── pythagoras.jpg
                     ├── pythagoras.md
                     ├── script.txt
                     ├── szorzas_gyakorlo.md
@@ -175,11 +186,15 @@
             ├── models.cpython-312.pyc
             ├── models.cpython-313.pyc
             ├── urls.cpython-312.pyc
+            ├── urls.cpython-313.pyc
             ├── views.cpython-312.pyc
+            ├── views.cpython-313.pyc
         └── 📁migrations
             └── 📁__pycache__
                 ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
                 ├── 0001_initial.cpython-312.pyc
+                ├── 0001_initial.cpython-313.pyc
             ├── __init__.py
             ├── 0001_initial.py
         └── 📁templates
@@ -212,6 +227,7 @@
         └── 📁migrations
             └── 📁__pycache__
                 ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
             ├── __init__.py
         └── 📁templates
             └── 📁mathsolver
@@ -240,6 +256,59 @@
         ├── particle.html
         ├── particle2.html
         ├── xs.html
+    └── 📁monetization
+        └── 📁__pycache__
+            ├── __init__.cpython-312.pyc
+            ├── __init__.cpython-313.pyc
+            ├── admin.cpython-312.pyc
+            ├── admin.cpython-313.pyc
+            ├── api_views.cpython-312.pyc
+            ├── api_views.cpython-313.pyc
+            ├── dashboard_views.cpython-312.pyc
+            ├── dashboard_views.cpython-313.pyc
+            ├── models.cpython-312.pyc
+            ├── models.cpython-313.pyc
+            ├── urls.cpython-312.pyc
+            ├── urls.cpython-313.pyc
+        └── 📁migrations
+            └── 📁__pycache__
+                ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
+                ├── 0001_initial.cpython-312.pyc
+                ├── 0001_initial.cpython-313.pyc
+            ├── __init__.py
+            ├── 0001_initial.py
+        └── 📁services
+            └── 📁__pycache__
+                ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
+                ├── settlement.cpython-312.pyc
+                ├── settlement.cpython-313.pyc
+            ├── __init__.py
+            ├── settlement.py
+        └── 📁tests
+            └── 📁__pycache__
+                ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
+                ├── test_models.cpython-312.pyc
+                ├── test_models.cpython-313.pyc
+                ├── test_rollback.cpython-312.pyc
+                ├── test_rollback.cpython-313.pyc
+                ├── test_settlement.cpython-312.pyc
+                ├── test_settlement.cpython-313.pyc
+            ├── __init__.py
+            ├── test_models.py
+            ├── test_rollback.py
+            ├── test_settlement.py
+        ├── __init__.py
+        ├── admin.py
+        ├── api_views.py
+        ├── COPILOT_SPEC.md
+        ├── dashboard_views.py
+        ├── Gyerek Monetizációs Dashboard.txt
+        ├── models.py
+        ├── README_MONETIZATION.md
+        ├── urls.py
     └── 📁navbar
         └── 📁__pycache__
             ├── __init__.cpython-312.pyc
@@ -251,10 +320,13 @@
             ├── models.cpython-312.pyc
             ├── models.cpython-313.pyc
             ├── urls.cpython-312.pyc
+            ├── urls.cpython-313.pyc
             ├── views.cpython-312.pyc
+            ├── views.cpython-313.pyc
         └── 📁migrations
             └── 📁__pycache__
                 ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
             ├── __init__.py
         └── 📁templates
             └── 📁navbar
@@ -277,11 +349,13 @@
             ├── models.cpython-312.pyc
             ├── models.cpython-313.pyc
             ├── urls.cpython-312.pyc
+            ├── urls.cpython-313.pyc
             ├── views.cpython-312.pyc
             ├── views.cpython-313.pyc
         └── 📁migrations
             └── 📁__pycache__
                 ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
             ├── __init__.py
         └── 📁templates
             └── 📁plotly
@@ -312,6 +386,7 @@
             ├── models.cpython-312.pyc
             ├── models.cpython-313.pyc
             ├── scoring_service.cpython-312.pyc
+            ├── scoring_service.cpython-313.pyc
             ├── urls.cpython-312.pyc
             ├── urls.cpython-313.pyc
             ├── views.cpython-312.pyc
@@ -319,6 +394,7 @@
         └── 📁management
             └── 📁__pycache__
                 ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
             └── 📁commands
                 └── 📁__pycache__
                     ├── __init__.cpython-312.pyc
@@ -329,9 +405,13 @@
         └── 📁migrations
             └── 📁__pycache__
                 ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
                 ├── 0001_initial.cpython-312.pyc
+                ├── 0001_initial.cpython-313.pyc
                 ├── 0002_kihivas.cpython-312.pyc
+                ├── 0002_kihivas.cpython-313.pyc
                 ├── 0003_badge_pontozasikategoria_streak_userlevel_userbadge.cpython-312.pyc
+                ├── 0003_badge_pontozasikategoria_streak_userlevel_userbadge.cpython-313.pyc
             ├── __init__.py
             ├── 0001_initial.py
             ├── 0002_kihivas.py
@@ -444,6 +524,9 @@
                 ├── admin_dashboard.bundle.js
                 ├── admin_dashboard.bundle.js.LICENSE.txt
                 ├── main.bundle.js
+                ├── monetization_dashboard.bundle.js
+                ├── monetization_dashboard.bundle.js.LICENSE.txt
+                ├── performance_dashboard.bundle.js
                 ├── plotly_chart.bundle.js
                 ├── plotly_chart.bundle.js.LICENSE.txt
                 ├── pythagorasz_tabla_bundle.bundle.js
@@ -472,6 +555,10 @@
                         ├── ProgressionChart.jsx
                     ├── chartsamples.jsx
                     ├── index.js
+                └── 📁monetization_dashboard
+                    ├── index.js
+                └── 📁performance_dashboard
+                    ├── index.js
                 └── 📁plotly_chart
                     └── 📁components
                         ├── 2D_area.jsx
@@ -492,13 +579,34 @@
                 └── 📁user_dashboard
                     └── 📁components
                         ├── ActivityChart.jsx
+                        ├── api.js
                         ├── HeatmapChart.jsx
+                        ├── LedgerTimeline.jsx
                         ├── PerformanceChart.jsx
                         ├── PitagoraszTableChart.jsx
                         ├── ProgressionChart.jsx
                         ├── UserDashboard.jsx
+                        ├── WalletSummaryCards.jsx
                         ├── WeekdayActivityChart.jsx
+                    ├── ApprovalRequestCard.jsx
+                    ├── ApprovalRequestCard.md
+                    ├── CheckoutActionBar.jsx
+                    ├── CheckoutAmountSelector.jsx
+                    ├── CheckoutPage.jsx
+                    ├── CheckoutSkeleton.jsx
+                    ├── CheckoutStatus.jsx
+                    ├── CheckoutSummary.jsx
                     ├── index.js
+                    ├── NotificationItem.jsx
+                    ├── ParentNotificationsPanel.jsx
+                    ├── ParentNotificationsPollingPanel.jsx
+                    ├── PaymentLinkModal.jsx
+                    ├── SponsorAddInput.jsx
+                    ├── SponsorsActionBar.jsx
+                    ├── SponsorsList.jsx
+                    ├── SponsorsPanel.jsx
+                    ├── Toast.jsx
+                    ├── UserDashboard.jsx
                 ├── index.js
             └── 📁szorzas
                 └── 📁gyakorlo
@@ -1017,6 +1125,9 @@
             ├── cube_task.js
             ├── heart.js
             ├── sphere_task.js
+        └── 📁testwidget
+            ├── pitagorasz_tabla_test.js
+            ├── pythagoras_test.css
         └── 📁three
             ├── blockly_three
             ├── three_init.js
@@ -1076,6 +1187,7 @@
         └── 📁migrations
             └── 📁__pycache__
                 ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
             ├── __init__.py
         └── 📁templates
             └── 📁statisztika
@@ -1098,6 +1210,8 @@
             ├── context_processors.cpython-312.pyc
             ├── models.cpython-312.pyc
             ├── models.cpython-313.pyc
+            ├── notification_api_views.cpython-312.pyc
+            ├── serializers.cpython-312.pyc
             ├── settings.cpython-312.pyc
             ├── settings.cpython-313.pyc
             ├── urls.cpython-312.pyc
@@ -1105,6 +1219,13 @@
             ├── views.cpython-312.pyc
             ├── views.cpython-313.pyc
             ├── wsgi.cpython-312.pyc
+            ├── wsgi.cpython-313.pyc
+        └── 📁migrations
+            └── 📁__pycache__
+                ├── __init__.cpython-312.pyc
+                ├── 0001_initial.cpython-312.pyc
+            ├── __init__.py
+            ├── 0001_initial.py
         └── 📁templates
             └── 📁evfolyamok
                 └── 📁4
@@ -1128,19 +1249,26 @@
                     ├── dynamic_sidebar.html
                     ├── sidebar.html
                 ├── base_evfolyam.html
+            ├── dashboard copy.html
+            ├── dashboard.html
             ├── evfolyam.html
             ├── evfolyamok.html
             ├── index.html
             ├── layout.html
+        └── 📁tests
+            ├── test_notifications.py
         ├── __init__.py
         ├── asgi.py
         ├── context_processors.py
         ├── models.py
+        ├── notification_api_views.py
+        ├── serializers.py
         ├── settings.py
         ├── urls.py
         ├── views.py
         ├── wsgi.py
     └── 📁templates
+        └── 📁money_board
         └── 📁tanoda
         ├── _szorzas_helyiertek_matrix_
         ├── background_animation.html
@@ -1155,10 +1283,13 @@
             ├── models.cpython-312.pyc
             ├── models.cpython-313.pyc
             ├── urls.cpython-312.pyc
+            ├── urls.cpython-313.pyc
             ├── views.cpython-312.pyc
+            ├── views.cpython-313.pyc
         └── 📁migrations
             └── 📁__pycache__
                 ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
             ├── __init__.py
         └── 📁static
             └── 📁threejs_app
@@ -1218,10 +1349,13 @@
             ├── models.cpython-312.pyc
             ├── models.cpython-313.pyc
             ├── urls.cpython-312.pyc
+            ├── urls.cpython-313.pyc
             ├── views.cpython-312.pyc
+            ├── views.cpython-313.pyc
         └── 📁migrations
             └── 📁__pycache__
                 ├── __init__.cpython-312.pyc
+                ├── __init__.cpython-313.pyc
             ├── __init__.py
         └── 📁static
             └── 📁tron_bit
@@ -1244,6 +1378,7 @@
         ├── urls.py
         ├── views.py
     ├── create_pythagoras_quiz.py
+    ├── dashboard.test.py
     ├── db copy.sqlite3
     ├── db.sqlite3
     ├── dbsqlite3.txt
